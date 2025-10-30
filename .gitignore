@@ -1,0 +1,8 @@
+*
+
+!.gitignore
+!*.py
+!*.nix
+!*.png
+
+!flake.lock
