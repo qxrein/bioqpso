@@ -7,3 +7,7 @@
 
 !flake.lock
 !*.md
+!outputs/
+!bioqpso/
+!results/
+!requirements.txt

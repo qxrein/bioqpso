@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import time
 import sys
 from scipy import stats 
+from sklearn.datasets import load_breast_cancer
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import cross_val_score
 
 def sphere(x):
     return np.sum(x**2)
@@ -23,6 +26,73 @@ def griewank(x):
     sum_term = np.sum(x**2 / 4000)
     prod_term = np.prod(np.cos(x / np.sqrt(np.arange(1, len(x) + 1))))
     return sum_term - prod_term + 1
+
+def rosenbrock(x):
+    x = np.asarray(x)
+    return np.sum(100.0 * (x[1:] - x[:-1]**2)**2 + (x[:-1] - 1.0)**2)
+
+def schwefel(x):
+    x = np.asarray(x)
+    D = len(x)
+    return 418.9829 * D - np.sum(x * np.sin(np.sqrt(np.abs(x))))
+
+def levy(x):
+    x = np.asarray(x)
+    w = 1 + (x - 1) / 4.0
+    term1 = np.sin(np.pi * w[0])**2
+    term3 = (w[-1] - 1)**2 * (1 + np.sin(2 * np.pi * w[-1])**2)
+    wi = w[:-1]
+    term2 = np.sum((wi - 1)**2 * (1 + 10 * np.sin(np.pi * wi + np.pi)**2))
+    return term1 + term2 + term3
+
+def zakharov(x):
+    x = np.asarray(x)
+    i = np.arange(1, len(x) + 1)
+    sum1 = np.sum(x**2)
+    sum2 = np.sum(0.5 * i * x)
+    return sum1 + sum2**2 + sum2**4
+
+def styblinski_tang(x):
+    x = np.asarray(x)
+    return 0.5 * np.sum(x**4 - 16 * x**2 + 5 * x)
+
+def dixon_price(x):
+    x = np.asarray(x)
+    i = np.arange(2, len(x) + 1)
+    term1 = (x[0] - 1)**2
+    term2 = np.sum(i * (2 * x[1:]**2 - x[:-1])**2)
+    return term1 + term2
+
+
+def make_feature_selection_problem():
+    data = load_breast_cancer()
+    X = data.data
+    y = data.target
+
+    def fitness(x):
+        x = np.asarray(x)
+        mask = x >= 0.5
+        selected = np.sum(mask)
+        if selected == 0:
+            return 1.0
+
+        X_sel = X[:, mask]
+        clf = KNeighborsClassifier(n_neighbors=5)
+        scores = cross_val_score(clf, X_sel, y, cv=5)
+        mean_acc = np.mean(scores)
+
+        feature_frac = selected / 30.0
+        return 0.7 * (1.0 - mean_acc) + 0.3 * feature_frac
+
+    problem = {
+        'func': fitness,
+        'min_bound': 0.0,
+        'max_bound': 1.0,
+        'D': 30,
+        'X': X,
+        'y': y
+    }
+    return problem
 
 
 PROBLEMS = {
@@ -48,6 +118,42 @@ PROBLEMS = {
         'func': griewank,
         'min_bound': -600,
         'max_bound': 600,
+        'D': 30
+    },
+    'rosenbrock': {
+        'func': rosenbrock,
+        'min_bound': -2.048,
+        'max_bound': 2.048,
+        'D': 30
+    },
+    'schwefel': {
+        'func': schwefel,
+        'min_bound': -500,
+        'max_bound': 500,
+        'D': 30
+    },
+    'levy': {
+        'func': levy,
+        'min_bound': -10,
+        'max_bound': 10,
+        'D': 30
+    },
+    'zakharov': {
+        'func': zakharov,
+        'min_bound': -5,
+        'max_bound': 10,
+        'D': 30
+    },
+    'styblinski_tang': {
+        'func': styblinski_tang,
+        'min_bound': -5,
+        'max_bound': 5,
+        'D': 30
+    },
+    'dixon_price': {
+        'func': dixon_price,
+        'min_bound': -10,
+        'max_bound': 10,
         'D': 30
     }
 }
@@ -138,6 +244,134 @@ class QPSO(BaseOptimizer):
                 f_val = self.func(self.x[i])
                 self._update_bests(i, f_val)
             self.convergence_history.append(self.gbest_val)
+        return self.gbest_val, self.convergence_history
+
+class ACO(BaseOptimizer):
+    def __init__(self, problem, n_particles, max_iter, q=0.1, xi=0.85):
+        super().__init__(problem, n_particles, max_iter)
+        self.q = q
+        self.xi = xi
+
+    def run(self):
+        self._initialize()
+        archive = np.copy(self.x)
+        archive_f = np.array([self.func(p) for p in archive])
+
+        m = self.n_particles
+        ranks = np.arange(1, m + 1)
+        weights = (1.0 / (self.q * m * np.sqrt(2 * np.pi))) * np.exp(
+            -((ranks - 1) ** 2) / (2 * (self.q * m) ** 2)
+        )
+        weights /= np.sum(weights)
+
+        for t in range(self.max_iter):
+            idx = np.argsort(archive_f)
+            archive = archive[idx]
+            archive_f = archive_f[idx]
+
+            sigma = self.xi * np.abs(archive[-1] - archive[0]) + 1e-12
+
+            new_solutions = []
+            new_f = []
+
+            for _ in range(m):
+                k = np.random.choice(m, p=weights)
+                center = archive[k]
+                candidate = center + np.random.randn(self.D) * sigma
+                candidate = np.clip(candidate, self.min_bound, self.max_bound)
+                f_val = self.func(candidate)
+                new_solutions.append(candidate)
+                new_f.append(f_val)
+
+            combined = np.vstack([archive, np.array(new_solutions)])
+            combined_f = np.concatenate([archive_f, np.array(new_f)])
+
+            best_idx = np.argsort(combined_f)[:m]
+            archive = combined[best_idx]
+            archive_f = combined_f[best_idx]
+
+            self.x = np.copy(archive)
+            self.pbest_pos = np.copy(archive)
+            self.pbest_val = np.copy(archive_f)
+
+            best_particle_idx = np.argmin(self.pbest_val)
+            self.gbest_val = self.pbest_val[best_particle_idx]
+            self.gbest_pos = np.copy(self.pbest_pos[best_particle_idx])
+
+            self.convergence_history.append(self.gbest_val)
+
+        return self.gbest_val, self.convergence_history
+
+class ABC(BaseOptimizer):
+    def __init__(self, problem, n_particles, max_iter, limit=30):
+        super().__init__(problem, n_particles, max_iter)
+        self.limit = limit
+
+    def run(self):
+        self._initialize()
+        food_sources = np.copy(self.x[: self.n_particles // 2])
+        food_f = np.array([self.func(fs) for fs in food_sources])
+        trials = np.zeros(len(food_sources), dtype=int)
+
+        for _ in range(self.max_iter):
+            num_food = len(food_sources)
+
+            # Employed bees
+            for i in range(num_food):
+                k = np.random.randint(num_food)
+                while k == i:
+                    k = np.random.randint(num_food)
+                dim = np.random.randint(self.D)
+                phi = np.random.uniform(-1, 1)
+
+                candidate = np.copy(food_sources[i])
+                candidate[dim] = candidate[dim] + phi * (candidate[dim] - food_sources[k][dim])
+                candidate = np.clip(candidate, self.min_bound, self.max_bound)
+                f_val = self.func(candidate)
+
+                if f_val < food_f[i]:
+                    food_sources[i] = candidate
+                    food_f[i] = f_val
+                    trials[i] = 0
+                else:
+                    trials[i] += 1
+
+            # Onlooker bees
+            fitness = 1.0 / (1.0 + food_f - np.min(food_f) + 1e-12)
+            probs = fitness / np.sum(fitness)
+
+            for _ in range(num_food):
+                i = np.random.choice(num_food, p=probs)
+                k = np.random.randint(num_food)
+                while k == i:
+                    k = np.random.randint(num_food)
+                dim = np.random.randint(self.D)
+                phi = np.random.uniform(-1, 1)
+
+                candidate = np.copy(food_sources[i])
+                candidate[dim] = candidate[dim] + phi * (candidate[dim] - food_sources[k][dim])
+                candidate = np.clip(candidate, self.min_bound, self.max_bound)
+                f_val = self.func(candidate)
+
+                if f_val < food_f[i]:
+                    food_sources[i] = candidate
+                    food_f[i] = f_val
+                    trials[i] = 0
+                else:
+                    trials[i] += 1
+
+            # Scout bees
+            for i in range(num_food):
+                if trials[i] > self.limit:
+                    food_sources[i] = self.min_bound + (self.max_bound - self.min_bound) * np.random.rand(self.D)
+                    food_f[i] = self.func(food_sources[i])
+                    trials[i] = 0
+
+            best_idx = np.argmin(food_f)
+            self.gbest_val = food_f[best_idx]
+            self.gbest_pos = np.copy(food_sources[best_idx])
+            self.convergence_history.append(self.gbest_val)
+
         return self.gbest_val, self.convergence_history
 
 class AntBioQPSO(BaseOptimizer):
@@ -360,32 +594,60 @@ def print_results_table(stats_data):
         print(f"{name:<16} | {data['Mean']:<12.2e} | {data['StdDev']:<12.2e} | {data['Best']:<12.2e} | {data['Worst']:<12.2e} | {data['Time (s)']:<12.4f}")
 
 def run_statistical_analysis(results_raw_bests, control_name='QPSO'):
-    print("\n--- Statistical Significance (Mann-Whitney U) ---")
+    print("\n--- Statistical Significance (Wilcoxon & Friedman) ---")
     print(f"(Comparing against control: {control_name})")
-    
+
     if control_name not in results_raw_bests:
         print(f"Control algorithm '{control_name}' not in results. Skipping.")
-        return
-        
-    control_data = results_raw_bests[control_name]
-    
-    header = f"{'Algorithm':<16} | {'p-value':<12} | {'Significant (p<0.05)?'}"
+        return {}
+
+    control_data = np.array(results_raw_bests[control_name])
+    algo_names = list(results_raw_bests.keys())
+
+    # Friedman test across all algorithms
+    try:
+        friedman_args = [np.array(results_raw_bests[name]) for name in algo_names]
+        friedman_stat, friedman_p = stats.friedmanchisquare(*friedman_args)
+    except ValueError:
+        friedman_stat, friedman_p = np.nan, np.nan
+
+    header = (
+        f"{'Algorithm':<16} | {'Wilcoxon p-value':<18} | "
+        f"{'Significant (p<0.05)?':<22} | {'Friedman chi2':<14} | {'Friedman p':<12}"
+    )
     print(header)
     print("-" * len(header))
 
+    p_values = {}
+
     for name, data in results_raw_bests.items():
+        data = np.array(data)
+
         if name == control_name:
-            print(f"{name:<16} | {'(Control)':<12} | ...")
-            continue
-            
-        try:
-            stat, p_value = stats.mannwhitneyu(data, control_data, alternative='less')
-            
-            is_significant = "YES" if p_value < 0.05 else "No"
-            print(f"{name:<16} | {p_value:<12.4e} | {is_significant}")
-            
-        except ValueError as e:
-            print(f"{name:<16} | {'Test Error':<12} | {e}")
+            wilcoxon_p = 1.0
+            significant = "Control"
+        else:
+            if np.array_equal(data, control_data):
+                wilcoxon_p = 1.0
+            else:
+                try:
+                    _, wilcoxon_p = stats.wilcoxon(data, control_data, alternative='less')
+                except ValueError:
+                    wilcoxon_p = np.nan
+
+            significant = "YES" if (not np.isnan(wilcoxon_p) and wilcoxon_p < 0.05) else "No"
+
+        p_values[name] = wilcoxon_p
+
+        print(
+            f"{name:<16} | "
+            f"{wilcoxon_p:<18.4e} | "
+            f"{significant:<22} | "
+            f"{friedman_stat:<14.4f} | "
+            f"{friedman_p:<12.4e}"
+        )
+
+    return p_values
 
 def plot_convergence(histories, problem_name):
     print(f"\n--- Plotting Convergence ({problem_name}) ---")
@@ -404,58 +666,169 @@ def plot_convergence(histories, problem_name):
     print(f"Saved convergence plot to convergence_{problem_name}.png")
     plt.close()
 
+def run_sensitivity_analysis():
+    print("\n--- Running Sensitivity Analysis (AntBioQPSO on sphere) ---")
+
+    N_RUNS = 10
+    MAX_ITER = 500
+    N_PARTICLES = 30
+
+    evaporation_rates = [0.05, 0.1, 0.2, 0.3, 0.5]
+    pheromone_deposits = [0.5, 1.0, 2.0, 5.0, 10.0]
+    phi3_values = [0.1, 0.2, 0.3, 0.4, 0.5]
+
+    problem = PROBLEMS['sphere'].copy()
+    problem['name'] = 'sphere'
+
+    def run_for_params(phi1, phi2, phi3, evaporation_rate, pheromone_deposit):
+        run_bests = []
+        for _ in range(N_RUNS):
+            optimizer = AntBioQPSO(
+                problem=problem,
+                n_particles=N_PARTICLES,
+                max_iter=MAX_ITER,
+                phi1=phi1,
+                phi2=phi2,
+                phi3=phi3,
+                beta=0.5,
+                evaporation_rate=evaporation_rate,
+                pheromone_deposit=pheromone_deposit
+            )
+            best_val, _ = optimizer.run()
+            run_bests.append(best_val)
+        run_bests = np.array(run_bests)
+        return np.mean(run_bests), np.std(run_bests)
+
+    # Baseline parameters (as used in ALGORITHMS_TO_TEST)
+    base_phi1, base_phi2, base_phi3 = 0.4, 0.3, 0.3
+    base_evaporation_rate = 0.1
+    base_pheromone_deposit = 1.0
+
+    evap_means, evap_stds = [], []
+    for evap in evaporation_rates:
+        mean_val, std_val = run_for_params(
+            base_phi1, base_phi2, base_phi3, evap, base_pheromone_deposit
+        )
+        evap_means.append(mean_val)
+        evap_stds.append(std_val)
+
+    depo_means, depo_stds = [], []
+    for depo in pheromone_deposits:
+        mean_val, std_val = run_for_params(
+            base_phi1, base_phi2, base_phi3, base_evaporation_rate, depo
+        )
+        depo_means.append(mean_val)
+        depo_stds.append(std_val)
+
+    phi3_means, phi3_stds = [], []
+    for phi3 in phi3_values:
+        remaining = 1.0 - phi3
+        scale = remaining / (base_phi1 + base_phi2)
+        phi1 = base_phi1 * scale
+        phi2 = base_phi2 * scale
+        mean_val, std_val = run_for_params(
+            phi1, phi2, phi3, base_evaporation_rate, base_pheromone_deposit
+        )
+        phi3_means.append(mean_val)
+        phi3_stds.append(std_val)
+
+    print("\nSensitivity: evaporation_rate")
+    header = f"{'evaporation_rate':<18} | {'Mean':<12} | {'StdDev':<12}"
+    print(header)
+    print("-" * len(header))
+    for v, m, s in zip(evaporation_rates, evap_means, evap_stds):
+        print(f"{v:<18.3f} | {m:<12.2e} | {s:<12.2e}")
+
+    print("\nSensitivity: pheromone_deposit")
+    header = f"{'pheromone_deposit':<18} | {'Mean':<12} | {'StdDev':<12}"
+    print(header)
+    print("-" * len(header))
+    for v, m, s in zip(pheromone_deposits, depo_means, depo_stds):
+        print(f"{v:<18.3f} | {m:<12.2e} | {s:<12.2e}")
+
+    print("\nSensitivity: phi3 (bio-leader weight)")
+    header = f"{'phi3':<18} | {'Mean':<12} | {'StdDev':<12}"
+    print(header)
+    print("-" * len(header))
+    for v, m, s in zip(phi3_values, phi3_means, phi3_stds):
+        print(f"{v:<18.3f} | {m:<12.2e} | {s:<12.2e}")
+
+    # Plotting
+    plt.figure(figsize=(12, 10))
+
+    plt.subplot(3, 1, 1)
+    plt.errorbar(evaporation_rates, evap_means, yerr=evap_stds, fmt='-o', capsize=4)
+    plt.title('Sensitivity of AntBioQPSO to evaporation_rate (sphere)')
+    plt.xlabel('evaporation_rate')
+    plt.ylabel('Best Fitness')
+    plt.grid(True, ls="--", alpha=0.5)
+
+    plt.subplot(3, 1, 2)
+    plt.errorbar(pheromone_deposits, depo_means, yerr=depo_stds, fmt='-o', capsize=4)
+    plt.title('Sensitivity of AntBioQPSO to pheromone_deposit (sphere)')
+    plt.xlabel('pheromone_deposit')
+    plt.ylabel('Best Fitness')
+    plt.grid(True, ls="--", alpha=0.5)
+
+    plt.subplot(3, 1, 3)
+    plt.errorbar(phi3_values, phi3_means, yerr=phi3_stds, fmt='-o', capsize=4)
+    plt.title('Sensitivity of AntBioQPSO to phi3 (sphere)')
+    plt.xlabel('phi3')
+    plt.ylabel('Best Fitness')
+    plt.grid(True, ls="--", alpha=0.5)
+
+    plt.tight_layout()
+    plt.savefig("sensitivity_analysis.png")
+    print("\nSaved sensitivity analysis plot to sensitivity_analysis.png")
+    plt.close()
+
+def _evaluate_feature_selection_solution(x, X, y):
+    x = np.asarray(x)
+    mask = x >= 0.5
+    selected = int(np.sum(mask))
+    if selected == 0:
+        return 0.0, 0  # accuracy 0, 0 features
+
+    X_sel = X[:, mask]
+    clf = KNeighborsClassifier(n_neighbors=5)
+    scores = cross_val_score(clf, X_sel, y, cv=5)
+    mean_acc = float(np.mean(scores))
+    return mean_acc, selected
+
 
 if __name__ == "__main__":
-    
+    from bioqpso import (
+        PROBLEMS,
+        ALGORITHMS_TO_TEST,
+        run_experiment,
+        print_results_table,
+        run_statistical_analysis,
+        plot_convergence,
+        run_sensitivity_analysis,
+        run_feature_selection_experiment,
+    )
+
     N_RUNS = 30
     MAX_ITER = 1000
     N_PARTICLES = 30
-    
-    ALGORITHMS_TO_TEST = {
-        'PSO': {
-            'class': PSO,
-            'params': {'w': 0.729, 'c1': 1.494, 'c2': 1.494}
-        },
-        'QPSO': {
-            'class': QPSO,
-            'params': {'beta': 0.5} 
-        },
-        'AntBioQPSO': {
-            'class': AntBioQPSO,
-            'params': {
-                'phi1': 0.4, 'phi2': 0.3, 'phi3': 0.3, 'beta': 0.5,
-                'evaporation_rate': 0.1,
-                'pheromone_deposit': 1.0
-            }
-        },
-        'BeeBioQPSO': {
-            'class': BeeBioQPSO,
-            'params': {
-                'phi1': 0.4, 'phi2': 0.3, 'phi3': 0.3, 'beta': 0.5,
-                'stagnation_limit': 15
-            }
-        }
-    }
 
     for problem_name, problem_config in PROBLEMS.items():
-        
-        problem_config['name'] = problem_name
-        
-        
+        problem = problem_config.copy()
+        problem["name"] = problem_name
+
         results_data, histories, raw_bests = run_experiment(
-            problem=problem_config,
+            problem=problem,
             algorithms=ALGORITHMS_TO_TEST,
             n_runs=N_RUNS,
             max_iter=MAX_ITER,
-            n_particles=N_PARTICLES
+            n_particles=N_PARTICLES,
         )
-        
-        print_results_table(results_data)
-        
-        run_statistical_analysis(raw_bests, control_name='QPSO')
-        
-        plot_convergence(histories, problem_name)
-        
-        print("\n" + "="*80 + "\n")
 
+        print_results_table(results_data)
+        run_statistical_analysis(raw_bests, control_name="QPSO")
+        plot_convergence(histories, problem_name)
+        print("\n" + "=" * 80 + "\n")
+
+    run_sensitivity_analysis()
+    run_feature_selection_experiment()
     print("finished...")
