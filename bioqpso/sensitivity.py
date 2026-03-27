@@ -1,3 +1,6 @@
+import json
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -5,7 +8,20 @@ from .problems import PROBLEMS
 from .optimizers import AntBioQPSO
 
 
-def run_sensitivity_analysis():
+def _to_serializable(obj):
+    """Convert numpy types to plain Python for JSON dumping."""
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    if isinstance(obj, np.generic):
+        return obj.item()
+    if isinstance(obj, dict):
+        return {k: _to_serializable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_to_serializable(v) for v in obj]
+    return obj
+
+
+def run_sensitivity_analysis(output_dir=None):
     print("\n--- Running Sensitivity Analysis (AntBioQPSO on sphere) ---")
 
     N_RUNS = 10
@@ -141,7 +157,31 @@ def run_sensitivity_analysis():
     plt.grid(True, ls="--", alpha=0.5)
 
     plt.tight_layout()
-    plt.savefig("sensitivity_analysis.png")
-    print("\nSaved sensitivity analysis plot to sensitivity_analysis.png")
+    if output_dir is not None:
+        os.makedirs(output_dir, exist_ok=True)
+        save_path = os.path.join(output_dir, "sensitivity_analysis.png")
+    else:
+        save_path = "sensitivity_analysis.png"
+
+    plt.savefig(save_path)
+    print(f"\nSaved sensitivity analysis plot to {save_path}")
     plt.close()
+
+    if output_dir is not None:
+        results_path = os.path.join(output_dir, "sensitivity_results.json")
+        sensitivity_results = {
+            "problem_name": "sphere",
+            "n_runs": N_RUNS,
+            "max_iter": MAX_ITER,
+            "n_particles": N_PARTICLES,
+            "evaporation_rates": evaporation_rates,
+            "pheromone_deposits": pheromone_deposits,
+            "phi3_values": phi3_values,
+            "evaporation_rate_results": {"means": evap_means, "stds": evap_stds},
+            "pheromone_deposit_results": {"means": depo_means, "stds": depo_stds},
+            "phi3_results": {"means": phi3_means, "stds": phi3_stds},
+        }
+        with open(results_path, "w", encoding="utf-8") as f:
+            json.dump(_to_serializable(sensitivity_results), f, indent=2)
+        print(f"Saved sensitivity results to {results_path}")
 

@@ -11,7 +11,7 @@ def run_all_experiments(n_runs=30, max_iter=1000, n_particles=30):
         problem = problem_config.copy()
         problem['name'] = problem_name
 
-        stats, histories, _ = run_experiment(
+        stats, histories, _, _ = run_experiment(
             problem=problem,
             algorithms=ALGORITHMS_TO_TEST,
             n_runs=n_runs,

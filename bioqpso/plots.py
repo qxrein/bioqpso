@@ -1,7 +1,9 @@
+import os
+
 import matplotlib.pyplot as plt
 
 
-def plot_convergence(histories, problem_name):
+def plot_convergence(histories, problem_name, output_dir=None):
     print(f"\n--- Plotting Convergence ({problem_name}) ---")
     plt.figure(figsize=(12, 8))
 
@@ -46,7 +48,13 @@ def plot_convergence(histories, problem_name):
     plt.legend()
     plt.grid(True, which="both", ls="--", alpha=0.5)
 
-    plt.savefig(f"convergence_{problem_name}.png")
-    print(f"Saved convergence plot to convergence_{problem_name}.png")
+    if output_dir is not None:
+        os.makedirs(output_dir, exist_ok=True)
+        save_path = os.path.join(output_dir, f"convergence_{problem_name}.png")
+    else:
+        save_path = f"convergence_{problem_name}.png"
+
+    plt.savefig(save_path)
+    print(f"Saved convergence plot to {save_path}")
     plt.close()
 

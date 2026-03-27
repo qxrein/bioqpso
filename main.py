@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import sys
+import os
+import json
 from scipy import stats 
 from sklearn.datasets import load_breast_cancer
 from sklearn.neighbors import KNeighborsClassifier
@@ -454,6 +456,106 @@ class AntBioQPSO(BaseOptimizer):
             
         return self.gbest_val, self.convergence_history
 
+class AdaptiveBioQPSO(AntBioQPSO):
+    def __init__(
+        self,
+        problem,
+        n_particles,
+        max_iter,
+        phi1,
+        phi2,
+        phi3,
+        beta,
+        evaporation_rate,
+        pheromone_deposit,
+        phi3_min=0.1,
+        phi3_max=0.5,
+        delta=0.02,
+        stagnation_window=20,
+    ):
+        super().__init__(
+            problem=problem,
+            n_particles=n_particles,
+            max_iter=max_iter,
+            phi1=phi1,
+            phi2=phi2,
+            phi3=phi3,
+            beta=beta,
+            evaporation_rate=evaporation_rate,
+            pheromone_deposit=pheromone_deposit,
+        )
+        self.phi3_min = phi3_min
+        self.phi3_max = phi3_max
+        self.delta = delta
+        self.stagnation_window = stagnation_window
+
+    def run(self):
+        self._initialize()
+
+        phi3_history = []
+        stagnation_counter = 0
+        prev_gbest_val = self.gbest_val
+
+        for t in range(self.max_iter):
+            self.pheromone *= (1 - self.evaporation_rate)
+
+            for i in range(self.n_particles):
+                self.update_local_leader(i)
+
+            mbest = np.mean(self.pbest_pos, axis=0)
+            current_beta = 1.0 - (1.0 - self.beta) * (t / self.max_iter)
+
+            for i in range(self.n_particles):
+                p = self.pbest_pos[i]
+                g = self.gbest_pos
+                b = self.local_leader_pos[i]
+
+                phi_sum = self.phi1 + self.phi2 + self.phi3 or 1.0
+                q = (self.phi1 * p + self.phi2 * g + self.phi3 * b) / phi_sum
+
+                u = np.random.rand(self.D)
+                u[u == 0] = 1e-10
+                abs_diff = np.abs(mbest - self.x[i])
+                log_term = -np.log(u)
+                rand_check = np.random.rand(self.D) > 0.5
+                self.x[i] = np.where(
+                    rand_check,
+                    q + current_beta * abs_diff * log_term,
+                    q - current_beta * abs_diff * log_term,
+                )
+
+                self.x[i] = np.clip(self.x[i], self.min_bound, self.max_bound)
+                f_val = self.func(self.x[i])
+
+                pbest_improved = self._update_bests(i, f_val)
+
+                if pbest_improved:
+                    self.pheromone[i] += self.pheromone_deposit
+
+            self.convergence_history.append(self.gbest_val)
+
+            # Update global stagnation counter based on gbest improvement.
+            if self.gbest_val < prev_gbest_val:
+                stagnation_counter = 0
+            else:
+                stagnation_counter += 1
+            prev_gbest_val = self.gbest_val
+
+            # Feedback-driven adaptive phi3 scheduling.
+            if stagnation_counter > self.stagnation_window:
+                self.phi3 = min(self.phi3 + self.delta, self.phi3_max)
+            else:
+                self.phi3 = max(self.phi3 - self.delta, self.phi3_min)
+
+            # Keep phi1:phi2 ratio fixed at 4:3 and enforce phi1+phi2+phi3=1.
+            remaining = 1.0 - self.phi3
+            self.phi1 = 4.0 * remaining / 7.0
+            self.phi2 = 3.0 * remaining / 7.0
+
+            phi3_history.append(self.phi3)
+
+        return self.gbest_val, self.convergence_history, phi3_history
+
 class BeeBioQPSO(BaseOptimizer):
     def __init__(self, problem, n_particles, max_iter, phi1, phi2, phi3, beta,
                  stagnation_limit):
@@ -541,6 +643,442 @@ class BeeBioQPSO(BaseOptimizer):
             
         return self.gbest_val, self.convergence_history
 
+
+class LinearAdaBioQPSO(AntBioQPSO):
+    def __init__(
+        self,
+        problem,
+        n_particles,
+        max_iter,
+        phi1,
+        phi2,
+        phi3,
+        beta,
+        evaporation_rate,
+        pheromone_deposit,
+        phi3_min=0.1,
+        phi3_max=0.5,
+    ):
+        super().__init__(
+            problem=problem,
+            n_particles=n_particles,
+            max_iter=max_iter,
+            phi1=phi1,
+            phi2=phi2,
+            phi3=phi3,
+            beta=beta,
+            evaporation_rate=evaporation_rate,
+            pheromone_deposit=pheromone_deposit,
+        )
+        self.phi3_min = phi3_min
+        self.phi3_max = phi3_max
+
+    def run(self):
+        self._initialize()
+        self.phi3_history = []
+
+        for t in range(self.max_iter):
+            phi3 = self.phi3_max - (self.phi3_max - self.phi3_min) * (
+                t / self.max_iter
+            )
+            phi3 = float(np.clip(phi3, self.phi3_min, self.phi3_max))
+            self.phi3 = phi3
+            self.phi1 = (1.0 - self.phi3) * (4.0 / 7.0)
+            self.phi2 = (1.0 - self.phi3) * (3.0 / 7.0)
+            self.phi3_history.append(self.phi3)
+
+            self.pheromone *= (1 - self.evaporation_rate)
+
+            for i in range(self.n_particles):
+                self.update_local_leader(i)
+
+            mbest = np.mean(self.pbest_pos, axis=0)
+            current_beta = 1.0 - (1.0 - self.beta) * (t / self.max_iter)
+
+            for i in range(self.n_particles):
+                p = self.pbest_pos[i]
+                g = self.gbest_pos
+                b = self.local_leader_pos[i]
+
+                q = self.phi1 * p + self.phi2 * g + self.phi3 * b
+
+                u = np.random.rand(self.D)
+                u[u == 0] = 1e-10
+                abs_diff = np.abs(mbest - self.x[i])
+                log_term = -np.log(u)
+                rand_check = np.random.rand(self.D) > 0.5
+                self.x[i] = np.where(
+                    rand_check,
+                    q + current_beta * abs_diff * log_term,
+                    q - current_beta * abs_diff * log_term,
+                )
+
+                self.x[i] = np.clip(self.x[i], self.min_bound, self.max_bound)
+                f_val = self.func(self.x[i])
+
+                pbest_improved = self._update_bests(i, f_val)
+
+                if pbest_improved:
+                    self.pheromone[i] += self.pheromone_deposit
+
+            self.convergence_history.append(self.gbest_val)
+
+        return self.gbest_val, self.convergence_history, self.phi3_history
+
+
+class CosineAdaBioQPSO(AntBioQPSO):
+    def __init__(
+        self,
+        problem,
+        n_particles,
+        max_iter,
+        phi1,
+        phi2,
+        phi3,
+        beta,
+        evaporation_rate,
+        pheromone_deposit,
+        phi3_min=0.1,
+        phi3_max=0.5,
+    ):
+        super().__init__(
+            problem=problem,
+            n_particles=n_particles,
+            max_iter=max_iter,
+            phi1=phi1,
+            phi2=phi2,
+            phi3=phi3,
+            beta=beta,
+            evaporation_rate=evaporation_rate,
+            pheromone_deposit=pheromone_deposit,
+        )
+        self.phi3_min = phi3_min
+        self.phi3_max = phi3_max
+
+    def run(self):
+        self._initialize()
+        self.phi3_history = []
+
+        for t in range(self.max_iter):
+            phi3 = self.phi3_min + 0.5 * (self.phi3_max - self.phi3_min) * (
+                1.0 + np.cos(np.pi * t / self.max_iter)
+            )
+            phi3 = float(np.clip(phi3, self.phi3_min, self.phi3_max))
+            self.phi3 = phi3
+            self.phi1 = (1.0 - self.phi3) * (4.0 / 7.0)
+            self.phi2 = (1.0 - self.phi3) * (3.0 / 7.0)
+            self.phi3_history.append(self.phi3)
+
+            self.pheromone *= (1 - self.evaporation_rate)
+
+            for i in range(self.n_particles):
+                self.update_local_leader(i)
+
+            mbest = np.mean(self.pbest_pos, axis=0)
+            current_beta = 1.0 - (1.0 - self.beta) * (t / self.max_iter)
+
+            for i in range(self.n_particles):
+                p = self.pbest_pos[i]
+                g = self.gbest_pos
+                b = self.local_leader_pos[i]
+
+                q = self.phi1 * p + self.phi2 * g + self.phi3 * b
+
+                u = np.random.rand(self.D)
+                u[u == 0] = 1e-10
+                abs_diff = np.abs(mbest - self.x[i])
+                log_term = -np.log(u)
+                rand_check = np.random.rand(self.D) > 0.5
+                self.x[i] = np.where(
+                    rand_check,
+                    q + current_beta * abs_diff * log_term,
+                    q - current_beta * abs_diff * log_term,
+                )
+
+                self.x[i] = np.clip(self.x[i], self.min_bound, self.max_bound)
+                f_val = self.func(self.x[i])
+
+                pbest_improved = self._update_bests(i, f_val)
+
+                if pbest_improved:
+                    self.pheromone[i] += self.pheromone_deposit
+
+            self.convergence_history.append(self.gbest_val)
+
+        return self.gbest_val, self.convergence_history, self.phi3_history
+
+
+class FeedbackAdaBioQPSO(AntBioQPSO):
+    def __init__(
+        self,
+        problem,
+        n_particles,
+        max_iter,
+        phi1,
+        phi2,
+        phi3,
+        beta,
+        evaporation_rate,
+        pheromone_deposit,
+        phi3_min=0.1,
+        phi3_max=0.5,
+        delta=0.02,
+        stagnation_window=20,
+    ):
+        super().__init__(
+            problem=problem,
+            n_particles=n_particles,
+            max_iter=max_iter,
+            phi1=phi1,
+            phi2=phi2,
+            phi3=phi3,
+            beta=beta,
+            evaporation_rate=evaporation_rate,
+            pheromone_deposit=pheromone_deposit,
+        )
+        self.phi3_min = phi3_min
+        self.phi3_max = phi3_max
+        self.delta = delta
+        self.stagnation_window = stagnation_window
+
+        self.phi3 = 0.5 * (self.phi3_max + self.phi3_min)
+        self.phi1 = (1.0 - self.phi3) * (4.0 / 7.0)
+        self.phi2 = (1.0 - self.phi3) * (3.0 / 7.0)
+
+    def run(self):
+        self._initialize()
+        self.phi3_history = []
+
+        gbest_stagnation_counter = 0
+        prev_gbest_val = self.gbest_val
+
+        for t in range(self.max_iter):
+            if gbest_stagnation_counter > self.stagnation_window:
+                self.phi3 = min(self.phi3 + self.delta, self.phi3_max)
+            else:
+                self.phi3 = max(self.phi3 - self.delta, self.phi3_min)
+
+            self.phi1 = (1.0 - self.phi3) * (4.0 / 7.0)
+            self.phi2 = (1.0 - self.phi3) * (3.0 / 7.0)
+            self.phi3_history.append(self.phi3)
+
+            self.pheromone *= (1 - self.evaporation_rate)
+
+            for i in range(self.n_particles):
+                self.update_local_leader(i)
+
+            mbest = np.mean(self.pbest_pos, axis=0)
+            current_beta = 1.0 - (1.0 - self.beta) * (t / self.max_iter)
+
+            for i in range(self.n_particles):
+                p = self.pbest_pos[i]
+                g = self.gbest_pos
+                b = self.local_leader_pos[i]
+
+                q = self.phi1 * p + self.phi2 * g + self.phi3 * b
+
+                u = np.random.rand(self.D)
+                u[u == 0] = 1e-10
+                abs_diff = np.abs(mbest - self.x[i])
+                log_term = -np.log(u)
+                rand_check = np.random.rand(self.D) > 0.5
+                self.x[i] = np.where(
+                    rand_check,
+                    q + current_beta * abs_diff * log_term,
+                    q - current_beta * abs_diff * log_term,
+                )
+
+                self.x[i] = np.clip(self.x[i], self.min_bound, self.max_bound)
+                f_val = self.func(self.x[i])
+
+                pbest_improved = self._update_bests(i, f_val)
+
+                if pbest_improved:
+                    self.pheromone[i] += self.pheromone_deposit
+
+            self.convergence_history.append(self.gbest_val)
+
+            if self.gbest_val < prev_gbest_val:
+                gbest_stagnation_counter = 0
+            else:
+                gbest_stagnation_counter += 1
+            prev_gbest_val = self.gbest_val
+
+        return self.gbest_val, self.convergence_history, self.phi3_history
+
+
+class PerParticleAdaBioQPSO(BeeBioQPSO):
+    def __init__(
+        self,
+        problem,
+        n_particles,
+        max_iter,
+        phi1,
+        phi2,
+        phi3,
+        beta,
+        stagnation_limit,
+        phi3_min=0.1,
+        phi3_max=0.5,
+    ):
+        super().__init__(
+            problem=problem,
+            n_particles=n_particles,
+            max_iter=max_iter,
+            phi1=phi1,
+            phi2=phi2,
+            phi3=phi3,
+            beta=beta,
+            stagnation_limit=stagnation_limit,
+        )
+        self.phi3_min = phi3_min
+        self.phi3_max = phi3_max
+
+    def run(self):
+        self._initialize()
+        self.phi3_history = []
+
+        denom = float(self.stagnation_limit) if self.stagnation_limit else 1.0
+
+        for t in range(self.max_iter):
+            for i in range(self.n_particles):
+                self.update_local_leader(i)
+
+            # Per-particle phi3_i based on each particle's stagnation counter.
+            frac = np.clip(self.stagnation_counter.astype(float) / denom, 0.0, 1.0)
+            phi3_vec = self.phi3_min + (self.phi3_max - self.phi3_min) * frac
+            self.phi3_history.append(float(np.mean(phi3_vec)))
+
+            mbest = np.mean(self.pbest_pos, axis=0)
+            current_beta = 1.0 - (1.0 - self.beta) * (t / self.max_iter)
+
+            for i in range(self.n_particles):
+                p = self.pbest_pos[i]
+                g = self.gbest_pos
+                b = self.local_leader_pos[i]
+
+                phi3_i = float(phi3_vec[i])
+                phi1_i = (1.0 - phi3_i) * (4.0 / 7.0)
+                phi2_i = (1.0 - phi3_i) * (3.0 / 7.0)
+                q = phi1_i * p + phi2_i * g + phi3_i * b
+
+                u = np.random.rand(self.D)
+                u[u == 0] = 1e-10
+                abs_diff = np.abs(mbest - self.x[i])
+                log_term = -np.log(u)
+                rand_check = np.random.rand(self.D) > 0.5
+                self.x[i] = np.where(
+                    rand_check,
+                    q + current_beta * abs_diff * log_term,
+                    q - current_beta * abs_diff * log_term,
+                )
+
+                self.x[i] = np.clip(self.x[i], self.min_bound, self.max_bound)
+                f_val = self.func(self.x[i])
+
+                self._update_bests(i, f_val)
+
+            for i in range(self.n_particles):
+                if self.stagnation_counter[i] > self.stagnation_limit:
+                    self.x[i] = self.min_bound + (self.max_bound - self.min_bound) * np.random.rand(
+                        self.D
+                    )
+                    f_val = self.func(self.x[i])
+
+                    self.pbest_pos[i] = np.copy(self.x[i])
+                    self.pbest_val[i] = f_val
+                    self.stagnation_counter[i] = 0
+
+                    if f_val < self.gbest_val:
+                        self.gbest_val = f_val
+                        self.gbest_pos = np.copy(self.x[i])
+
+            self.convergence_history.append(self.gbest_val)
+
+        return self.gbest_val, self.convergence_history, self.phi3_history
+
+
+ALGORITHMS_TO_TEST = {
+    "PSO": {"class": PSO, "params": {"w": 0.729, "c1": 1.494, "c2": 1.494}},
+    "QPSO": {"class": QPSO, "params": {"beta": 0.5}},
+    "ACO": {"class": ACO, "params": {"q": 0.1, "xi": 0.85}},
+    "ABC": {"class": ABC, "params": {"limit": 30}},
+    "AntBioQPSO": {
+        "class": AntBioQPSO,
+        "params": {
+            "phi1": 0.4,
+            "phi2": 0.3,
+            "phi3": 0.3,
+            "beta": 0.5,
+            "evaporation_rate": 0.1,
+            "pheromone_deposit": 1.0,
+        },
+    },
+    "BeeBioQPSO": {
+        "class": BeeBioQPSO,
+        "params": {
+            "phi1": 0.4,
+            "phi2": 0.3,
+            "phi3": 0.3,
+            "beta": 0.5,
+            "stagnation_limit": 15,
+        },
+    },
+    "LinearAda": {
+        "class": LinearAdaBioQPSO,
+        "params": {
+            "phi1": 0.4,
+            "phi2": 0.3,
+            "phi3": 0.3,
+            "beta": 0.5,
+            "evaporation_rate": 0.1,
+            "pheromone_deposit": 1.0,
+            "phi3_min": 0.1,
+            "phi3_max": 0.5,
+        },
+    },
+    "CosineAda": {
+        "class": CosineAdaBioQPSO,
+        "params": {
+            "phi1": 0.4,
+            "phi2": 0.3,
+            "phi3": 0.3,
+            "beta": 0.5,
+            "evaporation_rate": 0.1,
+            "pheromone_deposit": 1.0,
+            "phi3_min": 0.1,
+            "phi3_max": 0.5,
+        },
+    },
+    "FeedbackAda": {
+        "class": FeedbackAdaBioQPSO,
+        "params": {
+            "phi1": 0.4,
+            "phi2": 0.3,
+            "phi3": 0.3,
+            "beta": 0.5,
+            "evaporation_rate": 0.1,
+            "pheromone_deposit": 1.0,
+            "phi3_min": 0.1,
+            "phi3_max": 0.5,
+            "delta": 0.02,
+            "stagnation_window": 20,
+        },
+    },
+    "PerParticleAda": {
+        "class": PerParticleAdaBioQPSO,
+        "params": {
+            "phi1": 0.4,
+            "phi2": 0.3,
+            "phi3": 0.3,
+            "beta": 0.5,
+            "stagnation_limit": 15,
+            "phi3_min": 0.1,
+            "phi3_max": 0.5,
+        },
+    },
+}
+
 def run_experiment(problem, algorithms, n_runs=30, max_iter=1000, n_particles=50):
     print(f"\n--- Running Experiment ---")
     print(f"Problem: {problem['name']} (D={problem['D']})")
@@ -549,6 +1087,7 @@ def run_experiment(problem, algorithms, n_runs=30, max_iter=1000, n_particles=50
     results_stats = {}
     results_histories = {}
     results_raw_bests = {}
+    results_phi3_histories = {}
     
     for name, config in algorithms.items():
         print(f"Running {name}...")
@@ -557,6 +1096,7 @@ def run_experiment(problem, algorithms, n_runs=30, max_iter=1000, n_particles=50
         
         run_bests = []
         run_histories = []
+        run_phi3_histories = []
         
         start_time = time.time()
         for r in range(n_runs):
@@ -566,7 +1106,12 @@ def run_experiment(problem, algorithms, n_runs=30, max_iter=1000, n_particles=50
                 max_iter=max_iter, 
                 **params
             )
-            best_val, history = optimizer.run()
+            run_result = optimizer.run()
+            if isinstance(run_result, tuple) and len(run_result) == 3:
+                best_val, history, phi3_history = run_result
+                run_phi3_histories.append(phi3_history)
+            else:
+                best_val, history = run_result
             run_bests.append(best_val)
             run_histories.append(history)
         
@@ -582,8 +1127,9 @@ def run_experiment(problem, algorithms, n_runs=30, max_iter=1000, n_particles=50
         
         results_histories[name] = np.mean(run_histories, axis=0)
         results_raw_bests[name] = run_bests
+        results_phi3_histories[name] = run_phi3_histories if run_phi3_histories else None
     
-    return results_stats, results_histories, results_raw_bests
+    return results_stats, results_histories, results_raw_bests, results_phi3_histories
 
 def print_results_table(stats_data): 
     print("\n--- Experimental Results ---")
@@ -664,6 +1210,50 @@ def plot_convergence(histories, problem_name):
     
     plt.savefig(f"convergence_{problem_name}.png")
     print(f"Saved convergence plot to convergence_{problem_name}.png")
+    plt.close()
+
+def plot_phi3_evolution(phi3_histories, problem_name):
+    # phi3_histories: {algorithm_name: list_of_phi3_history_lists} or None entries
+    if not isinstance(phi3_histories, dict):
+        return
+
+    plt.figure(figsize=(12, 6))
+
+    plotted_any = False
+    for name, runs in phi3_histories.items():
+        if runs is None:
+            continue
+        if not runs:
+            continue
+
+        mean_phi3 = np.mean(np.asarray(runs, dtype=float), axis=0)
+        x = np.arange(len(mean_phi3))
+        plt.plot(x, mean_phi3, linewidth=2.0, label=name)
+        plotted_any = True
+
+    if not plotted_any:
+        plt.close()
+        return
+
+    plt.axhline(
+        0.3,
+        color="gray",
+        linestyle="--",
+        linewidth=1.5,
+        label="Fixed BioQPSO baseline",
+    )
+    plt.title(f"φ₃ weight evolution — {problem_name}")
+    plt.xlabel("Iteration")
+    plt.ylabel("φ₃ (bio-leader weight)")
+    plt.ylim(0, 1)
+    plt.grid(True, which="both", ls="--", alpha=0.5)
+    plt.legend()
+    plt.tight_layout()
+
+    out_dir = os.path.join("outputs", "adabioqpso")
+    os.makedirs(out_dir, exist_ok=True)
+    save_path = os.path.join(out_dir, f"phi3_evolution_{problem_name}.png")
+    plt.savefig(save_path)
     plt.close()
 
 def run_sensitivity_analysis():
@@ -799,24 +1389,45 @@ def _evaluate_feature_selection_solution(x, X, y):
 if __name__ == "__main__":
     from bioqpso import (
         PROBLEMS,
-        ALGORITHMS_TO_TEST,
         run_experiment,
         print_results_table,
         run_statistical_analysis,
         plot_convergence,
         run_sensitivity_analysis,
-        run_feature_selection_experiment,
     )
 
     N_RUNS = 30
     MAX_ITER = 1000
     N_PARTICLES = 30
 
+    output_dir = os.path.join("outputs", "adabioqpso")
+    os.makedirs(output_dir, exist_ok=True)
+
+    def _to_serializable(obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if isinstance(obj, np.generic):
+            return obj.item()
+        if isinstance(obj, dict):
+            return {k: _to_serializable(v) for k, v in obj.items()}
+        if isinstance(obj, (list, tuple)):
+            return [_to_serializable(v) for v in obj]
+        return obj
+
+    run_metadata = {
+        "output_dir": output_dir,
+        "N_RUNS": N_RUNS,
+        "MAX_ITER": MAX_ITER,
+        "N_PARTICLES": N_PARTICLES,
+    }
+    with open(os.path.join(output_dir, "run_metadata.json"), "w", encoding="utf-8") as f:
+        json.dump(_to_serializable(run_metadata), f, indent=2)
+
     for problem_name, problem_config in PROBLEMS.items():
         problem = problem_config.copy()
         problem["name"] = problem_name
 
-        results_data, histories, raw_bests = run_experiment(
+        results_data, histories, raw_bests, phi3_histories = run_experiment(
             problem=problem,
             algorithms=ALGORITHMS_TO_TEST,
             n_runs=N_RUNS,
@@ -825,10 +1436,131 @@ if __name__ == "__main__":
         )
 
         print_results_table(results_data)
-        run_statistical_analysis(raw_bests, control_name="QPSO")
-        plot_convergence(histories, problem_name)
+        p_values = run_statistical_analysis(raw_bests, control_name="QPSO")
+
+        plot_convergence(histories, problem_name, output_dir=output_dir)
+        plot_phi3_evolution(phi3_histories, problem_name)
+
+        # Save numeric results and histories.
+        with open(
+            os.path.join(output_dir, f"{problem_name}_results_stats.json"),
+            "w",
+            encoding="utf-8",
+        ) as f:
+            json.dump(_to_serializable(results_data), f, indent=2)
+
+        with open(
+            os.path.join(output_dir, f"{problem_name}_convergence_histories.json"),
+            "w",
+            encoding="utf-8",
+        ) as f:
+            json.dump(_to_serializable(histories), f, indent=2)
+
+        with open(
+            os.path.join(output_dir, f"{problem_name}_raw_bests.json"),
+            "w",
+            encoding="utf-8",
+        ) as f:
+            json.dump(_to_serializable(raw_bests), f, indent=2)
+
+        with open(
+            os.path.join(output_dir, f"{problem_name}_p_values.json"),
+            "w",
+            encoding="utf-8",
+        ) as f:
+            json.dump(_to_serializable(p_values), f, indent=2)
+
+        with open(
+            os.path.join(output_dir, f"{problem_name}_phi3_histories.json"),
+            "w",
+            encoding="utf-8",
+        ) as f:
+            json.dump(_to_serializable(phi3_histories), f, indent=2)
+
         print("\n" + "=" * 80 + "\n")
 
-    run_sensitivity_analysis()
-    run_feature_selection_experiment()
+    run_sensitivity_analysis(output_dir=output_dir)
+
+    print("\n--- Running Feature Selection Experiment (Breast Cancer) ---")
+    fs_problem = make_feature_selection_problem()
+    fs_problem["name"] = "feature_selection"
+
+    N_RUNS_FS = 10
+    MAX_ITER_FS = 200
+    N_PARTICLES_FS = 30
+
+    X_fs = fs_problem["X"]
+    y_fs = fs_problem["y"]
+
+    # Use the same algorithm configs as the main experiment, but evaluated on feature selection.
+    FEATURE_SELECTION_ALGORITHMS = dict(ALGORITHMS_TO_TEST)
+    # Explicitly ensure the 4 adaptive variants are included.
+    for k in ["LinearAda", "CosineAda", "FeedbackAda", "PerParticleAda"]:
+        if k in ALGORITHMS_TO_TEST:
+            FEATURE_SELECTION_ALGORITHMS[k] = ALGORITHMS_TO_TEST[k]
+
+    fs_stats = {}
+    fs_histories = {}
+
+    for name, config in FEATURE_SELECTION_ALGORITHMS.items():
+        print(f"Running {name} on feature selection...")
+        algo_class = config["class"]
+        params = config["params"]
+
+        run_accuracies = []
+        run_features = []
+        run_histories = []
+
+        start_time = time.time()
+        for _ in range(N_RUNS_FS):
+            optimizer = algo_class(
+                problem=fs_problem,
+                n_particles=N_PARTICLES_FS,
+                max_iter=MAX_ITER_FS,
+                **params,
+            )
+            run_result = optimizer.run()
+            if isinstance(run_result, tuple) and len(run_result) == 3:
+                _, history, _phi3_history = run_result
+            else:
+                _, history = run_result
+            run_histories.append(history)
+
+            acc, n_feat = _evaluate_feature_selection_solution(
+                optimizer.gbest_pos, X_fs, y_fs
+            )
+            run_accuracies.append(acc)
+            run_features.append(n_feat)
+
+        end_time = time.time()
+
+        fs_stats[name] = {
+            "MeanAcc": np.mean(run_accuracies),
+            "StdAcc": np.std(run_accuracies),
+            "AvgFeatures": np.mean(run_features),
+            "Time (s)": (end_time - start_time) / N_RUNS_FS,
+        }
+        fs_histories[name] = np.mean(run_histories, axis=0)
+
+    print("\n--- Feature Selection Results (Breast Cancer) ---")
+    header = f"{'Algorithm':<16} | {'Mean Acc':<12} | {'Std Acc':<12} | {'Avg Features':<14} | {'Avg Time (s)':<12}"
+    print(header)
+    print("-" * len(header))
+    for name, data in fs_stats.items():
+        print(
+            f"{name:<16} | "
+            f"{data['MeanAcc']:<12.4f} | "
+            f"{data['StdAcc']:<12.4f} | "
+            f"{data['AvgFeatures']:<14.2f} | "
+            f"{data['Time (s)']:<12.4f}"
+        )
+
+    plot_convergence(fs_histories, "feature_selection", output_dir=output_dir)
+
+    results_path = os.path.join(output_dir, "feature_selection_results.json")
+    feature_selection_results = {"stats": fs_stats, "mean_histories": fs_histories}
+    with open(results_path, "w", encoding="utf-8") as f:
+        json.dump(_to_serializable(feature_selection_results), f, indent=2)
+    print(f"Saved feature selection results to {results_path}")
+
     print("finished...")

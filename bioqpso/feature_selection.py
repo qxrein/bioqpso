@@ -1,4 +1,7 @@
 import time
+import json
+import os
+
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import cross_val_score
@@ -22,7 +25,20 @@ def _evaluate_feature_selection_solution(x, X, y):
     return mean_acc, selected
 
 
-def run_feature_selection_experiment():
+def _to_serializable(obj):
+    """Convert numpy types to plain Python for JSON dumping."""
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    if isinstance(obj, np.generic):
+        return obj.item()
+    if isinstance(obj, dict):
+        return {k: _to_serializable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_to_serializable(v) for v in obj]
+    return obj
+
+
+def run_feature_selection_experiment(output_dir=None):
     print("\n--- Running Feature Selection Experiment (Breast Cancer) ---")
     fs_problem = make_feature_selection_problem()
     fs_problem["name"] = "feature_selection"
@@ -86,5 +102,13 @@ def run_feature_selection_experiment():
             f"{data['Time (s)']:<12.4f}"
         )
 
-    plot_convergence(fs_histories, "feature_selection")
+    plot_convergence(fs_histories, "feature_selection", output_dir=output_dir)
+
+    if output_dir is not None:
+        os.makedirs(output_dir, exist_ok=True)
+        results_path = os.path.join(output_dir, "feature_selection_results.json")
+        feature_selection_results = {"stats": fs_stats, "mean_histories": fs_histories}
+        with open(results_path, "w", encoding="utf-8") as f:
+            json.dump(_to_serializable(feature_selection_results), f, indent=2)
+        print(f"Saved feature selection results to {results_path}")
 

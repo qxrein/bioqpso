@@ -11,6 +11,7 @@ def run_experiment(problem, algorithms, n_runs=30, max_iter=1000, n_particles=50
     results_stats = {}
     results_histories = {}
     results_raw_bests = {}
+    results_phi3_histories = {}
 
     for name, config in algorithms.items():
         print(f"Running {name}...")
@@ -19,6 +20,7 @@ def run_experiment(problem, algorithms, n_runs=30, max_iter=1000, n_particles=50
 
         run_bests = []
         run_histories = []
+        run_phi3_histories = []
 
         start_time = time.time()
         for _ in range(n_runs):
@@ -28,7 +30,12 @@ def run_experiment(problem, algorithms, n_runs=30, max_iter=1000, n_particles=50
                 max_iter=max_iter,
                 **params,
             )
-            best_val, history = optimizer.run()
+            run_result = optimizer.run()
+            if isinstance(run_result, tuple) and len(run_result) == 3:
+                best_val, history, phi3_history = run_result
+                run_phi3_histories.append(phi3_history)
+            else:
+                best_val, history = run_result
             run_bests.append(best_val)
             run_histories.append(history)
 
@@ -44,8 +51,9 @@ def run_experiment(problem, algorithms, n_runs=30, max_iter=1000, n_particles=50
 
         results_histories[name] = np.mean(run_histories, axis=0)
         results_raw_bests[name] = run_bests
+        results_phi3_histories[name] = run_phi3_histories if run_phi3_histories else None
 
-    return results_stats, results_histories, results_raw_bests
+    return results_stats, results_histories, results_raw_bests, results_phi3_histories
 
 
 def print_results_table(stats_data):
