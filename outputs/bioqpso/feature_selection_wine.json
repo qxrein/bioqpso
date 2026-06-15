@@ -1,0 +1,56 @@
+{
+  "dataset": "Wine",
+  "n_runs": 10,
+  "max_iter": 200,
+  "n_particles": 30,
+  "results": {
+    "PSO": {
+      "MeanAcc": 0.9229682539682541,
+      "StdAcc": 0.010215873509130193,
+      "AvgFeatures": 2.4,
+      "Time (s)": 28.091425704956055
+    },
+    "QPSO": {
+      "MeanAcc": 0.9195079365079366,
+      "StdAcc": 0.006714285714285751,
+      "AvgFeatures": 2.0,
+      "Time (s)": 22.90429298877716
+    },
+    "ACO": {
+      "MeanAcc": 0.9184603174603175,
+      "StdAcc": 0.010069811745588159,
+      "AvgFeatures": 2.1,
+      "Time (s)": 22.853236293792726
+    },
+    "ABC": {
+      "MeanAcc": 0.9072380952380952,
+      "StdAcc": 0.015862567990086365,
+      "AvgFeatures": 2.7,
+      "Time (s)": 23.546353387832642
+    },
+    "AntBioQPSO": {
+      "MeanAcc": 0.9217460317460319,
+      "StdAcc": 0.0,
+      "AvgFeatures": 2.0,
+      "Time (s)": 20.934112477302552
+    },
+    "BeeBioQPSO": {
+      "MeanAcc": 0.9217460317460319,
+      "StdAcc": 0.0,
+      "AvgFeatures": 2.0,
+      "Time (s)": 25.081737875938416
+    },
+    "GWO": {
+      "MeanAcc": 0.9217460317460319,
+      "StdAcc": 0.0,
+      "AvgFeatures": 2.0,
+      "Time (s)": 26.18224468231201
+    },
+    "WOA": {
+      "MeanAcc": 0.8921746031746032,
+      "StdAcc": 0.02555792653893331,
+      "AvgFeatures": 2.5,
+      "Time (s)": 23.589310216903687
+    }
+  }
+}

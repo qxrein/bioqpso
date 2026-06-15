@@ -1,5 +1,10 @@
+import logging
 import sys
+
 import numpy as np
+from mealpy.swarm_based.GWO import OriginalGWO
+from mealpy.swarm_based.WOA import OriginalWOA
+from mealpy.utils.space import FloatVar
 
 
 class BaseOptimizer:
@@ -411,6 +416,46 @@ class BeeBioQPSO(BaseOptimizer):
         return self.gbest_val, self.convergence_history
 
 
+class MealpyOptimizer(BaseOptimizer):
+    """Adapter wrapping a mealpy swarm optimizer for the BioQPSO experiment harness."""
+
+    _mealpy_class = None
+
+    def run(self):
+        logging.getLogger("mealpy").setLevel(logging.WARNING)
+
+        def obj_func(solution):
+            return float(self.func(np.asarray(solution)))
+
+        mealpy_problem = {
+            "obj_func": obj_func,
+            "lb": self.min_bound,
+            "ub": self.max_bound,
+            "minmax": "min",
+            "bounds": [
+                FloatVar(lb=self.min_bound, ub=self.max_bound) for _ in range(self.D)
+            ],
+            "log_to": None,
+        }
+
+        optimizer = self._mealpy_class(epoch=self.max_iter, pop_size=self.n_particles)
+        agent = optimizer.solve(mealpy_problem)
+
+        self.gbest_val = float(agent.target.fitness)
+        self.gbest_pos = np.asarray(agent.solution, dtype=float)
+        self.convergence_history = list(optimizer.history.list_global_best_fit)
+
+        return self.gbest_val, self.convergence_history
+
+
+class GWO(MealpyOptimizer):
+    _mealpy_class = OriginalGWO
+
+
+class WOA(MealpyOptimizer):
+    _mealpy_class = OriginalWOA
+
+
 ALGORITHMS_TO_TEST = {
     "PSO": {"class": PSO, "params": {"w": 0.729, "c1": 1.494, "c2": 1.494}},
     "QPSO": {"class": QPSO, "params": {"beta": 0.5}},
@@ -437,5 +482,7 @@ ALGORITHMS_TO_TEST = {
             "stagnation_limit": 15,
         },
     },
+    "GWO": {"class": GWO, "params": {}},
+    "WOA": {"class": WOA, "params": {}},
 }
 

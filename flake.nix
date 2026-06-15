@@ -33,7 +33,24 @@
         fi
         . .venv/bin/activate
         python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
       '';
+    };
+
+    # Minimal TeX shell for compiling figures/ (TikZ flowchart)
+    devShells.${system}.figures = pkgs.mkShell {
+      name = "bioqpso-figures";
+      packages = [ pkgs.texlive.combined.scheme-medium ];
+    };
+
+    apps.${system}.flowchart = {
+      type = "app";
+      program = toString (pkgs.writeShellScript "build-flowchart" ''
+        cd "${./figures}"
+        ${pkgs.texlive.combined.scheme-medium}/bin/pdflatex -interaction=nonstopmode bioqpso_flowchart.tex
+        ${pkgs.texlive.combined.scheme-medium}/bin/pdflatex -interaction=nonstopmode bioqpso_flowchart.tex
+        echo "Wrote ${./figures}/bioqpso_flowchart.pdf"
+      '');
     };
   };
 }

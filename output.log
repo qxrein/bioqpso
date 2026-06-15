@@ -1,0 +1,1227 @@
+Last login: Fri May 15 19:15:18 on ttys004
+
+/home🔒
+❯ cd
+
+~
+❯ ls
+$(.config-path)        Documents/             Movies/                private.pem            secrets/
+AndroidStudioProjects/ Downloads/             Music/                 projects/              signature.bin
+Applications/          Library/               Pictures/              Public/
+Desktop/               mips_pipeline/         private_key.pem        public_key.pem
+
+~
+❯ cd projects/
+
+~/projects
+❯ cd bioqpso/
+
+bioqpso adabioqpso ≡
+❯ ls
+bar.py                           flake.nix                        requirements.txt
+bioqpso/                         LICENSE.md                       results/
+convergence_styblinski_tang.png  main.py
+flake.lock                       outputs/
+
+bioqpso adabioqpso ≡
+❯ cursor .
+
+bioqpso adabioqpso ≡
+❯ git branch
+* adabioqpso
+  main
+
+bioqpso adabioqpso ≡
+❯ git checkout main
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+
+bioqpso main ≡
+❯ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+
+bioqpso main ≡
+❯ cursor .
+
+bioqpso main ≡
+❯ nix develop
+warning: Git tree '/Users/rein/projects/bioqpso' is dirty
+[0/7 built, 0.1 KiB DL] waiting for lock on '/nix/store/c5rs5igg7vvywfny1jjq1bzmw77wk04a-python3.11-scipy-1.16.2', '/nix/^error: interrupted by the user
+
+bioqpso main* ≡1m4s
+❯ nix develop
+  python main.py
+warning: Git tree '/Users/rein/projects/bioqpso' is dirty
+[0/7 built] waiting for lock on '/nix/store/c5rs5igg7vvywfny1jjq1bzmw77wk04a-python3.11-scipy-1.16.2', '/nix/store/rkfm4l^error: interrupted by the user
+Traceback (most recent call last):
+  File "/Users/rein/projects/bioqpso/main.py", line 1, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+bioqpso main* ≡5m1s
+❯ nix develop
+  python main.py
+warning: Git tree '/Users/rein/projects/bioqpso' is dirty
+[0/7 built] waiting for lock on '/nix/store/c5rs5igg7vvywfny1jjq1bzmw77wk04a-python3.11-scipy-1.16.2', '/nix/store/rkfm4l^error: interrupted by the user
+Traceback (most recent call last):
+  File "/Users/rein/projects/bioqpso/main.py", line 1, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+bioqpso main* ≡5m58s
+❯ cd ~/projects/bioqpso
+
+  nix develop
+warning: Git tree '/Users/rein/projects/bioqpso' is dirty
+[0/7 built] waiting for lock on '/nix/store/c5rs5igg7vvywfny1jjq1bzmw77wk04a-python3.11-scipy-1.16.2', '/nix/store/rkfm4l^error: interrupted by the user
+
+bioqpso main* ≡6s
+❯ rm -rf flake.lock
+
+bioqpso main* ≡
+❯ cd ~/projects/bioqpso
+
+  nix develop
+warning: Git tree '/Users/rein/projects/bioqpso' is dirty
+warning: creating lock file "/Users/rein/projects/bioqpso/flake.lock":
+• Added input 'nixpkgs':
+    'github:NixOS/nixpkgs/d233902339c02a9c334e7e593de68855ad26c4cb?narHash=sha256-30sZNZoA1cqF5JNO9fVX%2BwgiQYjB7HJqqJ4ztCDeBZE%3D' (2026-05-15)
+Requirement already satisfied: pip in ./.venv/lib/python3.11/site-packages (26.1.1)
+Requirement already satisfied: numpy in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 1)) (2.4.3)
+Requirement already satisfied: scipy in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 2)) (1.17.1)
+Requirement already satisfied: matplotlib in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 3)) (3.10.8)
+Requirement already satisfied: scikit-learn in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 4)) (1.8.0)
+Requirement already satisfied: opfunu in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 5)) (1.0.4)
+Requirement already satisfied: contourpy>=1.0.1 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (1.3.3)
+Requirement already satisfied: cycler>=0.10 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (0.12.1)
+Requirement already satisfied: fonttools>=4.22.0 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (4.62.1)
+Requirement already satisfied: kiwisolver>=1.3.1 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (1.5.0)
+Requirement already satisfied: packaging>=20.0 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (26.0)
+Requirement already satisfied: pillow>=8 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (12.1.1)
+Requirement already satisfied: pyparsing>=3 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (3.3.2)
+Requirement already satisfied: python-dateutil>=2.7 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (2.9.0.post0)
+Requirement already satisfied: joblib>=1.3.0 in ./.venv/lib/python3.11/site-packages (from scikit-learn->-r requirements.txt (line 4)) (1.5.3)
+Requirement already satisfied: threadpoolctl>=3.2.0 in ./.venv/lib/python3.11/site-packages (from scikit-learn->-r requirements.txt (line 4)) (3.6.0)
+Requirement already satisfied: requests>=2.27.0 in ./.venv/lib/python3.11/site-packages (from opfunu->-r requirements.txt (line 5)) (2.34.2)
+Requirement already satisfied: six>=1.5 in ./.venv/lib/python3.11/site-packages (from python-dateutil>=2.7->matplotlib->-r requirements.txt (line 3)) (1.17.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (3.4.7)
+Requirement already satisfied: idna<4,>=2.5 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (3.15)
+Requirement already satisfied: urllib3<3,>=1.26 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (2.7.0)
+Requirement already satisfied: certifi>=2023.5.7 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (2026.4.22)
+(.venv) bash-5.3$ python main.py
+
+--- Running Experiment ---
+Problem: sphere (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+^CTraceback (most recent call last):
+  File "/Users/rein/projects/bioqpso/main.py", line 824, in <module>
+    results_data, histories, raw_bests = run_experiment(
+                                         ^^^^^^^^^^^^^^^
+  File "/Users/rein/projects/bioqpso/bioqpso/experiments.py", line 34, in run_experiment
+    best_val, history = optimizer.run()
+                        ^^^^^^^^^^^^^^^
+  File "/Users/rein/projects/bioqpso/bioqpso/optimizers.py", line 392, in run
+    self._update_bests(i, f_val)
+KeyboardInterrupt
+
+(.venv) bash-5.3$ ^C
+(.venv) bash-5.3$ exit
+exit
+
+bioqpso main* ≡57m4s
+❯ nix flake update
+warning: Git tree '/Users/rein/projects/bioqpso' is dirty
+
+bioqpso main* ≡
+❯ nix develop
+  python main.py
+warning: Git tree '/Users/rein/projects/bioqpso' is dirty
+Requirement already satisfied: pip in ./.venv/lib/python3.11/site-packages (26.1.1)
+Requirement already satisfied: numpy in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 1)) (1.26.0)
+Requirement already satisfied: scipy in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 2)) (1.16.3)
+Requirement already satisfied: matplotlib in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 3)) (3.10.8)
+Requirement already satisfied: scikit-learn in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 4)) (1.8.0)
+Requirement already satisfied: opfunu in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 5)) (1.0.4)
+Requirement already satisfied: mealpy in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 6)) (3.0.3)
+Requirement already satisfied: contourpy>=1.0.1 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (1.3.3)
+Requirement already satisfied: cycler>=0.10 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (0.12.1)
+Requirement already satisfied: fonttools>=4.22.0 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (4.62.1)
+Requirement already satisfied: kiwisolver>=1.3.1 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (1.5.0)
+Requirement already satisfied: packaging>=20.0 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (26.0)
+Requirement already satisfied: pillow>=8 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (12.1.1)
+Requirement already satisfied: pyparsing>=3 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (3.3.2)
+Requirement already satisfied: python-dateutil>=2.7 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (2.9.0.post0)
+Requirement already satisfied: joblib>=1.3.0 in ./.venv/lib/python3.11/site-packages (from scikit-learn->-r requirements.txt (line 4)) (1.5.3)
+Requirement already satisfied: threadpoolctl>=3.2.0 in ./.venv/lib/python3.11/site-packages (from scikit-learn->-r requirements.txt (line 4)) (3.6.0)
+Requirement already satisfied: requests>=2.27.0 in ./.venv/lib/python3.11/site-packages (from opfunu->-r requirements.txt (line 5)) (2.34.2)
+Requirement already satisfied: pandas>=1.2.0 in ./.venv/lib/python3.11/site-packages (from mealpy->-r requirements.txt (line 6)) (3.0.3)
+Requirement already satisfied: six>=1.5 in ./.venv/lib/python3.11/site-packages (from python-dateutil>=2.7->matplotlib->-r requirements.txt (line 3)) (1.17.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (3.4.7)
+Requirement already satisfied: idna<4,>=2.5 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (3.15)
+Requirement already satisfied: urllib3<3,>=1.26 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (2.7.0)
+Requirement already satisfied: certifi>=2023.5.7 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (2026.4.22)
+(.venv) bash-5.3$ python main.py
+
+--- Running Experiment ---
+Problem: sphere (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+^CTraceback (most recent call last):
+  File "/Users/rein/projects/bioqpso/main.py", line 826, in <module>
+    results_data, histories, raw_bests = run_experiment(
+                                         ^^^^^^^^^^^^^^^
+  File "/Users/rein/projects/bioqpso/bioqpso/experiments.py", line 34, in run_experiment
+    best_val, history = optimizer.run()
+                        ^^^^^^^^^^^^^^^
+  File "/Users/rein/projects/bioqpso/bioqpso/optimizers.py", line 66, in run
+    self.x[i] = np.clip(self.x[i], self.min_bound, self.max_bound)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rein/projects/bioqpso/.venv/lib/python3.11/site-packages/numpy/core/fromnumeric.py", line 2096, in _clip_dispatcher
+    def _clip_dispatcher(a, a_min, a_max, out=None, **kwargs):
+
+KeyboardInterrupt
+
+(.venv) bash-5.3$ pip install
+ERROR: You must give at least one requirement to install (see "pip help install")
+(.venv) bash-5.3$ ls
+bar.py   convergence_feature_selection_wine.png  convergence_wine.png  flake.nix   main.py  requirements.txt
+bioqpso  convergence_styblinski_tang.png         flake.lock            LICENSE.md  outputs  results
+(.venv) bash-5.3$ pip install requirements.txt
+ERROR: Could not find a version that satisfies the requirement requirements.txt (from versions: none)
+HINT: You are attempting to install a package literally named "requirements.txt" (which cannot exist). Consider using the '-r' flag to install the packages listed in requirements.txt
+ERROR: No matching distribution found for requirements.txt
+(.venv) bash-5.3$ pip install -r requirements.txt
+Requirement already satisfied: numpy in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 1)) (1.26.0)
+Requirement already satisfied: scipy in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 2)) (1.16.3)
+Requirement already satisfied: matplotlib in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 3)) (3.10.8)
+Requirement already satisfied: scikit-learn in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 4)) (1.8.0)
+Requirement already satisfied: opfunu in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 5)) (1.0.4)
+Requirement already satisfied: mealpy in ./.venv/lib/python3.11/site-packages (from -r requirements.txt (line 6)) (3.0.3)
+Requirement already satisfied: contourpy>=1.0.1 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (1.3.3)
+Requirement already satisfied: cycler>=0.10 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (0.12.1)
+Requirement already satisfied: fonttools>=4.22.0 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (4.62.1)
+Requirement already satisfied: kiwisolver>=1.3.1 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (1.5.0)
+Requirement already satisfied: packaging>=20.0 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (26.0)
+Requirement already satisfied: pillow>=8 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (12.1.1)
+Requirement already satisfied: pyparsing>=3 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (3.3.2)
+Requirement already satisfied: python-dateutil>=2.7 in ./.venv/lib/python3.11/site-packages (from matplotlib->-r requirements.txt (line 3)) (2.9.0.post0)
+Requirement already satisfied: joblib>=1.3.0 in ./.venv/lib/python3.11/site-packages (from scikit-learn->-r requirements.txt (line 4)) (1.5.3)
+Requirement already satisfied: threadpoolctl>=3.2.0 in ./.venv/lib/python3.11/site-packages (from scikit-learn->-r requirements.txt (line 4)) (3.6.0)
+Requirement already satisfied: requests>=2.27.0 in ./.venv/lib/python3.11/site-packages (from opfunu->-r requirements.txt (line 5)) (2.34.2)
+Requirement already satisfied: pandas>=1.2.0 in ./.venv/lib/python3.11/site-packages (from mealpy->-r requirements.txt (line 6)) (3.0.3)
+Requirement already satisfied: six>=1.5 in ./.venv/lib/python3.11/site-packages (from python-dateutil>=2.7->matplotlib->-r requirements.txt (line 3)) (1.17.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (3.4.7)
+Requirement already satisfied: idna<4,>=2.5 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (3.15)
+Requirement already satisfied: urllib3<3,>=1.26 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (2.7.0)
+Requirement already satisfied: certifi>=2023.5.7 in ./.venv/lib/python3.11/site-packages (from requests>=2.27.0->opfunu->-r requirements.txt (line 5)) (2026.4.22)
+(.venv) bash-5.3$ python main.py
+
+--- Running Experiment ---
+Problem: sphere (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 3.90e-14     | 1.42e-13     | 2.48e-17     | 7.99e-13     | 0.2093
+QPSO             | 2.42e-11     | 9.40e-11     | 2.11e-13     | 5.27e-10     | 0.3020
+ACO              | 3.33e+02     | 1.80e+03     | 7.94e-08     | 1.00e+04     | 0.2862
+ABC              | 3.94e+00     | 1.11e+01     | 1.10e-05     | 5.90e+01     | 0.2762
+AntBioQPSO       | 1.48e-07     | 2.43e-07     | 7.69e-10     | 1.23e-06     | 0.3569
+BeeBioQPSO       | 1.87e-01     | 2.00e-01     | 1.54e-03     | 8.19e-01     | 0.3570
+GWO              | 8.02e-65     | 2.57e-64     | 1.57e-69     | 1.45e-63     | 1.5665
+WOA              | 7.65e-178    | 0.00e+00     | 4.94e-198    | 2.29e-176    | 1.6136
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 9.3132e-10         | YES                    | 205.7444       | 6.9648e-41
+QPSO             | 1.0000e+00         | Control                | 205.7444       | 6.9648e-41
+ACO              | 1.0000e+00         | No                     | 205.7444       | 6.9648e-41
+ABC              | 1.0000e+00         | No                     | 205.7444       | 6.9648e-41
+AntBioQPSO       | 1.0000e+00         | No                     | 205.7444       | 6.9648e-41
+BeeBioQPSO       | 1.0000e+00         | No                     | 205.7444       | 6.9648e-41
+GWO              | 9.3132e-10         | YES                    | 205.7444       | 6.9648e-41
+WOA              | 9.3132e-10         | YES                    | 205.7444       | 6.9648e-41
+
+--- Plotting Convergence (sphere) ---
+Saved convergence plot to convergence_sphere.png
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: rastrigin (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 1.12e+02     | 3.18e+01     | 5.77e+01     | 1.90e+02     | 0.2459
+QPSO             | 3.14e+01     | 2.00e+01     | 1.40e+01     | 1.26e+02     | 0.3435
+ACO              | 1.19e+02     | 5.29e+01     | 3.39e+01     | 2.58e+02     | 0.3320
+ABC              | 4.44e+01     | 2.11e+01     | 7.38e+00     | 9.20e+01     | 0.3203
+AntBioQPSO       | 4.62e+01     | 4.26e+01     | 1.67e+01     | 1.84e+02     | 0.3948
+BeeBioQPSO       | 3.93e+01     | 8.56e+00     | 2.65e+01     | 5.95e+01     | 0.4082
+GWO              | 1.20e+01     | 6.54e+00     | 0.00e+00     | 2.56e+01     | 1.6168
+WOA              | 8.10e+01     | 7.44e+01     | 0.00e+00     | 1.95e+02     | 1.8130
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 111.1444       | 5.3147e-21
+QPSO             | 1.0000e+00         | Control                | 111.1444       | 5.3147e-21
+ACO              | 1.0000e+00         | No                     | 111.1444       | 5.3147e-21
+ABC              | 9.9798e-01         | No                     | 111.1444       | 5.3147e-21
+AntBioQPSO       | 9.4291e-01         | No                     | 111.1444       | 5.3147e-21
+BeeBioQPSO       | 9.9927e-01         | No                     | 111.1444       | 5.3147e-21
+GWO              | 6.5193e-08         | YES                    | 111.1444       | 5.3147e-21
+WOA              | 9.9711e-01         | No                     | 111.1444       | 5.3147e-21
+
+--- Plotting Convergence (rastrigin) ---
+Saved convergence plot to convergence_rastrigin.png
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: ackley (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 1.81e+00     | 1.22e+00     | 2.35e-08     | 4.30e+00     | 0.3505
+QPSO             | 8.87e-07     | 9.75e-07     | 4.29e-08     | 3.46e-06     | 0.4471
+ACO              | 2.43e+00     | 4.61e+00     | 7.80e-05     | 1.60e+01     | 0.4192
+ABC              | 2.57e-04     | 2.16e-04     | 2.57e-05     | 9.86e-04     | 0.4057
+AntBioQPSO       | 8.78e-05     | 8.19e-05     | 1.38e-05     | 3.96e-04     | 0.5109
+BeeBioQPSO       | 2.84e-01     | 4.00e-01     | 1.70e-02     | 1.51e+00     | 0.5309
+GWO              | 7.43e-15     | 6.38e-16     | 4.00e-15     | 7.55e-15     | 2.3339
+WOA              | 4.59e-15     | 2.26e-15     | 4.44e-16     | 7.55e-15     | 2.0372
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 178.9211       | 3.2919e-35
+QPSO             | 1.0000e+00         | Control                | 178.9211       | 3.2919e-35
+ACO              | 1.0000e+00         | No                     | 178.9211       | 3.2919e-35
+ABC              | 1.0000e+00         | No                     | 178.9211       | 3.2919e-35
+AntBioQPSO       | 1.0000e+00         | No                     | 178.9211       | 3.2919e-35
+BeeBioQPSO       | 1.0000e+00         | No                     | 178.9211       | 3.2919e-35
+GWO              | 9.3132e-10         | YES                    | 178.9211       | 3.2919e-35
+WOA              | 9.3132e-10         | YES                    | 178.9211       | 3.2919e-35
+
+--- Plotting Convergence (ackley) ---
+Saved convergence plot to convergence_ackley.png
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: griewank (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 6.04e+00     | 2.25e+01     | 2.22e-16     | 9.04e+01     | 0.4209
+QPSO             | 8.00e-03     | 1.19e-02     | 3.69e-12     | 5.14e-02     | 0.5844
+ACO              | 3.12e+00     | 1.66e+01     | 1.89e-07     | 9.23e+01     | 0.5692
+ABC              | 1.55e+00     | 8.04e+00     | 2.74e-08     | 4.48e+01     | 0.5497
+AntBioQPSO       | 1.63e-02     | 3.76e-02     | 2.01e-08     | 1.72e-01     | 0.6631
+BeeBioQPSO       | 1.73e-01     | 1.93e-01     | 7.79e-03     | 7.69e-01     | 0.7010
+GWO              | 2.77e-03     | 5.26e-03     | 0.00e+00     | 1.71e-02     | 2.5430
+WOA              | 2.99e-03     | 8.52e-03     | 0.00e+00     | 3.46e-02     | 2.6623
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 9.8534e-01         | No                     | 106.4358       | 5.0330e-20
+QPSO             | 1.0000e+00         | Control                | 106.4358       | 5.0330e-20
+ACO              | 9.9964e-01         | No                     | 106.4358       | 5.0330e-20
+ABC              | 7.9194e-01         | No                     | 106.4358       | 5.0330e-20
+AntBioQPSO       | 8.1463e-01         | No                     | 106.4358       | 5.0330e-20
+BeeBioQPSO       | 1.0000e+00         | No                     | 106.4358       | 5.0330e-20
+GWO              | 7.6436e-05         | YES                    | 106.4358       | 5.0330e-20
+WOA              | 1.0939e-03         | YES                    | 106.4358       | 5.0330e-20
+
+--- Plotting Convergence (griewank) ---
+Saved convergence plot to convergence_griewank.png
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: rosenbrock (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 3.46e+01     | 4.54e+01     | 2.35e-01     | 2.61e+02     | 0.4068
+QPSO             | 2.61e+01     | 1.14e+00     | 2.32e+01     | 2.94e+01     | 0.5525
+ACO              | 1.36e+02     | 2.95e+02     | 7.18e+00     | 1.30e+03     | 0.5280
+ABC              | 8.79e+01     | 3.34e+01     | 2.91e+01     | 1.64e+02     | 0.5257
+AntBioQPSO       | 2.72e+01     | 4.93e-01     | 2.68e+01     | 2.92e+01     | 0.6585
+BeeBioQPSO       | 2.78e+01     | 2.92e-01     | 2.68e+01     | 2.83e+01     | 0.6403
+GWO              | 2.62e+01     | 5.72e-01     | 2.52e+01     | 2.71e+01     | 2.6389
+WOA              | 2.74e+01     | 6.02e-01     | 2.62e+01     | 2.87e+01     | 3.1532
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 7.2690e-03         | YES                    | 121.1889       | 4.3317e-23
+QPSO             | 1.0000e+00         | Control                | 121.1889       | 4.3317e-23
+ACO              | 9.9798e-01         | No                     | 121.1889       | 4.3317e-23
+ABC              | 1.0000e+00         | No                     | 121.1889       | 4.3317e-23
+AntBioQPSO       | 9.9967e-01         | No                     | 121.1889       | 4.3317e-23
+BeeBioQPSO       | 1.0000e+00         | No                     | 121.1889       | 4.3317e-23
+GWO              | 9.2103e-01         | No                     | 121.1889       | 4.3317e-23
+WOA              | 9.9998e-01         | No                     | 121.1889       | 4.3317e-23
+
+--- Plotting Convergence (rosenbrock) ---
+Saved convergence plot to convergence_rosenbrock.png
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: schwefel (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 3.64e+03     | 5.90e+02     | 2.71e+03     | 5.40e+03     | 0.4181
+QPSO             | 4.48e+03     | 1.90e+03     | 2.36e+03     | 7.93e+03     | 0.5550
+ACO              | 3.77e+03     | 7.53e+02     | 2.14e+03     | 5.10e+03     | 0.5062
+ABC              | 2.88e+03     | 7.63e+02     | 9.15e+02     | 4.10e+03     | 0.4788
+AntBioQPSO       | 7.84e+03     | 1.31e+03     | 2.40e+03     | 8.99e+03     | 0.6244
+BeeBioQPSO       | 7.98e+03     | 1.38e+03     | 3.87e+03     | 9.18e+03     | 0.6272
+GWO              | 6.00e+03     | 1.18e+03     | 4.34e+03     | 9.13e+03     | 2.7724
+WOA              | 3.62e+03     | 9.85e+02     | 3.82e-04     | 5.29e+03     | 2.7453
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 7.5943e-02         | No                     | 135.1333       | 5.3095e-26
+QPSO             | 1.0000e+00         | Control                | 135.1333       | 5.3095e-26
+ACO              | 2.7461e-02         | YES                    | 135.1333       | 5.3095e-26
+ABC              | 7.9164e-04         | YES                    | 135.1333       | 5.3095e-26
+AntBioQPSO       | 1.0000e+00         | No                     | 135.1333       | 5.3095e-26
+BeeBioQPSO       | 1.0000e+00         | No                     | 135.1333       | 5.3095e-26
+GWO              | 9.9927e-01         | No                     | 135.1333       | 5.3095e-26
+WOA              | 5.7088e-02         | No                     | 135.1333       | 5.3095e-26
+
+--- Plotting Convergence (schwefel) ---
+Saved convergence plot to convergence_schwefel.png
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: levy (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 1.04e+01     | 5.20e+00     | 1.98e+00     | 2.19e+01     | 0.6484
+QPSO             | 4.17e-13     | 1.15e-12     | 6.21e-16     | 6.44e-12     | 0.7752
+ACO              | 1.89e+01     | 1.11e+01     | 1.96e+00     | 6.03e+01     | 0.7491
+ABC              | 6.88e-11     | 1.54e-10     | 1.30e-12     | 7.86e-10     | 0.7334
+AntBioQPSO       | 2.68e-09     | 7.25e-09     | 8.74e-12     | 3.37e-08     | 0.8467
+BeeBioQPSO       | 7.90e-04     | 1.41e-03     | 2.31e-05     | 7.71e-03     | 0.8579
+GWO              | 1.44e-01     | 2.43e-01     | 3.34e-06     | 1.13e+00     | 2.8292
+WOA              | 2.87e+01     | 2.34e+01     | 6.35e-03     | 7.09e+01     | 3.5365
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 195.9111       | 8.4246e-39
+QPSO             | 1.0000e+00         | Control                | 195.9111       | 8.4246e-39
+ACO              | 1.0000e+00         | No                     | 195.9111       | 8.4246e-39
+ABC              | 1.0000e+00         | No                     | 195.9111       | 8.4246e-39
+AntBioQPSO       | 1.0000e+00         | No                     | 195.9111       | 8.4246e-39
+BeeBioQPSO       | 1.0000e+00         | No                     | 195.9111       | 8.4246e-39
+GWO              | 1.0000e+00         | No                     | 195.9111       | 8.4246e-39
+WOA              | 1.0000e+00         | No                     | 195.9111       | 8.4246e-39
+
+--- Plotting Convergence (levy) ---
+Saved convergence plot to convergence_levy.png
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: zakharov (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 1.73e+02     | 1.42e+02     | 5.63e-01     | 6.08e+02     | 0.4906
+QPSO             | 5.06e+00     | 2.43e+00     | 1.41e+00     | 1.01e+01     | 0.6454
+ACO              | 2.65e+02     | 4.40e+01     | 1.94e+02     | 3.77e+02     | 0.5267
+ABC              | 4.83e+02     | 8.03e+01     | 3.38e+02     | 7.28e+02     | 0.5066
+AntBioQPSO       | 1.30e+01     | 5.29e+00     | 5.06e+00     | 2.96e+01     | 0.6322
+BeeBioQPSO       | 5.82e+00     | 1.57e+00     | 3.25e+00     | 9.15e+00     | 0.6312
+GWO              | 2.74e-14     | 4.96e-14     | 1.93e-17     | 1.92e-13     | 2.4861
+WOA              | 4.31e+02     | 9.79e+01     | 2.68e+02     | 7.11e+02     | 2.6125
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 197.7333       | 3.4658e-39
+QPSO             | 1.0000e+00         | Control                | 197.7333       | 3.4658e-39
+ACO              | 1.0000e+00         | No                     | 197.7333       | 3.4658e-39
+ABC              | 1.0000e+00         | No                     | 197.7333       | 3.4658e-39
+AntBioQPSO       | 1.0000e+00         | No                     | 197.7333       | 3.4658e-39
+BeeBioQPSO       | 9.3532e-01         | No                     | 197.7333       | 3.4658e-39
+GWO              | 9.3132e-10         | YES                    | 197.7333       | 3.4658e-39
+WOA              | 1.0000e+00         | No                     | 197.7333       | 3.4658e-39
+
+--- Plotting Convergence (zakharov) ---
+Saved convergence plot to convergence_zakharov.png
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: styblinski_tang (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | -1.02e+03    | 3.27e+01     | -1.08e+03    | -9.77e+02    | 0.4463
+QPSO             | -1.12e+03    | 2.60e+01     | -1.16e+03    | -1.06e+03    | 0.6111
+ACO              | -1.04e+03    | 6.16e+01     | -1.10e+03    | -7.79e+02    | 0.5451
+ABC              | -1.16e+03    | 1.78e+01     | -1.17e+03    | -1.10e+03    | 0.5425
+AntBioQPSO       | -1.14e+03    | 1.97e+01     | -1.17e+03    | -1.09e+03    | 0.6761
+BeeBioQPSO       | -1.12e+03    | 3.16e+01     | -1.16e+03    | -1.02e+03    | 0.6727
+GWO              | -1.01e+03    | 6.00e+01     | -1.09e+03    | -8.28e+02    | 2.5759
+WOA              | -9.60e+02    | 8.61e+01     | -1.17e+03    | -7.95e+02    | 2.5772
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 159.0111       | 5.1795e-31
+QPSO             | 1.0000e+00         | Control                | 159.0111       | 5.1795e-31
+ACO              | 1.0000e+00         | No                     | 159.0111       | 5.1795e-31
+ABC              | 3.4552e-07         | YES                    | 159.0111       | 5.1795e-31
+AntBioQPSO       | 1.0101e-03         | YES                    | 159.0111       | 5.1795e-31
+BeeBioQPSO       | 8.9353e-01         | No                     | 159.0111       | 5.1795e-31
+GWO              | 1.0000e+00         | No                     | 159.0111       | 5.1795e-31
+WOA              | 1.0000e+00         | No                     | 159.0111       | 5.1795e-31
+
+--- Plotting Convergence (styblinski_tang) ---
+Saved convergence plot to convergence_styblinski_tang.png
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: dixon_price (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 6.60e+01     | 1.18e+02     | 6.67e-01     | 3.21e+02     | 0.4390
+QPSO             | 6.92e-01     | 9.90e-02     | 6.67e-01     | 1.19e+00     | 0.5677
+ACO              | 1.96e+04     | 5.94e+04     | 6.67e-01     | 2.34e+05     | 0.6988
+ABC              | 1.54e+01     | 1.65e+01     | 6.29e-01     | 8.52e+01     | 0.5564
+AntBioQPSO       | 6.93e-01     | 6.76e-02     | 6.67e-01     | 9.56e-01     | 0.6886
+BeeBioQPSO       | 1.73e+00     | 1.07e+00     | 6.75e-01     | 4.51e+00     | 0.7803
+GWO              | 6.67e-01     | 2.40e-05     | 6.67e-01     | 6.67e-01     | 2.9429
+WOA              | 6.67e-01     | 1.72e-05     | 6.67e-01     | 6.67e-01     | 2.5664
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 9.0454e-01         | No                     | 115.4222       | 6.8682e-22
+QPSO             | 1.0000e+00         | Control                | 115.4222       | 6.8682e-22
+ACO              | 1.0000e+00         | No                     | 115.4222       | 6.8682e-22
+ABC              | 1.0000e+00         | No                     | 115.4222       | 6.8682e-22
+AntBioQPSO       | 8.3577e-01         | No                     | 115.4222       | 6.8682e-22
+BeeBioQPSO       | 1.0000e+00         | No                     | 115.4222       | 6.8682e-22
+GWO              | 7.0110e-01         | No                     | 115.4222       | 6.8682e-22
+WOA              | 7.2194e-01         | No                     | 115.4222       | 6.8682e-22
+
+--- Plotting Convergence (dixon_price) ---
+Saved convergence plot to convergence_dixon_price.png
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: CEC2017_F1 (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 8.28e+09     | 6.43e+09     | 5.59e+03     | 2.76e+10     | 0.3739
+QPSO             | 6.19e+03     | 6.32e+03     | 2.02e+02     | 2.09e+04     | 0.4987
+ACO              | 2.09e+09     | 2.84e+09     | 1.27e+03     | 1.31e+10     | 0.4782
+ABC              | 9.91e+07     | 1.93e+08     | 1.32e+06     | 1.05e+09     | 0.4594
+AntBioQPSO       | 4.15e+03     | 4.08e+03     | 1.46e+02     | 1.66e+04     | 0.5743
+BeeBioQPSO       | 4.89e+05     | 8.62e+05     | 1.53e+04     | 4.38e+06     | 0.5827
+GWO              | 9.26e+08     | 8.49e+08     | 4.70e+07     | 4.15e+09     | 2.3188
+WOA              | 9.07e+09     | 3.95e+09     | 3.47e+09     | 1.93e+10     | 2.4287
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 183.2000       | 4.1084e-36
+QPSO             | 1.0000e+00         | Control                | 183.2000       | 4.1084e-36
+ACO              | 1.0000e+00         | No                     | 183.2000       | 4.1084e-36
+ABC              | 1.0000e+00         | No                     | 183.2000       | 4.1084e-36
+AntBioQPSO       | 7.5943e-02         | No                     | 183.2000       | 4.1084e-36
+BeeBioQPSO       | 1.0000e+00         | No                     | 183.2000       | 4.1084e-36
+GWO              | 1.0000e+00         | No                     | 183.2000       | 4.1084e-36
+WOA              | 1.0000e+00         | No                     | 183.2000       | 4.1084e-36
+
+--- Plotting Convergence (CEC2017_F1) ---
+Saved convergence plot to outputs/bioqpso/cec2017/convergence_CEC2017_F1.png
+Saved experiment results to outputs/bioqpso/cec2017/results_CEC2017_F1.json
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: CEC2017_F2 (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 6.09e+03     | 7.49e+03     | 2.00e+02     | 3.12e+04     | 0.4609
+QPSO             | 2.00e+02     | 8.28e-03     | 2.00e+02     | 2.00e+02     | 0.5935
+ACO              | 1.23e+04     | 1.25e+04     | 7.71e+02     | 4.88e+04     | 0.6023
+ABC              | 4.57e+04     | 1.96e+04     | 9.59e+03     | 8.63e+04     | 0.6431
+AntBioQPSO       | 2.01e+02     | 1.74e+00     | 2.00e+02     | 2.07e+02     | 0.7141
+BeeBioQPSO       | 4.10e+02     | 1.07e+02     | 2.56e+02     | 6.39e+02     | 0.6936
+GWO              | 3.67e+03     | 3.03e+03     | 3.04e+02     | 1.55e+04     | 2.6137
+WOA              | 3.92e+04     | 1.43e+04     | 1.53e+04     | 6.92e+04     | 2.6267
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 177.9889       | 5.1793e-35
+QPSO             | 1.0000e+00         | Control                | 177.9889       | 5.1793e-35
+ACO              | 1.0000e+00         | No                     | 177.9889       | 5.1793e-35
+ABC              | 1.0000e+00         | No                     | 177.9889       | 5.1793e-35
+AntBioQPSO       | 1.0000e+00         | No                     | 177.9889       | 5.1793e-35
+BeeBioQPSO       | 1.0000e+00         | No                     | 177.9889       | 5.1793e-35
+GWO              | 1.0000e+00         | No                     | 177.9889       | 5.1793e-35
+WOA              | 1.0000e+00         | No                     | 177.9889       | 5.1793e-35
+
+--- Plotting Convergence (CEC2017_F2) ---
+Saved convergence plot to outputs/bioqpso/cec2017/convergence_CEC2017_F2.png
+Saved experiment results to outputs/bioqpso/cec2017/results_CEC2017_F2.json
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: CEC2017_F3 (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 1.43e+03     | 1.36e+03     | 3.36e+02     | 6.21e+03     | 0.5527
+QPSO             | 3.44e+02     | 2.37e+01     | 3.32e+02     | 3.97e+02     | 0.6881
+ACO              | 7.09e+02     | 5.78e+02     | 3.32e+02     | 3.30e+03     | 0.6664
+ABC              | 5.82e+02     | 2.12e+02     | 3.83e+02     | 1.58e+03     | 0.7488
+AntBioQPSO       | 3.37e+02     | 1.59e+01     | 3.32e+02     | 3.93e+02     | 0.7766
+BeeBioQPSO       | 3.40e+02     | 1.93e+01     | 3.32e+02     | 3.99e+02     | 0.7714
+GWO              | 4.66e+02     | 6.86e+01     | 3.59e+02     | 7.31e+02     | 2.5483
+WOA              | 1.20e+03     | 5.44e+02     | 6.13e+02     | 3.20e+03     | 2.5230
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 172.0889       | 9.1045e-34
+QPSO             | 1.0000e+00         | Control                | 172.0889       | 9.1045e-34
+ACO              | 1.0000e+00         | No                     | 172.0889       | 9.1045e-34
+ABC              | 1.0000e+00         | No                     | 172.0889       | 9.1045e-34
+AntBioQPSO       | 5.9608e-01         | No                     | 172.0889       | 9.1045e-34
+BeeBioQPSO       | 8.4574e-01         | No                     | 172.0889       | 9.1045e-34
+GWO              | 1.0000e+00         | No                     | 172.0889       | 9.1045e-34
+WOA              | 1.0000e+00         | No                     | 172.0889       | 9.1045e-34
+
+--- Plotting Convergence (CEC2017_F3) ---
+Saved convergence plot to outputs/bioqpso/cec2017/convergence_CEC2017_F3.png
+Saved experiment results to outputs/bioqpso/cec2017/results_CEC2017_F3.json
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: CEC2017_F4 (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 1.29e+04     | 8.50e+03     | 2.47e+03     | 3.83e+04     | 0.4345
+QPSO             | 4.52e+02     | 2.25e+01     | 4.29e+02     | 5.40e+02     | 0.5540
+ACO              | 6.23e+03     | 6.10e+03     | 5.98e+02     | 2.85e+04     | 0.5507
+ABC              | 2.07e+03     | 1.85e+03     | 7.15e+02     | 1.02e+04     | 0.5283
+AntBioQPSO       | 4.45e+02     | 1.12e+01     | 4.23e+02     | 4.71e+02     | 0.6388
+BeeBioQPSO       | 5.91e+02     | 4.10e+01     | 4.92e+02     | 6.83e+02     | 0.6479
+GWO              | 1.74e+03     | 1.13e+03     | 5.81e+02     | 4.93e+03     | 2.5281
+WOA              | 2.54e+04     | 8.48e+03     | 1.11e+04     | 4.58e+04     | 2.7213
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 193.4222       | 2.8331e-38
+QPSO             | 1.0000e+00         | Control                | 193.4222       | 2.8331e-38
+ACO              | 1.0000e+00         | No                     | 193.4222       | 2.8331e-38
+ABC              | 1.0000e+00         | No                     | 193.4222       | 2.8331e-38
+AntBioQPSO       | 1.3550e-01         | No                     | 193.4222       | 2.8331e-38
+BeeBioQPSO       | 1.0000e+00         | No                     | 193.4222       | 2.8331e-38
+GWO              | 1.0000e+00         | No                     | 193.4222       | 2.8331e-38
+WOA              | 1.0000e+00         | No                     | 193.4222       | 2.8331e-38
+
+--- Plotting Convergence (CEC2017_F4) ---
+Saved convergence plot to outputs/bioqpso/cec2017/convergence_CEC2017_F4.png
+Saved experiment results to outputs/bioqpso/cec2017/results_CEC2017_F4.json
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: CEC2017_F5 (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 5.00e+02     | 3.01e-03     | 5.00e+02     | 5.00e+02     | 1.0948
+QPSO             | 5.00e+02     | 2.06e-03     | 5.00e+02     | 5.00e+02     | 1.1798
+ACO              | 5.00e+02     | 7.49e-03     | 5.00e+02     | 5.00e+02     | 1.1808
+ABC              | 5.00e+02     | 2.48e-03     | 5.00e+02     | 5.00e+02     | 1.1370
+AntBioQPSO       | 5.00e+02     | 1.44e-03     | 5.00e+02     | 5.00e+02     | 1.2671
+BeeBioQPSO       | 5.00e+02     | 7.09e-05     | 5.00e+02     | 5.00e+02     | 1.5779
+GWO              | 5.00e+02     | 2.50e-03     | 5.00e+02     | 5.00e+02     | 3.3177
+WOA              | 5.00e+02     | 5.90e-03     | 5.00e+02     | 5.00e+02     | 3.0776
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 9.6164e-01         | No                     | 126.0444       | 4.2097e-24
+QPSO             | 1.0000e+00         | Control                | 126.0444       | 4.2097e-24
+ACO              | 9.9993e-01         | No                     | 126.0444       | 4.2097e-24
+ABC              | 1.0000e+00         | No                     | 126.0444       | 4.2097e-24
+AntBioQPSO       | 1.0647e-01         | No                     | 126.0444       | 4.2097e-24
+BeeBioQPSO       | 2.6914e-03         | YES                    | 126.0444       | 4.2097e-24
+GWO              | 2.5792e-01         | No                     | 126.0444       | 4.2097e-24
+WOA              | 1.0000e+00         | No                     | 126.0444       | 4.2097e-24
+
+--- Plotting Convergence (CEC2017_F5) ---
+Saved convergence plot to outputs/bioqpso/cec2017/convergence_CEC2017_F5.png
+Saved experiment results to outputs/bioqpso/cec2017/results_CEC2017_F5.json
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: CEC2017_F6 (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 5.04e+05     | 3.30e+05     | 4.56e+04     | 1.21e+06     | 0.5156
+QPSO             | 7.11e+02     | 3.23e+01     | 6.50e+02     | 7.99e+02     | 0.6175
+ACO              | 1.89e+05     | 1.92e+05     | 8.31e+02     | 8.86e+05     | 0.6063
+ABC              | 1.88e+04     | 2.15e+04     | 1.12e+03     | 8.78e+04     | 0.5948
+AntBioQPSO       | 7.06e+02     | 3.62e+01     | 6.45e+02     | 8.03e+02     | 0.6937
+BeeBioQPSO       | 8.89e+02     | 4.85e+01     | 8.01e+02     | 1.05e+03     | 0.7267
+GWO              | 4.69e+04     | 5.19e+04     | 6.47e+03     | 2.06e+05     | 2.3987
+WOA              | 4.46e+05     | 2.31e+05     | 8.89e+04     | 9.59e+05     | 2.6740
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 193.0889       | 3.3327e-38
+QPSO             | 1.0000e+00         | Control                | 193.0889       | 3.3327e-38
+ACO              | 1.0000e+00         | No                     | 193.0889       | 3.3327e-38
+ABC              | 1.0000e+00         | No                     | 193.0889       | 3.3327e-38
+AntBioQPSO       | 2.1998e-01         | No                     | 193.0889       | 3.3327e-38
+BeeBioQPSO       | 1.0000e+00         | No                     | 193.0889       | 3.3327e-38
+GWO              | 1.0000e+00         | No                     | 193.0889       | 3.3327e-38
+WOA              | 1.0000e+00         | No                     | 193.0889       | 3.3327e-38
+
+--- Plotting Convergence (CEC2017_F6) ---
+Saved convergence plot to outputs/bioqpso/cec2017/convergence_CEC2017_F6.png
+Saved experiment results to outputs/bioqpso/cec2017/results_CEC2017_F6.json
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: CEC2017_F7 (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 1.00e+03     | 6.16e+01     | 8.54e+02     | 1.12e+03     | 1.5225
+QPSO             | 9.69e+02     | 9.21e+01     | 7.82e+02     | 1.11e+03     | 2.1942
+ACO              | 1.08e+03     | 1.14e+02     | 8.76e+02     | 1.28e+03     | 1.8968
+ABC              | 1.44e+03     | 1.44e+02     | 1.09e+03     | 1.66e+03     | 1.6677
+AntBioQPSO       | 9.37e+02     | 7.56e+01     | 7.84e+02     | 1.06e+03     | 1.7830
+BeeBioQPSO       | 8.63e+02     | 6.83e+01     | 7.90e+02     | 1.08e+03     | 1.5221
+GWO              | 9.51e+02     | 1.17e+02     | 8.07e+02     | 1.20e+03     | 3.5450
+WOA              | 1.51e+03     | 1.34e+02     | 1.30e+03     | 1.90e+03     | 2.2673
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 9.1470e-01         | No                     | 146.4444       | 2.2641e-28
+QPSO             | 1.0000e+00         | Control                | 146.4444       | 2.2641e-28
+ACO              | 9.9952e-01         | No                     | 146.4444       | 2.2641e-28
+ABC              | 1.0000e+00         | No                     | 146.4444       | 2.2641e-28
+AntBioQPSO       | 1.6423e-01         | No                     | 146.4444       | 2.2641e-28
+BeeBioQPSO       | 3.5284e-05         | YES                    | 146.4444       | 2.2641e-28
+GWO              | 1.7994e-01         | No                     | 146.4444       | 2.2641e-28
+WOA              | 1.0000e+00         | No                     | 146.4444       | 2.2641e-28
+
+--- Plotting Convergence (CEC2017_F7) ---
+Saved convergence plot to outputs/bioqpso/cec2017/convergence_CEC2017_F7.png
+Saved experiment results to outputs/bioqpso/cec2017/results_CEC2017_F7.json
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: CEC2017_F8 (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 8.12e+02     | 6.01e+00     | 8.03e+02     | 8.32e+02     | 0.5037
+QPSO             | 8.01e+02     | 1.68e+00     | 8.00e+02     | 8.09e+02     | 0.6251
+ACO              | 8.10e+02     | 5.02e+00     | 8.01e+02     | 8.21e+02     | 0.6221
+ABC              | 8.24e+02     | 1.04e+01     | 8.10e+02     | 8.66e+02     | 0.5896
+AntBioQPSO       | 8.00e+02     | 4.73e-01     | 8.00e+02     | 8.02e+02     | 0.6647
+BeeBioQPSO       | 8.00e+02     | 5.49e-01     | 8.00e+02     | 8.02e+02     | 0.6584
+GWO              | 8.03e+02     | 2.03e+00     | 8.00e+02     | 8.09e+02     | 1.9147
+WOA              | 8.23e+02     | 7.75e+00     | 8.10e+02     | 8.38e+02     | 1.9948
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 179.9778       | 1.9693e-35
+QPSO             | 1.0000e+00         | Control                | 179.9778       | 1.9693e-35
+ACO              | 1.0000e+00         | No                     | 179.9778       | 1.9693e-35
+ABC              | 1.0000e+00         | No                     | 179.9778       | 1.9693e-35
+AntBioQPSO       | 6.7030e-04         | YES                    | 179.9778       | 1.9693e-35
+BeeBioQPSO       | 1.3832e-03         | YES                    | 179.9778       | 1.9693e-35
+GWO              | 9.9990e-01         | No                     | 179.9778       | 1.9693e-35
+WOA              | 1.0000e+00         | No                     | 179.9778       | 1.9693e-35
+
+--- Plotting Convergence (CEC2017_F8) ---
+Saved convergence plot to outputs/bioqpso/cec2017/convergence_CEC2017_F8.png
+Saved experiment results to outputs/bioqpso/cec2017/results_CEC2017_F8.json
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: CEC2017_F9 (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+ls Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 4.49e+03     | 7.22e+02     | 2.93e+03     | 6.14e+03     | 0.7803
+QPSO             | 7.66e+03     | 8.77e+02     | 3.92e+03     | 8.58e+03     | 0.8924
+ACO              | 6.55e+03     | 1.71e+03     | 3.07e+03     | 8.52e+03     | 0.9060
+ABC              | 6.56e+03     | 7.98e+02     | 4.54e+03     | 8.03e+03     | 0.8786
+AntBioQPSO       | 7.63e+03     | 6.22e+02     | 5.87e+03     | 8.60e+03     | 1.0281
+BeeBioQPSO       | 7.14e+03     | 9.91e+02     | 3.23e+03     | 8.49e+03     | 1.0388
+GWO              | 5.26e+03     | 1.96e+03     | 2.63e+03     | 8.66e+03     | 2.2570
+WOA              | 6.50e+03     | 1.15e+03     | 3.94e+03     | 8.77e+03     | 2.3027
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 9.3132e-10         | YES                    | 76.6889        | 6.5070e-14
+QPSO             | 1.0000e+00         | Control                | 76.6889        | 6.5070e-14
+ACO              | 3.3198e-03         | YES                    | 76.6889        | 6.5070e-14
+ABC              | 1.1833e-05         | YES                    | 76.6889        | 6.5070e-14
+AntBioQPSO       | 2.6455e-01         | No                     | 76.6889        | 6.5070e-14
+BeeBioQPSO       | 6.4169e-03         | YES                    | 76.6889        | 6.5070e-14
+GWO              | 1.5248e-05         | YES                    | 76.6889        | 6.5070e-14
+WOA              | 2.7963e-05         | YES                    | 76.6889        | 6.5070e-14
+
+--- Plotting Convergence (CEC2017_F9) ---
+Saved convergence plot to outputs/bioqpso/cec2017/convergence_CEC2017_F9.png
+Saved experiment results to outputs/bioqpso/cec2017/results_CEC2017_F9.json
+
+================================================================================
+
+
+--- Running Experiment ---
+Problem: CEC2017_F10 (D=30)
+Runs: 30, Iterations: 1000, Particles: 30
+
+Running PSO...
+Running QPSO...
+Running ACO...
+Running ABC...
+Running AntBioQPSO...
+Running BeeBioQPSO...
+Running GWO...
+Running WOA...
+
+--- Experimental Results ---
+Algorithm        | Mean         | StdDev       | Best         | Worst        | Avg Time (s)
+-------------------------------------------------------------------------------------------
+PSO              | 1.05e+07     | 5.51e+07     | 4.59e+04     | 3.07e+08     | 0.5349
+QPSO             | 2.26e+04     | 1.13e+04     | 7.87e+03     | 5.32e+04     | 0.6764
+ACO              | 8.81e+05     | 2.37e+06     | 3.96e+04     | 1.04e+07     | 0.6403
+ABC              | 2.65e+07     | 6.44e+07     | 5.22e+04     | 2.99e+08     | 0.6832
+AntBioQPSO       | 2.37e+04     | 9.59e+03     | 4.89e+03     | 4.79e+04     | 0.7685
+BeeBioQPSO       | 3.77e+04     | 1.53e+04     | 1.47e+04     | 7.73e+04     | 0.7011
+GWO              | 1.33e+05     | 7.38e+04     | 7.47e+04     | 4.02e+05     | 2.0767
+WOA              | 1.40e+05     | 5.42e+04     | 7.83e+04     | 3.05e+05     | 2.0378
+
+--- Statistical Significance (Wilcoxon & Friedman) ---
+(Comparing against control: QPSO)
+Algorithm        | Wilcoxon p-value   | Significant (p<0.05)?  | Friedman chi2  | Friedman p
+----------------------------------------------------------------------------------------------
+PSO              | 1.0000e+00         | No                     | 171.5444       | 1.1860e-33
+QPSO             | 1.0000e+00         | Control                | 171.5444       | 1.1860e-33
+ACO              | 1.0000e+00         | No                     | 171.5444       | 1.1860e-33
+ABC              | 1.0000e+00         | No                     | 171.5444       | 1.1860e-33
+AntBioQPSO       | 6.4998e-01         | No                     | 171.5444       | 1.1860e-33
+BeeBioQPSO       | 9.9996e-01         | No                     | 171.5444       | 1.1860e-33
+GWO              | 1.0000e+00         | No                     | 171.5444       | 1.1860e-33
+WOA              | 1.0000e+00         | No                     | 171.5444       | 1.1860e-33
+
+--- Plotting Convergence (CEC2017_F10) ---
+Saved convergence plot to outputs/bioqpso/cec2017/convergence_CEC2017_F10.png
+Saved experiment results to outputs/bioqpso/cec2017/results_CEC2017_F10.json
+
+================================================================================
+
+
+--- Running Sensitivity Analysis (AntBioQPSO on sphere) ---
+
+Sensitivity: evaporation_rate
+evaporation_rate   | Mean         | StdDev
+------------------------------------------------
+0.050              | 1.20e-02     | 1.56e-02
+0.100              | 5.67e-03     | 4.59e-03
+0.200              | 7.63e-03     | 5.19e-03
+0.300              | 6.46e-03     | 7.25e-03
+0.500              | 3.07e-03     | 1.92e-03
+
+Sensitivity: pheromone_deposit
+pheromone_deposit  | Mean         | StdDev
+------------------------------------------------
+0.500              | 6.25e-03     | 7.05e-03
+1.000              | 7.38e-03     | 1.04e-02
+2.000              | 3.53e-03     | 1.68e-03
+5.000              | 3.55e-03     | 2.06e-03
+10.000             | 7.80e-03     | 1.02e-02
+
+Sensitivity: phi3 (bio-leader weight)
+phi3               | Mean         | StdDev
+------------------------------------------------
+0.100              | 5.25e-03     | 5.34e-03
+0.200              | 3.03e-03     | 3.74e-03
+0.300              | 5.29e-03     | 7.45e-03
+0.400              | 4.15e-03     | 3.22e-03
+0.500              | 4.58e-03     | 4.97e-03
+
+Saved sensitivity analysis plot to sensitivity_analysis.png
+
+--- Running Feature Selection Experiment (Breast Cancer) ---
+Running PSO on feature selection...
+Running QPSO on feature selection...
+Running ACO on feature selection...
+Running ABC on feature selection...
+Running AntBioQPSO on feature selection...
+Running BeeBioQPSO on feature selection...
+Running GWO on feature selection...
+^[[BRunning WOA on feature selection...
+
+--- Feature Selection Results (Breast Cancer) ---
+Algorithm        | Mean Acc     | Std Acc      | Avg Features   | Avg Time (s)
+------------------------------------------------------------------------------
+PSO              | 0.9302       | 0.0151       | 3.90           | 23.7566
+QPSO             | 0.9411       | 0.0090       | 2.00           | 23.1520
+ACO              | 0.9399       | 0.0084       | 2.70           | 28.9833
+ABC              | 0.9276       | 0.0069       | 5.60           | 56.0911
+AntBioQPSO       | 0.9508       | 0.0000       | 2.00           | 31.9327
+BeeBioQPSO       | 0.9481       | 0.0079       | 2.00           | 45.2052
+GWO              | 0.9441       | 0.0068       | 2.00           | 33.1892
+WOA              | 0.9255       | 0.0169       | 2.20           | 36.4853
+
+--- Plotting Convergence (breast_cancer) ---
+Saved convergence plot to convergence_breast_cancer.png
+
+--- Running Feature Selection Experiment (Wine) ---
+Running PSO on feature selection...
+Running QPSO on feature selection...
+Running ACO on feature selection...
+Running ABC on feature selection...
+Running AntBioQPSO on feature selection...
+Running BeeBioQPSO on feature selection...
+Running GWO on feature selection...
+Running WOA on feature selection...
+
+--- Feature Selection Results (Wine) ---
+Algorithm        | Mean Acc     | Std Acc      | Avg Features   | Avg Time (s)
+------------------------------------------------------------------------------
+PSO              | 0.9230       | 0.0102       | 2.40           | 28.0914
+QPSO             | 0.9195       | 0.0067       | 2.00           | 22.9043
+ACO              | 0.9185       | 0.0101       | 2.10           | 22.8532
+ABC              | 0.9072       | 0.0159       | 2.70           | 23.5464
+AntBioQPSO       | 0.9217       | 0.0000       | 2.00           | 20.9341
+BeeBioQPSO       | 0.9217       | 0.0000       | 2.00           | 25.0817
+GWO              | 0.9217       | 0.0000       | 2.00           | 26.1822
+WOA              | 0.8922       | 0.0256       | 2.50           | 23.5893
+Saved feature selection results to outputs/bioqpso/feature_selection_wine.json
+
+--- Plotting Convergence (feature_selection_wine) ---
+Saved convergence plot to convergence_feature_selection_wine.png
+
+--- Running Feature Selection Experiment (Ionosphere) ---
+Running PSO on feature selection...
+Running QPSO on feature selection...
+Running ACO on feature selection...
+Running ABC on feature selection...
+Running AntBioQPSO on feature selection...
+^[[BRunning BeeBioQPSO on feature selection...
+Running GWO on feature selection...
+Running WOA on feature selection...
+
+--- Feature Selection Results (Ionosphere) ---
+Algorithm        | Mean Acc     | Std Acc      | Avg Features   | Avg Time (s)
+------------------------------------------------------------------------------
+PSO              | 0.8873       | 0.0117       | 5.20           | 30.8431
+QPSO             | 0.9266       | 0.0069       | 3.00           | 25.5782
+ACO              | 0.9126       | 0.0108       | 3.00           | 25.6543
+ABC              | 0.8562       | 0.0102       | 7.30           | 58.0715
+AntBioQPSO       | 0.9285       | 0.0050       | 3.00           | 28.3824
+BeeBioQPSO       | 0.9288       | 0.0044       | 3.00           | 37.4310
+GWO              | 0.9226       | 0.0105       | 2.80           | 26.4643
+WOA              | 0.8773       | 0.0235       | 2.70           | 28.4364
+Saved feature selection results to outputs/bioqpso/feature_selection_ionosphere.json
+
+--- Plotting Convergence (feature_selection_ionosphere) ---
+Saved convergence plot to convergence_feature_selection_ionosphere.png
+finished...

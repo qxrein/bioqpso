@@ -4,6 +4,7 @@
 !*.py
 !*.nix
 !*.png
+!*.md
 
 !flake.lock
 !*.md
@@ -11,3 +12,5 @@
 !bioqpso/
 !results/
 !requirements.txt
+
+!*.log

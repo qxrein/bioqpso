@@ -1,4 +1,7 @@
+import json
 import time
+from pathlib import Path
+
 import numpy as np
 from scipy import stats
 
@@ -116,4 +119,26 @@ def run_statistical_analysis(results_raw_bests, control_name="QPSO"):
         )
 
     return p_values
+
+
+def save_experiment_results(stats_data, raw_bests, output_dir, problem_name):
+    """Write summary stats and per-run bests to *output_dir*."""
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    payload = {
+        "problem": problem_name,
+        "stats": {
+            algo: {k: float(v) if np.isscalar(v) else v for k, v in data.items()}
+            for algo, data in stats_data.items()
+        },
+        "raw_bests": {
+            algo: [float(v) for v in values] for algo, values in raw_bests.items()
+        },
+    }
+
+    out_path = output_dir / f"results_{problem_name}.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+    print(f"Saved experiment results to {out_path}")
 

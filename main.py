@@ -797,21 +797,28 @@ def _evaluate_feature_selection_solution(x, X, y):
 
 
 if __name__ == "__main__":
+    from pathlib import Path
+
     from bioqpso import (
         PROBLEMS,
+        CEC_PROBLEMS,
         ALGORITHMS_TO_TEST,
         run_experiment,
         print_results_table,
         run_statistical_analysis,
+        save_experiment_results,
         plot_convergence,
         run_sensitivity_analysis,
         run_feature_selection_experiment,
+        make_wine_feature_selection_problem,
+        make_ionosphere_feature_selection_problem,
     )
 
     N_RUNS = 30
     MAX_ITER = 1000
     N_PARTICLES = 30
 
+    # Classical benchmarks (no adaptive variants)
     for problem_name, problem_config in PROBLEMS.items():
         problem = problem_config.copy()
         problem["name"] = problem_name
@@ -829,6 +836,62 @@ if __name__ == "__main__":
         plot_convergence(histories, problem_name)
         print("\n" + "=" * 80 + "\n")
 
+    # CEC2017 suite (BioQPSO paper benchmarks; results kept separate)
+    CEC_OUTPUT_DIR = Path("outputs/bioqpso/cec2017")
+    CEC_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    for problem_name, problem_config in CEC_PROBLEMS.items():
+        problem = problem_config.copy()
+        problem["name"] = problem_name
+
+        results_data, histories, raw_bests = run_experiment(
+            problem=problem,
+            algorithms=ALGORITHMS_TO_TEST,
+            n_runs=N_RUNS,
+            max_iter=MAX_ITER,
+            n_particles=N_PARTICLES,
+        )
+
+        print_results_table(results_data)
+        run_statistical_analysis(raw_bests, control_name="QPSO")
+        plot_convergence(histories, problem_name, output_dir=CEC_OUTPUT_DIR)
+        save_experiment_results(
+            results_data, raw_bests, CEC_OUTPUT_DIR, problem_name
+        )
+        print("\n" + "=" * 80 + "\n")
+
     run_sensitivity_analysis()
-    run_feature_selection_experiment()
+
+    FS_OUTPUT_DIR = Path("outputs/bioqpso")
+    FS_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    FS_N_RUNS = 10
+    FS_MAX_ITER = 200
+    FS_N_PARTICLES = 30
+
+    run_feature_selection_experiment(
+        n_runs=FS_N_RUNS,
+        max_iter=FS_MAX_ITER,
+        n_particles=FS_N_PARTICLES,
+    )
+
+    run_feature_selection_experiment(
+        dataset_label="Wine",
+        fs_problem=make_wine_feature_selection_problem(),
+        output_json=FS_OUTPUT_DIR / "feature_selection_wine.json",
+        plot_name="feature_selection_wine",
+        n_runs=FS_N_RUNS,
+        max_iter=FS_MAX_ITER,
+        n_particles=FS_N_PARTICLES,
+    )
+
+    run_feature_selection_experiment(
+        dataset_label="Ionosphere",
+        fs_problem=make_ionosphere_feature_selection_problem(),
+        output_json=FS_OUTPUT_DIR / "feature_selection_ionosphere.json",
+        plot_name="feature_selection_ionosphere",
+        n_runs=FS_N_RUNS,
+        max_iter=FS_MAX_ITER,
+        n_particles=FS_N_PARTICLES,
+    )
+
     print("finished...")
