@@ -1,0 +1,724 @@
+{
+  "sphere": {
+    "average_rank": {
+      "PSO": 1,
+      "QPSO": 2,
+      "ACO": 7,
+      "ABC": 10,
+      "AntBioQPSO": 4,
+      "BeeBioQPSO": 8,
+      "LinearAda": 5,
+      "CosineAda": 6,
+      "FeedbackAda": 3,
+      "PerParticleAda": 9
+    },
+    "friedman": {
+      "chi2": 248.0654545454545,
+      "p": 2.5546545430835942e-48
+    },
+    "wilcoxon_vs_qpso": {
+      "PSO": 9.313225746154785e-10,
+      "QPSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0
+    },
+    "wilcoxon_vs_qpso_holm": {
+      "PSO": 8.381903171539307e-09,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0,
+      "QPSO": 1.0
+    },
+    "rank_biserial_vs_qpso": {
+      "PSO": 0.9755555555555555,
+      "QPSO": 0.0,
+      "ACO": -1.0,
+      "ABC": -1.0,
+      "AntBioQPSO": -1.0,
+      "BeeBioQPSO": -1.0,
+      "LinearAda": -1.0,
+      "CosineAda": -1.0,
+      "FeedbackAda": -1.0,
+      "PerParticleAda": -1.0
+    },
+    "pairwise_biofamily": {
+      "AntBioQPSO_vs_BeeBioQPSO": 9.313225746154785e-10,
+      "AntBioQPSO_vs_LinearAda": 1.5247613191604614e-05,
+      "AntBioQPSO_vs_CosineAda": 5.960464477539062e-07,
+      "AntBioQPSO_vs_FeedbackAda": 0.9797551389783621,
+      "AntBioQPSO_vs_PerParticleAda": 9.313225746154785e-10,
+      "BeeBioQPSO_vs_LinearAda": 1.0,
+      "BeeBioQPSO_vs_CosineAda": 1.0,
+      "BeeBioQPSO_vs_FeedbackAda": 1.0,
+      "BeeBioQPSO_vs_PerParticleAda": 8.419156074523926e-07,
+      "LinearAda_vs_CosineAda": 0.169370892457664,
+      "LinearAda_vs_FeedbackAda": 0.9999827342107892,
+      "LinearAda_vs_PerParticleAda": 9.313225746154785e-10,
+      "CosineAda_vs_FeedbackAda": 0.9999960027635098,
+      "CosineAda_vs_PerParticleAda": 9.313225746154785e-10,
+      "FeedbackAda_vs_PerParticleAda": 9.313225746154785e-10
+    }
+  },
+  "rastrigin": {
+    "average_rank": {
+      "PSO": 9,
+      "QPSO": 1,
+      "ACO": 10,
+      "ABC": 3,
+      "AntBioQPSO": 5,
+      "BeeBioQPSO": 2,
+      "LinearAda": 7,
+      "CosineAda": 6,
+      "FeedbackAda": 8,
+      "PerParticleAda": 4
+    },
+    "friedman": {
+      "chi2": 107.74545454545455,
+      "p": 4.2278312944491523e-19
+    },
+    "wilcoxon_vs_qpso": {
+      "PSO": 1.0,
+      "QPSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 0.9961939314380288,
+      "AntBioQPSO": 0.9633779628202319,
+      "BeeBioQPSO": 0.9996010512113571,
+      "LinearAda": 0.9540251865983009,
+      "CosineAda": 0.9961939314380288,
+      "FeedbackAda": 0.9999383315443993,
+      "PerParticleAda": 0.9999970132485032
+    },
+    "wilcoxon_vs_qpso_holm": {
+      "PSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0,
+      "QPSO": 1.0
+    },
+    "rank_biserial_vs_qpso": {
+      "PSO": -1.0,
+      "QPSO": 0.0,
+      "ACO": -0.9933333333333334,
+      "ABC": -0.3533333333333333,
+      "AntBioQPSO": -0.30222222222222217,
+      "BeeBioQPSO": -0.5355555555555556,
+      "LinearAda": -0.1644444444444444,
+      "CosineAda": -0.3933333333333333,
+      "FeedbackAda": -0.5022222222222221,
+      "PerParticleAda": -0.6622222222222223
+    },
+    "pairwise_biofamily": {
+      "AntBioQPSO_vs_BeeBioQPSO": 0.7219433626160026,
+      "AntBioQPSO_vs_LinearAda": 0.5483867637813091,
+      "AntBioQPSO_vs_CosineAda": 0.49191679060459137,
+      "AntBioQPSO_vs_FeedbackAda": 0.012393025681376457,
+      "AntBioQPSO_vs_PerParticleAda": 0.3277192125096917,
+      "BeeBioQPSO_vs_LinearAda": 0.4196963720023632,
+      "BeeBioQPSO_vs_CosineAda": 0.29890388529747725,
+      "BeeBioQPSO_vs_FeedbackAda": 0.008726834319531918,
+      "BeeBioQPSO_vs_PerParticleAda": 0.023629524745047092,
+      "LinearAda_vs_CosineAda": 0.49191679060459137,
+      "LinearAda_vs_FeedbackAda": 0.03177824430167675,
+      "LinearAda_vs_PerParticleAda": 0.30600280687212944,
+      "CosineAda_vs_FeedbackAda": 0.034946455620229244,
+      "CosineAda_vs_PerParticleAda": 0.3728273371234536,
+      "FeedbackAda_vs_PerParticleAda": 0.9876069743186235
+    }
+  },
+  "ackley": {
+    "average_rank": {
+      "PSO": 9,
+      "QPSO": 1,
+      "ACO": 10,
+      "ABC": 6,
+      "AntBioQPSO": 2,
+      "BeeBioQPSO": 7,
+      "LinearAda": 4,
+      "CosineAda": 5,
+      "FeedbackAda": 3,
+      "PerParticleAda": 8
+    },
+    "friedman": {
+      "chi2": 210.66909090909098,
+      "p": 1.9128187698437998e-40
+    },
+    "wilcoxon_vs_qpso": {
+      "PSO": 0.9999999953433871,
+      "QPSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0
+    },
+    "wilcoxon_vs_qpso_holm": {
+      "PSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0,
+      "QPSO": 1.0
+    },
+    "rank_biserial_vs_qpso": {
+      "PSO": -0.8311111111111111,
+      "QPSO": 0.0,
+      "ACO": -1.0,
+      "ABC": -1.0,
+      "AntBioQPSO": -1.0,
+      "BeeBioQPSO": -1.0,
+      "LinearAda": -1.0,
+      "CosineAda": -1.0,
+      "FeedbackAda": -0.9955555555555555,
+      "PerParticleAda": -1.0
+    },
+    "pairwise_biofamily": {
+      "AntBioQPSO_vs_BeeBioQPSO": 9.313225746154785e-10,
+      "AntBioQPSO_vs_LinearAda": 3.955326974391937e-05,
+      "AntBioQPSO_vs_CosineAda": 1.0244548320770264e-07,
+      "AntBioQPSO_vs_FeedbackAda": 0.9045352395623922,
+      "AntBioQPSO_vs_PerParticleAda": 9.313225746154785e-10,
+      "BeeBioQPSO_vs_LinearAda": 1.0,
+      "BeeBioQPSO_vs_CosineAda": 1.0,
+      "BeeBioQPSO_vs_FeedbackAda": 1.0,
+      "BeeBioQPSO_vs_PerParticleAda": 1.3442710041999817e-05,
+      "LinearAda_vs_CosineAda": 0.04805078636854887,
+      "LinearAda_vs_FeedbackAda": 0.9999751579016447,
+      "LinearAda_vs_PerParticleAda": 9.313225746154785e-10,
+      "CosineAda_vs_FeedbackAda": 0.9999981047585607,
+      "CosineAda_vs_PerParticleAda": 9.313225746154785e-10,
+      "FeedbackAda_vs_PerParticleAda": 9.313225746154785e-10
+    }
+  },
+  "griewank": {
+    "average_rank": {
+      "PSO": 6,
+      "QPSO": 2,
+      "ACO": 10,
+      "ABC": 7,
+      "AntBioQPSO": 1,
+      "BeeBioQPSO": 8,
+      "LinearAda": 4,
+      "CosineAda": 3,
+      "FeedbackAda": 5,
+      "PerParticleAda": 9
+    },
+    "friedman": {
+      "chi2": 118.16000000000008,
+      "p": 3.1792698199308484e-21
+    },
+    "wilcoxon_vs_qpso": {
+      "PSO": 0.9861292811110616,
+      "QPSO": 1.0,
+      "ACO": 0.9989899089559913,
+      "ABC": 0.7550769560039043,
+      "AntBioQPSO": 0.41178847197443247,
+      "BeeBioQPSO": 0.9999999972060323,
+      "LinearAda": 0.7486194763332605,
+      "CosineAda": 0.8644971856847405,
+      "FeedbackAda": 0.7977527482435107,
+      "PerParticleAda": 1.0
+    },
+    "wilcoxon_vs_qpso_holm": {
+      "PSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0,
+      "QPSO": 1.0
+    },
+    "rank_biserial_vs_qpso": {
+      "PSO": -0.13555555555555565,
+      "QPSO": 0.0,
+      "ACO": -0.5377777777777777,
+      "ABC": -0.2333333333333334,
+      "AntBioQPSO": -0.18222222222222229,
+      "BeeBioQPSO": -0.9111111111111112,
+      "LinearAda": -0.27555555555555555,
+      "CosineAda": -0.24888888888888894,
+      "FeedbackAda": -0.30222222222222217,
+      "PerParticleAda": -0.9977777777777779
+    },
+    "pairwise_biofamily": {
+      "AntBioQPSO_vs_BeeBioQPSO": 1.7695128917694092e-08,
+      "AntBioQPSO_vs_LinearAda": 0.1853703036904335,
+      "AntBioQPSO_vs_CosineAda": 0.2712639691308141,
+      "AntBioQPSO_vs_FeedbackAda": 0.03836060781031847,
+      "AntBioQPSO_vs_PerParticleAda": 9.313225746154785e-10,
+      "BeeBioQPSO_vs_LinearAda": 1.0,
+      "BeeBioQPSO_vs_CosineAda": 0.999999993480742,
+      "BeeBioQPSO_vs_FeedbackAda": 0.9999999972060323,
+      "BeeBioQPSO_vs_PerParticleAda": 0.022453604266047478,
+      "LinearAda_vs_CosineAda": 0.5564025957137346,
+      "LinearAda_vs_FeedbackAda": 0.29890388529747725,
+      "LinearAda_vs_PerParticleAda": 9.313225746154785e-09,
+      "CosineAda_vs_FeedbackAda": 0.24492304399609566,
+      "CosineAda_vs_PerParticleAda": 9.313225746154785e-10,
+      "FeedbackAda_vs_PerParticleAda": 9.313225746154785e-10
+    }
+  },
+  "rosenbrock": {
+    "average_rank": {
+      "PSO": 6,
+      "QPSO": 1,
+      "ACO": 9,
+      "ABC": 10,
+      "AntBioQPSO": 3,
+      "BeeBioQPSO": 7,
+      "LinearAda": 5,
+      "CosineAda": 4,
+      "FeedbackAda": 2,
+      "PerParticleAda": 8
+    },
+    "friedman": {
+      "chi2": 165.14181818181828,
+      "p": 6.334812252222444e-31
+    },
+    "wilcoxon_vs_qpso": {
+      "PSO": 0.006023811176419258,
+      "QPSO": 1.0,
+      "ACO": 0.342523536644876,
+      "ABC": 1.0,
+      "AntBioQPSO": 0.9999986188486218,
+      "BeeBioQPSO": 0.9999999981373549,
+      "LinearAda": 0.9999986188486218,
+      "CosineAda": 0.9999990044161677,
+      "FeedbackAda": 0.9999383315443993,
+      "PerParticleAda": 0.9999999981373549
+    },
+    "wilcoxon_vs_qpso_holm": {
+      "PSO": 0.05421430058777332,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0,
+      "QPSO": 1.0
+    },
+    "rank_biserial_vs_qpso": {
+      "PSO": 0.5422222222222222,
+      "QPSO": 0.0,
+      "ACO": 0.3288888888888889,
+      "ABC": -1.0,
+      "AntBioQPSO": -0.9333333333333333,
+      "BeeBioQPSO": -0.9355555555555555,
+      "LinearAda": -0.9333333333333333,
+      "CosineAda": -0.9333333333333333,
+      "FeedbackAda": -0.8044444444444445,
+      "PerParticleAda": -0.94
+    },
+    "pairwise_biofamily": {
+      "AntBioQPSO_vs_BeeBioQPSO": 1.862645149230957e-09,
+      "AntBioQPSO_vs_LinearAda": 0.03177824430167675,
+      "AntBioQPSO_vs_CosineAda": 0.08529919758439064,
+      "AntBioQPSO_vs_FeedbackAda": 0.9997225869446993,
+      "AntBioQPSO_vs_PerParticleAda": 2.7939677238464355e-09,
+      "BeeBioQPSO_vs_LinearAda": 0.9999999767169356,
+      "BeeBioQPSO_vs_CosineAda": 0.9999999180436134,
+      "BeeBioQPSO_vs_FeedbackAda": 0.9999999990686774,
+      "BeeBioQPSO_vs_PerParticleAda": 0.036622037179768085,
+      "LinearAda_vs_CosineAda": 0.7150712013244629,
+      "LinearAda_vs_FeedbackAda": 0.9999720370396972,
+      "LinearAda_vs_PerParticleAda": 5.122274160385132e-08,
+      "CosineAda_vs_FeedbackAda": 0.9999447092413902,
+      "CosineAda_vs_PerParticleAda": 8.195638656616211e-08,
+      "FeedbackAda_vs_PerParticleAda": 1.862645149230957e-09
+    }
+  },
+  "schwefel": {
+    "average_rank": {
+      "PSO": 2,
+      "QPSO": 4,
+      "ACO": 3,
+      "ABC": 1,
+      "AntBioQPSO": 6,
+      "BeeBioQPSO": 10,
+      "LinearAda": 8,
+      "CosineAda": 9,
+      "FeedbackAda": 5,
+      "PerParticleAda": 7
+    },
+    "friedman": {
+      "chi2": 202.93818181818187,
+      "p": 8.019499555750829e-39
+    },
+    "wilcoxon_vs_qpso": {
+      "PSO": 0.17460568994283676,
+      "QPSO": 1.0,
+      "ACO": 0.14942207373678684,
+      "ABC": 0.00030420441180467606,
+      "AntBioQPSO": 0.9999999487772584,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 0.9999999981373549,
+      "CosineAda": 0.9999999990686774,
+      "FeedbackAda": 0.999999986961484,
+      "PerParticleAda": 0.9999999953433871
+    },
+    "wilcoxon_vs_qpso_holm": {
+      "PSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 0.0027378397062420845,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0,
+      "QPSO": 1.0
+    },
+    "rank_biserial_vs_qpso": {
+      "PSO": 0.013333333333333308,
+      "QPSO": 0.0,
+      "ACO": 0.026666666666666616,
+      "ABC": 0.6022222222222222,
+      "AntBioQPSO": -0.8888888888888888,
+      "BeeBioQPSO": -0.971111111111111,
+      "LinearAda": -0.9533333333333334,
+      "CosineAda": -0.9644444444444444,
+      "FeedbackAda": -0.8422222222222222,
+      "PerParticleAda": -0.9222222222222223
+    },
+    "pairwise_biofamily": {
+      "AntBioQPSO_vs_BeeBioQPSO": 0.0010100910440087318,
+      "AntBioQPSO_vs_LinearAda": 0.007730001583695412,
+      "AntBioQPSO_vs_CosineAda": 0.002169116400182247,
+      "AntBioQPSO_vs_FeedbackAda": 0.830629107542336,
+      "AntBioQPSO_vs_PerParticleAda": 0.020244861021637917,
+      "BeeBioQPSO_vs_LinearAda": 0.7150712013244629,
+      "BeeBioQPSO_vs_CosineAda": 0.7800166169181466,
+      "BeeBioQPSO_vs_FeedbackAda": 0.9999313028529286,
+      "BeeBioQPSO_vs_PerParticleAda": 0.9080154532566667,
+      "LinearAda_vs_CosineAda": 0.7550769560039043,
+      "LinearAda_vs_FeedbackAda": 0.9973086100071669,
+      "LinearAda_vs_PerParticleAda": 0.7354474077001214,
+      "CosineAda_vs_FeedbackAda": 0.9987199548631907,
+      "CosineAda_vs_PerParticleAda": 0.47576323710381985,
+      "FeedbackAda_vs_PerParticleAda": 0.01549240481108427
+    }
+  },
+  "levy": {
+    "average_rank": {
+      "PSO": 9,
+      "QPSO": 1,
+      "ACO": 10,
+      "ABC": 2,
+      "AntBioQPSO": 8,
+      "BeeBioQPSO": 6,
+      "LinearAda": 4,
+      "CosineAda": 5,
+      "FeedbackAda": 3,
+      "PerParticleAda": 7
+    },
+    "friedman": {
+      "chi2": 252.5745454545454,
+      "p": 2.853354177993012e-49
+    },
+    "wilcoxon_vs_qpso": {
+      "PSO": 1.0,
+      "QPSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0
+    },
+    "wilcoxon_vs_qpso_holm": {
+      "PSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0,
+      "QPSO": 1.0
+    },
+    "rank_biserial_vs_qpso": {
+      "PSO": -1.0,
+      "QPSO": 0.0,
+      "ACO": -1.0,
+      "ABC": -0.9244444444444444,
+      "AntBioQPSO": -1.0,
+      "BeeBioQPSO": -1.0,
+      "LinearAda": -1.0,
+      "CosineAda": -1.0,
+      "FeedbackAda": -1.0,
+      "PerParticleAda": -1.0
+    },
+    "pairwise_biofamily": {
+      "AntBioQPSO_vs_BeeBioQPSO": 1.8952414393424988e-06,
+      "AntBioQPSO_vs_LinearAda": 0.000670301727950573,
+      "AntBioQPSO_vs_CosineAda": 0.002888246439397335,
+      "AntBioQPSO_vs_FeedbackAda": 0.4838367886841297,
+      "AntBioQPSO_vs_PerParticleAda": 1.8952414393424988e-06,
+      "BeeBioQPSO_vs_LinearAda": 1.0,
+      "BeeBioQPSO_vs_CosineAda": 1.0,
+      "BeeBioQPSO_vs_FeedbackAda": 1.0,
+      "BeeBioQPSO_vs_PerParticleAda": 0.0003989487886428833,
+      "LinearAda_vs_CosineAda": 0.14942207373678684,
+      "LinearAda_vs_FeedbackAda": 0.9998583681881428,
+      "LinearAda_vs_PerParticleAda": 9.313225746154785e-10,
+      "CosineAda_vs_FeedbackAda": 0.9999150512740016,
+      "CosineAda_vs_PerParticleAda": 9.313225746154785e-10,
+      "FeedbackAda_vs_PerParticleAda": 9.313225746154785e-10
+    }
+  },
+  "zakharov": {
+    "average_rank": {
+      "PSO": 8,
+      "QPSO": 1,
+      "ACO": 9,
+      "ABC": 10,
+      "AntBioQPSO": 5,
+      "BeeBioQPSO": 2,
+      "LinearAda": 6,
+      "CosineAda": 7,
+      "FeedbackAda": 4,
+      "PerParticleAda": 3
+    },
+    "friedman": {
+      "chi2": 205.57090909090903,
+      "p": 2.2483080104681647e-39
+    },
+    "wilcoxon_vs_qpso": {
+      "PSO": 0.9999999990686774,
+      "QPSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 0.9999504871666431,
+      "BeeBioQPSO": 0.8357650712132454,
+      "LinearAda": 0.9997472558170557,
+      "CosineAda": 0.9999996544793248,
+      "FeedbackAda": 0.9999235644936562,
+      "PerParticleAda": 0.9179079588502645
+    },
+    "wilcoxon_vs_qpso_holm": {
+      "PSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0,
+      "QPSO": 1.0
+    },
+    "rank_biserial_vs_qpso": {
+      "PSO": -0.9333333333333333,
+      "QPSO": 0.0,
+      "ACO": -1.0,
+      "ABC": -1.0,
+      "AntBioQPSO": -0.6288888888888888,
+      "BeeBioQPSO": -0.21777777777777785,
+      "LinearAda": -0.6511111111111112,
+      "CosineAda": -0.74,
+      "FeedbackAda": -0.6511111111111112,
+      "PerParticleAda": -0.23777777777777787
+    },
+    "pairwise_biofamily": {
+      "AntBioQPSO_vs_BeeBioQPSO": 0.9999939082190394,
+      "AntBioQPSO_vs_LinearAda": 0.4196963720023632,
+      "AntBioQPSO_vs_CosineAda": 0.2199833830818534,
+      "AntBioQPSO_vs_FeedbackAda": 0.873281947337091,
+      "AntBioQPSO_vs_PerParticleAda": 0.9999827342107892,
+      "BeeBioQPSO_vs_LinearAda": 4.610046744346619e-06,
+      "BeeBioQPSO_vs_CosineAda": 2.859160304069519e-07,
+      "BeeBioQPSO_vs_FeedbackAda": 6.983056664466858e-06,
+      "BeeBioQPSO_vs_PerParticleAda": 0.435603897087276,
+      "LinearAda_vs_CosineAda": 0.4838367886841297,
+      "LinearAda_vs_FeedbackAda": 0.7739178286865354,
+      "LinearAda_vs_PerParticleAda": 0.9999685669317842,
+      "CosineAda_vs_FeedbackAda": 0.9475800478830934,
+      "CosineAda_vs_PerParticleAda": 0.9999990044161677,
+      "FeedbackAda_vs_PerParticleAda": 0.9999988256022334
+    }
+  },
+  "styblinski_tang": {
+    "average_rank": {
+      "PSO": 9,
+      "QPSO": 6,
+      "ACO": 10,
+      "ABC": 1,
+      "AntBioQPSO": 4,
+      "BeeBioQPSO": 7,
+      "LinearAda": 3,
+      "CosineAda": 2,
+      "FeedbackAda": 5,
+      "PerParticleAda": 8
+    },
+    "friedman": {
+      "chi2": 156.50181818181818,
+      "p": 3.9558413492625673e-29
+    },
+    "wilcoxon_vs_qpso": {
+      "PSO": 0.9999999953433871,
+      "QPSO": 1.0,
+      "ACO": 0.9999999990686774,
+      "ABC": 1.5247613191604614e-05,
+      "AntBioQPSO": 0.04203273914754391,
+      "BeeBioQPSO": 0.940461715683341,
+      "LinearAda": 0.03177824430167675,
+      "CosineAda": 0.034946455620229244,
+      "FeedbackAda": 0.29890388529747725,
+      "PerParticleAda": 0.9598363190889359
+    },
+    "wilcoxon_vs_qpso_holm": {
+      "PSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 0.00013722851872444153,
+      "AntBioQPSO": 0.254225954413414,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 0.254225954413414,
+      "CosineAda": 0.254225954413414,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0,
+      "QPSO": 1.0
+    },
+    "rank_biserial_vs_qpso": {
+      "PSO": -0.951111111111111,
+      "QPSO": 0.0,
+      "ACO": -0.94,
+      "ABC": 0.6311111111111112,
+      "AntBioQPSO": 0.09333333333333338,
+      "BeeBioQPSO": -0.33111111111111113,
+      "LinearAda": 0.14888888888888885,
+      "CosineAda": 0.22888888888888892,
+      "FeedbackAda": -0.004444444444444473,
+      "PerParticleAda": -0.3177777777777777
+    },
+    "pairwise_biofamily": {
+      "AntBioQPSO_vs_BeeBioQPSO": 0.00020919833332300186,
+      "AntBioQPSO_vs_LinearAda": 0.435603897087276,
+      "AntBioQPSO_vs_CosineAda": 0.7486194763332605,
+      "AntBioQPSO_vs_FeedbackAda": 0.1908992175012827,
+      "AntBioQPSO_vs_PerParticleAda": 2.4842098355293274e-05,
+      "BeeBioQPSO_vs_LinearAda": 0.9992712615057826,
+      "BeeBioQPSO_vs_CosineAda": 0.9989061122760177,
+      "BeeBioQPSO_vs_FeedbackAda": 0.9982624221593142,
+      "BeeBioQPSO_vs_PerParticleAda": 0.4276358615607023,
+      "LinearAda_vs_CosineAda": 0.7010961147025228,
+      "LinearAda_vs_FeedbackAda": 0.13550281431525946,
+      "LinearAda_vs_PerParticleAda": 1.183338463306427e-05,
+      "CosineAda_vs_FeedbackAda": 0.04805078636854887,
+      "CosineAda_vs_PerParticleAda": 2.2037886083126068e-05,
+      "FeedbackAda_vs_PerParticleAda": 8.494872599840164e-05
+    }
+  },
+  "dixon_price": {
+    "average_rank": {
+      "PSO": 9,
+      "QPSO": 1,
+      "ACO": 10,
+      "ABC": 8,
+      "AntBioQPSO": 2,
+      "BeeBioQPSO": 6,
+      "LinearAda": 3,
+      "CosineAda": 4,
+      "FeedbackAda": 5,
+      "PerParticleAda": 7
+    },
+    "friedman": {
+      "chi2": 164.33454545454538,
+      "p": 9.3255435469706e-31
+    },
+    "wilcoxon_vs_qpso": {
+      "PSO": 0.845739615149796,
+      "QPSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 0.9179079588502645,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 0.9966802317649126,
+      "CosineAda": 0.9999604467302561,
+      "FeedbackAda": 0.9989061122760177,
+      "PerParticleAda": 1.0
+    },
+    "wilcoxon_vs_qpso_holm": {
+      "PSO": 1.0,
+      "ACO": 1.0,
+      "ABC": 1.0,
+      "AntBioQPSO": 1.0,
+      "BeeBioQPSO": 1.0,
+      "LinearAda": 1.0,
+      "CosineAda": 1.0,
+      "FeedbackAda": 1.0,
+      "PerParticleAda": 1.0,
+      "QPSO": 1.0
+    },
+    "rank_biserial_vs_qpso": {
+      "PSO": 0.02444444444444449,
+      "QPSO": 0.0,
+      "ACO": -0.951111111111111,
+      "ABC": -0.9977777777777779,
+      "AntBioQPSO": -0.48444444444444446,
+      "BeeBioQPSO": -0.9822222222222223,
+      "LinearAda": -0.5955555555555556,
+      "CosineAda": -0.6666666666666667,
+      "FeedbackAda": -0.6222222222222222,
+      "PerParticleAda": -0.9955555555555555
+    },
+    "pairwise_biofamily": {
+      "AntBioQPSO_vs_BeeBioQPSO": 2.7939677238464355e-09,
+      "AntBioQPSO_vs_LinearAda": 0.045974813401699066,
+      "AntBioQPSO_vs_CosineAda": 0.011705071665346622,
+      "AntBioQPSO_vs_FeedbackAda": 0.006831620819866657,
+      "AntBioQPSO_vs_PerParticleAda": 9.313225746154785e-10,
+      "BeeBioQPSO_vs_LinearAda": 0.9999999906867743,
+      "BeeBioQPSO_vs_CosineAda": 0.9999908776953816,
+      "BeeBioQPSO_vs_FeedbackAda": 0.9999994039535522,
+      "BeeBioQPSO_vs_PerParticleAda": 0.022453604266047478,
+      "LinearAda_vs_CosineAda": 0.13550281431525946,
+      "LinearAda_vs_FeedbackAda": 0.14468310307711363,
+      "LinearAda_vs_PerParticleAda": 9.313225746154785e-10,
+      "CosineAda_vs_FeedbackAda": 0.5080832093954086,
+      "CosineAda_vs_PerParticleAda": 4.991888999938965e-07,
+      "FeedbackAda_vs_PerParticleAda": 8.419156074523926e-07
+    }
+  },
+  "global_average_ranks": {
+    "PSO": 6.8,
+    "QPSO": 2.0,
+    "ACO": 8.8,
+    "ABC": 5.8,
+    "AntBioQPSO": 4.0,
+    "BeeBioQPSO": 6.3,
+    "LinearAda": 4.9,
+    "CosineAda": 5.1,
+    "FeedbackAda": 4.3,
+    "PerParticleAda": 7.0
+  }
+}

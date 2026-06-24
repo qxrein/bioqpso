@@ -11,3 +11,6 @@
 !bioqpso/
 !results/
 !requirements.txt
+
+!*.tex
+!*.bib
