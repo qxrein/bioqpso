@@ -1,0 +1,43 @@
+# E2 — Controls: schedule vs fixed phi3
+experiment: e2_controls
+n_particles: 30
+max_iter: 1000
+boundary: clip
+hist_every: 10
+
+algorithms:
+  qpso:              {}
+  ant-nobio:         {}
+  ant-fixed:         {phi3: 0.0}
+  ant-fixed_p1:      {phi3: 0.1}
+  ant-fixed_p2:      {phi3: 0.2}
+  ant-fixed_p3:      {phi3: 0.3}
+  ant-fixed_p4:      {phi3: 0.4}
+  ant-fixed_p5:      {phi3: 0.5}
+  ant-random:        {}
+  ant-linear:        {}
+  ant-cosine:        {}
+  ant-feedback:      {W: 20, delta: 0.02}
+  bee-nobio:         {}
+  bee-fixed_p1:      {phi3: 0.1}
+  bee-fixed_p2:      {phi3: 0.2}
+  bee-fixed_p3:      {phi3: 0.3}
+  bee-fixed_p4:      {phi3: 0.4}
+  bee-fixed_p5:      {phi3: 0.5}
+  bee-random:        {}
+  bee-linear:        {}
+  bee-cosine:        {}
+  bee-feedback:      {W: 20, delta: 0.02}
+  bee-per_particle:  {}
+
+functions:
+  - sphere
+  - rosenbrock
+  - zakharov
+  - dixon_price
+  - rastrigin
+  - ackley
+  - griewank
+  - schwefel
+  - levy
+  - styblinski_tang

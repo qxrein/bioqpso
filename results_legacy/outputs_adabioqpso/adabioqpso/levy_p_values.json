@@ -1,0 +1,12 @@
+{
+  "PSO": 1.0,
+  "QPSO": 1.0,
+  "ACO": 1.0,
+  "ABC": 1.0,
+  "AntBioQPSO": 1.0,
+  "BeeBioQPSO": 1.0,
+  "LinearAda": 1.0,
+  "CosineAda": 1.0,
+  "FeedbackAda": 1.0,
+  "PerParticleAda": 1.0
+}

@@ -1,0 +1,6 @@
+{
+  "output_dir": "outputs/adabioqpso",
+  "N_RUNS": 30,
+  "MAX_ITER": 1000,
+  "N_PARTICLES": 30
+}

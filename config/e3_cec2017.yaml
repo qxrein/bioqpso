@@ -1,0 +1,27 @@
+# E3 — CEC2017 (light budget = 30030 FEs; tier a)
+experiment: e3_cec2017
+n_particles: 30
+max_iter: 1000
+# max_fes = 30030 (light tier)
+# For standard tier: max_fes = 10000*D = 300000 at D=30
+budget_tier: light
+boundary: clip
+hist_every: 10
+dims: [30, 50]
+
+algorithms:
+  pso:            {}
+  qpso:           {}
+  aco_r:          {}
+  abc:            {}
+  gwo:            {}
+  woa:            {}
+  ant-fixed:      {phi3: 0.3}
+  bee-fixed:      {phi3: 0.3}
+  ant-linear:     {}
+  ant-cosine:     {}
+  ant-feedback:   {W: 20, delta: 0.02}
+  bee-per_particle: {}
+
+# F5 excluded (flat in opfunu 1.0.4); F2=opfunu-Zakharov included
+cec_exclude: [F52017]

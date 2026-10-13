@@ -14,3 +14,9 @@
 
 !*.tex
 !*.bib
+!docs/
+
+!tests/
+!scripts/
+!results_legacy/
+!config/

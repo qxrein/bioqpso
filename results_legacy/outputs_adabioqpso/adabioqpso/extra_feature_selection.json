@@ -1,0 +1,130 @@
+{
+  "wine": {
+    "stats": {
+      "PSO": {
+        "MeanAcc": 0.9195079365079366,
+        "StdAcc": 0.006714285714285751,
+        "AvgFeatures": 2.0,
+        "Time (s)": 21.287725710868834
+      },
+      "QPSO": {
+        "MeanAcc": 0.9195079365079366,
+        "StdAcc": 0.006714285714285751,
+        "AvgFeatures": 2.0,
+        "Time (s)": 21.359007287025452
+      },
+      "ACO": {
+        "MeanAcc": 0.9178095238095239,
+        "StdAcc": 0.00935937410289195,
+        "AvgFeatures": 2.1,
+        "Time (s)": 21.447824311256408
+      },
+      "ABC": {
+        "MeanAcc": 0.9286190476190477,
+        "StdAcc": 0.011235370936942962,
+        "AvgFeatures": 3.1,
+        "Time (s)": 21.83818140029907
+      },
+      "AntBioQPSO": {
+        "MeanAcc": 0.9217460317460319,
+        "StdAcc": 0.0,
+        "AvgFeatures": 2.0,
+        "Time (s)": 21.28344738483429
+      },
+      "BeeBioQPSO": {
+        "MeanAcc": 0.9217460317460319,
+        "StdAcc": 0.0,
+        "AvgFeatures": 2.0,
+        "Time (s)": 22.565769028663635
+      },
+      "LinearAda": {
+        "MeanAcc": 0.9217460317460319,
+        "StdAcc": 0.0,
+        "AvgFeatures": 2.0,
+        "Time (s)": 21.134072184562683
+      },
+      "CosineAda": {
+        "MeanAcc": 0.9217460317460319,
+        "StdAcc": 0.0,
+        "AvgFeatures": 2.0,
+        "Time (s)": 21.10843892097473
+      },
+      "FeedbackAda": {
+        "MeanAcc": 0.9217460317460319,
+        "StdAcc": 0.0,
+        "AvgFeatures": 2.0,
+        "Time (s)": 21.10032639503479
+      },
+      "PerParticleAda": {
+        "MeanAcc": 0.9217460317460319,
+        "StdAcc": 0.0,
+        "AvgFeatures": 2.0,
+        "Time (s)": 21.922217297554017
+      }
+    }
+  },
+  "ionosphere": {
+    "stats": {
+      "PSO": {
+        "MeanAcc": 0.8969456740442656,
+        "StdAcc": 0.014908046865404114,
+        "AvgFeatures": 5.2,
+        "Time (s)": 23.602424001693727
+      },
+      "QPSO": {
+        "MeanAcc": 0.9239879275653925,
+        "StdAcc": 0.010188566612998322,
+        "AvgFeatures": 2.9,
+        "Time (s)": 25.022678399085997
+      },
+      "ACO": {
+        "MeanAcc": 0.9105915492957747,
+        "StdAcc": 0.009113276459587111,
+        "AvgFeatures": 2.8,
+        "Time (s)": 22.940450024604797
+      },
+      "ABC": {
+        "MeanAcc": 0.8613038229376256,
+        "StdAcc": 0.01597749916784961,
+        "AvgFeatures": 8.4,
+        "Time (s)": 37.80999848842621
+      },
+      "AntBioQPSO": {
+        "MeanAcc": 0.9262535211267607,
+        "StdAcc": 0.008500937220680382,
+        "AvgFeatures": 2.9,
+        "Time (s)": 22.847058796882628
+      },
+      "BeeBioQPSO": {
+        "MeanAcc": 0.9259678068410464,
+        "StdAcc": 0.007101311432280183,
+        "AvgFeatures": 3.0,
+        "Time (s)": 30.0982656955719
+      },
+      "LinearAda": {
+        "MeanAcc": 0.9294044265593563,
+        "StdAcc": 0.004715296794633305,
+        "AvgFeatures": 3.0,
+        "Time (s)": 23.29807722568512
+      },
+      "CosineAda": {
+        "MeanAcc": 0.9273843058350103,
+        "StdAcc": 0.0069055369505231085,
+        "AvgFeatures": 2.9,
+        "Time (s)": 23.150568294525147
+      },
+      "FeedbackAda": {
+        "MeanAcc": 0.9219879275653924,
+        "StdAcc": 0.007540354131960186,
+        "AvgFeatures": 2.7,
+        "Time (s)": 22.837536787986757
+      },
+      "PerParticleAda": {
+        "MeanAcc": 0.9302454728370224,
+        "StdAcc": 0.00427364185110668,
+        "AvgFeatures": 3.0,
+        "Time (s)": 53.309745621681216
+      }
+    }
+  }
+}

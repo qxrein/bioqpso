@@ -1,0 +1,33 @@
+# E1 — Unified classical benchmark
+experiment: e1_classical
+n_particles: 30
+max_iter: 1000
+# max_fes = n_particles * (max_iter + 1) = 30030
+boundary: clip
+hist_every: 10
+
+algorithms:
+  pso:            {}
+  qpso:           {}
+  aco_r:          {}
+  abc:            {}
+  gwo:            {}
+  woa:            {}
+  ant-fixed:      {phi3: 0.3}
+  bee-fixed:      {phi3: 0.3}
+  ant-linear:     {}
+  ant-cosine:     {}
+  ant-feedback:   {W: 20, delta: 0.02}
+  bee-per_particle: {}
+
+functions:
+  - sphere
+  - rosenbrock
+  - zakharov
+  - dixon_price
+  - rastrigin
+  - ackley
+  - griewank
+  - schwefel
+  - levy
+  - styblinski_tang

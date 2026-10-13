@@ -1,5 +1,9 @@
-numpy
-scipy
+numpy==1.26.0
+scipy==1.16.3
+scikit-learn==1.8.0
+opfunu==1.0.4
 matplotlib
-scikit-learn
-
+joblib
+pyyaml
+pytest==9.1.1
+pandas
