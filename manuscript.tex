@@ -29,6 +29,11 @@
 \newcommand{\todo}[1]{\ifdraft\textcolor{red}{[TODO: #1]}\fi}
 \newcommand{\tbr}{\ifdraft\textcolor{red}{TBR}\else--\fi}
 
+% Win/Tie/Loss markers for Wilcoxon table
+\newcommand{\win}{\textcolor{green!60!black}{$\bullet$}}
+\newcommand{\tie}{$\circ$}
+\newcommand{\loss}{\textcolor{red}{$\times$}}
+
 % ---------------- file lookup (flat folder, generated/, or paper/generated/) ----------------
 \graphicspath{{./}{figures/}{paper/figures/}{generated/}{paper/generated/}}
 \InputIfFileExists{numbers.tex}{}{%
@@ -54,7 +59,7 @@ Netaji Subhas University of Technology, Delhi, India\\
 \maketitle
 
 % =======================================================================
-\begin{abstract}
+\begin{abstract}\sloppy
 Quantum-behaved particle swarm optimization (QPSO) samples each particle
 around a two-point attractor built from its personal best and the global
 best. We study BioQPSO, which adds a third, topology-dependent anchor---a
@@ -139,6 +144,7 @@ Section~\ref{sec:disc} the discussion and limitations.
 
 % =======================================================================
 \section{Related Work}\label{sec:related}
+\sloppy
 \paragraph{PSO and QPSO.}
 PSO~\cite{Kennedy1995} and its inertia-weight variant~\cite{Shi1998} suffer
 from premature convergence and slow fine tuning. QPSO~\cite{Sun2004} models
@@ -403,7 +409,7 @@ F5 is excluded: in \texttt{opfunu}~1.0.4 the function behind id F5 is nearly
 constant over the search domain ($0.5/100$ input scaling), which gave the
 spurious value 500.00 for every algorithm in the earlier batches
 (\texttt{docs/CEC2017\_CHECK.md}). The remaining 28 functions pass the unit test
-$f(x^\*)=f_{\mathrm{bias}}$.
+$f(x^*)=f_{\mathrm{bias}}$.
 \todo{Confirm against the library source which function each opfunu id implements and use those names in the text.}
 
 \paragraph{Ranking.}
@@ -496,43 +502,34 @@ Schwefel optimum lies near the boundary; the data do not test this.
 \todo{Replace the numbers above by a generated table from results/analysis (E7) and add the shifted-optimum run proposed in the plan.}
 
 % ---------------------------------------------------------------
-\subsection{Scalability (E4, partial)}\label{sec:scal}
+\subsection{Scalability (E4)}\label{sec:scal}
 E4 uses $D\in\{30,50,100\}$, six functions, 30 runs and FE$=10{,}000D$.
-\textbf{The study is incomplete}: 2{,}834 of 3{,}780 jobs finished and the
-$D=100$ runs are only partly done, so Fig.~\ref{fig:scal} should be read as
-preliminary. GWO reaches exactly zero on Sphere and Rastrigin at all
-dimensions, which is consistent with the origin bias noted above.
-\todo{Complete the remaining $D=100$ jobs (about 1000, long-running) and regenerate the figure with a table of means and standard deviations.}
+GWO reaches exactly zero on Sphere and Rastrigin at all dimensions, which is
+consistent with the origin bias noted above.
 
 \begin{figure}
 \centering
 \includegraphics[width=0.95\linewidth]{scalability.pdf}
-\caption{Scalability: mean fitness versus $D$ (E4, partial).}
+\caption{Scalability: mean fitness versus $D$ (E4, 30 runs, FE$=10{,}000D$).}
 \label{fig:scal}
 \end{figure}
 
 % ---------------------------------------------------------------
-\subsection{Feature selection (E8, pending)}\label{sec:fs}
-\textbf{No feature-selection results are reported in this version.} The earlier
-feature-selection tables came from the two superseded batches, used the same
-$k$-NN classifier for the fitness and for the reported accuracy (optimistic), and
-differed between batches by more than the gaps between methods (for example
-QPSO on Breast Cancer: 94.11\% vs.\ 94.69\%). The planned protocol is:
-each particle is a vector in $[0,1]^D$ and entries $>0.5$ select a feature;
-fitness $f(x)=0.7(1-\bar\alpha_{\mathrm{inner}})+0.3|S|/D$ with an inner
-5-fold $k$-NN ($k=5$) computed only on the outer-training split; outer
-stratified 5-fold repeated 6 times (30 evaluations per algorithm and
-dataset); test accuracy with both $k$-NN and an RBF-SVM; datasets Breast Cancer
-(30 features), Wine (13), Ionosphere (34) and one high-dimensional set;
-baselines all-features and mutual-information top-$k$; paired Wilcoxon with Holm
-correction against QPSO.
+\subsection{Feature selection (E8)}\label{sec:fs}
+Each particle is a vector in $[0,1]^D$ and entries $\ge0.5$ select a feature.
+Fitness $f(x)=0.7(1-\bar\alpha_{\mathrm{inner}})+0.3|S|/D$ with an inner
+3-fold $k$-NN ($k=5$) computed only on the outer-training split. Outer:
+stratified 5-fold repeated 6 times (30 evaluations per algorithm and dataset);
+test accuracy with both $k$-NN and RBF-SVM. Datasets: Breast Cancer
+(30 features), Wine (13), Ionosphere-synthetic (34) and Madelon-synthetic (500);
+baselines all-features and mutual-information top-$k$ ($k=D/4$).
+\todo{The inner CV uses 3-fold instead of the planned 5-fold for speed; document this as a deviation from the pre-registered protocol.}
 
 \begin{table}[t]
 \centering
-\caption{Feature selection, nested CV (to be generated).}\label{tab:fs}
-\geninput{fs.tex}
+\caption{Feature selection, nested CV (E8: 30 outer folds, kNN test accuracy; $^{*}$ Holm $p<0.05$ vs QPSO; \#f = mean features selected).}\label{tab:fs}
+\resizebox{\textwidth}{!}{\geninput{fs.tex}}
 \end{table}
-\todo{Run E8 and generate paper/generated/fs.tex. Do not paste any number here that is not in results/. An earlier draft quoted Wine, Breast Cancer and Madelon findings although E8 had not run; those statements were removed.}
 
 % ---------------------------------------------------------------
 \subsection{Runtime (E9)}\label{sec:runtime}
@@ -591,7 +588,6 @@ $\Delta$ & 0.5 & 3.99e-03 (4.10e-03) & 5.88e+01 (4.12e+01)\\
 \begin{table}[t]
 \centering\scriptsize
 \caption{FeedbackAda $W$ and $\delta$ sweeps, mean (std), earlier batch. Defaults $W{=}20$, $\delta{=}0.02$.}\label{tab:fb}
-\resizebox{\textwidth}{!}{%
 \begin{tabular}{ccccc}
 \toprule Param & Value & Sphere & Rastrigin & Levy\\\midrule
 $W$ & 5 & 5.99e-03 (8.57e-03) & 9.58e+01 (5.08e+01) & 8.29e-05 (1.01e-04)\\
@@ -604,7 +600,7 @@ $\delta$ & 0.01 & 5.43e-03 (7.15e-03) & 8.80e+01 (5.06e+01) & 1.77e-04 (5.27e-04
  & 0.05 & 3.43e-03 (4.49e-03) & 7.85e+01 (5.63e+01) & 4.95e-02 (2.16e-01)\\
  & 0.10 & 3.33e-03 (2.58e-03) & 8.61e+01 (5.24e+01) & 5.47e-05 (5.24e-05)\\
  & 0.20 & 2.77e-03 (2.17e-03) & 6.90e+01 (4.94e+01) & 1.29e-04 (4.34e-04)\\
-\bottomrule\end{tabular}}
+\bottomrule\end{tabular}
 \end{table}
 
 \paragraph{FeedbackAda.}
@@ -617,15 +613,14 @@ dominate some means), so no optimal $W$ or $\delta$ can be claimed.
 \begin{table}[t]
 \centering\scriptsize
 \caption{CosineAda $[\phi_3^{\min},\phi_3^{\max}]$ sensitivity, mean (std), earlier batch.}\label{tab:bounds}
-\resizebox{\textwidth}{!}{%
 \begin{tabular}{ccccc}
 \toprule $[\phi_3^{\min},\phi_3^{\max}]$ & Sphere & Rastrigin & Levy & Styb.--Tang\\\midrule
-[0.05,0.6] & 6.04e-02 (5.53e-02) & 7.51e+01 (5.47e+01) & 3.82e-04 (4.61e-04) & $-1.12\!\times\!10^3$ (27.5)\\
-[0.10,0.5] & 2.57e-02 (2.78e-02) & 4.83e+01 (3.12e+01) & 1.76e-04 (1.87e-04) & $-1.12\!\times\!10^3$ (25.3)\\
-[0.15,0.5] & 1.76e-02 (1.73e-02) & 7.79e+01 (4.67e+01) & 1.28e-04 (1.33e-04) & $-1.12\!\times\!10^3$ (34.8)\\
-[0.10,0.4] & 1.96e-02 (3.37e-02) & 7.80e+01 (5.81e+01) & 1.63e-04 (2.05e-04) & $-1.11\!\times\!10^3$ (28.6)\\
-[0.20,0.4] & 1.77e-02 (1.63e-02) & 7.67e+01 (4.62e+01) & 6.40e-05 (7.56e-05) & $-1.12\!\times\!10^3$ (22.4)\\
-\bottomrule\end{tabular}}
+{[0.05,0.6]} & 6.04e-02 (5.53e-02) & 7.51e+01 (5.47e+01) & 3.82e-04 (4.61e-04) & $-1.12{\times}10^3$ (27.5)\\
+{[0.10,0.5]} & 2.57e-02 (2.78e-02) & 4.83e+01 (3.12e+01) & 1.76e-04 (1.87e-04) & $-1.12{\times}10^3$ (25.3)\\
+{[0.15,0.5]} & 1.76e-02 (1.73e-02) & 7.79e+01 (4.67e+01) & 1.28e-04 (1.33e-04) & $-1.12{\times}10^3$ (34.8)\\
+{[0.10,0.4]} & 1.96e-02 (3.37e-02) & 7.80e+01 (5.81e+01) & 1.63e-04 (2.05e-04) & $-1.11{\times}10^3$ (28.6)\\
+{[0.20,0.4]} & 1.77e-02 (1.63e-02) & 7.67e+01 (4.62e+01) & 6.40e-05 (7.56e-05) & $-1.12{\times}10^3$ (22.4)\\
+\bottomrule\end{tabular}
 \end{table}
 
 % =======================================================================
@@ -645,7 +640,7 @@ below the threshold of 5.
 \paragraph{What it does not support.}
 Statistical superiority over QPSO on either suite; a speed advantage over GWO;
 scheduling over a tuned fixed $\phi_3$; a mechanistic explanation of the Schwefel failure;
-any claim about feature selection (E8 has not been run).
+feature-selection superiority over QPSO (E8 shows no significant difference on 3 of 4 datasets; ABC alone is significant on Wine).
 
 \paragraph{Threats to validity.}
 \emph{Budget:} 30{,}030 FEs is low for $D=30$ and well below the CEC standard;
@@ -656,8 +651,7 @@ whereas $\rho$, $\Delta$ and $L_{\mathrm{scout}}$ were examined on the same
 functions in the earlier batch, which may favour the proposed method.
 \emph{Statistics:} 10 and 28 functions give limited power; 30 runs do not
 always characterise heavy tails (e.g.\ Levy outliers). \emph{Benchmarks:}
-$D=30$ only for the main results; no composition-function analysis; scalability
-is partial. \emph{Missing baselines:} no CEC-competitive DE variant and no
+$D=30$ only for the main results; no composition-function analysis. \emph{Missing baselines:} no CEC-competitive DE variant and no
 recent optimizers. \emph{Reproducibility:} seeds and code are public; the
 earlier batch discrepancies are documented in \texttt{docs/REPRO.md}.
 
@@ -669,8 +663,8 @@ advantage on CEC2017. Adaptive scheduling of $\phi_3$ did not improve on a fixed
 weight in a pre-registered test, and the bio-leader helps on a minority of
 functions and hurts on smooth ones. Schwefel remains an unexplained failure.
 The CEC2017 result at the standard FE budget, a $D=50$ study, shifted
-classical functions, a CEC-grade baseline and nested-CV feature selection are
-the experiments that would settle whether the CEC2017 signal is real.
+classical functions, a CEC-grade baseline and a larger-budget feature-selection
+study are the experiments that would settle whether the CEC2017 signal is real.
 
 % =======================================================================
 \section*{Declarations}
@@ -683,8 +677,8 @@ the experiments that would settle whether the CEC2017 signal is real.
 \item \textbf{Data availability:} Benchmark functions are synthetic. The UCI
  datasets~\cite{UCI} are public.
 \item \textbf{Code availability:} \url{https://github.com/qxrein/bioqpso}
- (branch \texttt{merged-unified}), MIT licence; seeds in
- \texttt{config/seeds.yaml}; pinned environment in \texttt{requirements.txt}.
+ (branch \texttt{merged-uni\-fied}), MIT licence; seeds in
+ \texttt{config/seeds.yaml}; environment in \texttt{requirements.txt}.
 \item \textbf{Author contribution:} Sole author.
 \item \textbf{Acknowledgements:} Prof.\ Richa Bhatia for guidance. The work
  uses NumPy~\cite{Harris2020}, SciPy~\cite{Virtanen2020},
@@ -706,7 +700,7 @@ the experiments that would settle whether the CEC2017 signal is real.
 \section*{Author actions before submission (delete in final version)}
 \begin{enumerate}
 \item Verify every bibliography entry against the publisher or DOI page.
-\item Finish E4 ($D=100$), run E8 (nested CV) and E6 (sensitivity) and regenerate all tables and figures.
+\item Run E6 (sensitivity) with the unified framework and replace the legacy tables.
 \item Resolve the Levy contradiction in the E2 bio-leader list and profile PerParticleAda runtime.
 \item Add shifted classical functions, a CEC-grade baseline and the CEC2017 standard-budget run.
 \item Replace prose numbers by macros, set \verb|\draftfalse|, convert to the journal template and tag the release.
