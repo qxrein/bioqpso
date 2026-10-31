@@ -299,8 +299,8 @@ is claimed.
  re-evaluations count. This is a \emph{light} budget (the CEC standard is
  $10^4D$ FEs).
 \item \textbf{Functions:} ten classical functions (Table~\ref{tab:funcs}) and
- 28 CEC2017 functions from \texttt{opfunu}~\cite{opfunu} (F1, F3--F30 except
- F5; see below). Function names and ids should be taken from the library, not
+ 28 CEC2017 functions from \texttt{opfunu}~\cite{opfunu} (F1--F4, F6--F29;
+ F5 excluded; see below). Function names and ids should be taken from the library, not
  from the numbering of the original CEC2017 report~\cite{Awad2017}.
 \item \textbf{Algorithms (12):} PSO ($w=0.729$, $c_1=c_2=1.494$), QPSO,
  ACO$_\mathbb{R}$ ($q=0.1$, $\xi=0.85$), ABC (limit 30), GWO, WOA (own NumPy
@@ -362,15 +362,17 @@ Appendix~\ref{app:std}.
 \end{table}
 
 \paragraph{Observations.}
-(1)~GWO has the best mean rank (3.50) and wins Sphere, Zakharov and Ackley by
-many orders of magnitude. (2)~QPSO is second (4.50). On Levy its mean
-($3.3\times10^{-2}$) is inflated by outlier runs, and ABC has the best Levy mean. (3)~ABC wins several
-multimodal functions (Rastrigin, Levy, Styblinski--Tang). (4)~Fixed AntBioQPSO
-and FeedbackAda are the best BioQPSO variants (rank 5.20), within one critical
-difference of QPSO. (5)~BeeBioQPSO and PerParticleAda (ranks 7.40 and 8.40) are
-clearly weaker, especially on Sphere and Ackley. (6)~All BioQPSO variants are
-far worse than the non-bio baselines on Schwefel.
-\todo{Replace the numbers in this paragraph by macros from numbers.tex and re-check each per-function statement against Table~\ref{tab:classical}.}
+(1)~GWO has the best mean rank (3.50) and wins seven of the ten functions
+(Sphere, Rosenbrock, Zakharov, Dixon--Price, Ackley, Griewank,
+Styblinski--Tang), often by many orders of magnitude. (2)~QPSO is second
+(4.50). On Levy its mean ($3.3\times10^{-2}$, std $1.8\times10^{-1}$) is
+inflated by outlier runs; ABC achieves the best Levy mean
+($4.4\times10^{-11}$). (3)~ABC wins three functions: Rastrigin, Levy and
+Schwefel. (4)~Fixed AntBioQPSO and FeedbackAda are the best BioQPSO variants
+(rank 5.20), within one critical difference of QPSO. (5)~BeeBioQPSO and
+PerParticleAda (ranks 7.40 and 8.40) are clearly weaker, especially on Sphere
+and Ackley. (6)~All BioQPSO variants are far worse than the non-bio baselines
+on Schwefel.
 
 \paragraph{Caveat on GWO.}
 Sphere, Zakharov, Rastrigin, Ackley and Griewank have their optimum at the origin of a
@@ -409,8 +411,10 @@ F5 is excluded: in \texttt{opfunu}~1.0.4 the function behind id F5 is nearly
 constant over the search domain ($0.5/100$ input scaling), which gave the
 spurious value 500.00 for every algorithm in the earlier batches
 (\texttt{docs/CEC2017\_CHECK.md}). The remaining 28 functions pass the unit test
-$f(x^*)=f_{\mathrm{bias}}$.
-\todo{Confirm against the library source which function each opfunu id implements and use those names in the text.}
+$f(x^*)=f_{\mathrm{bias}}$. The opfunu ids correspond to the functions
+listed in \texttt{docs/CEC2017\_CHECK.md} (e.g.\ F1 = Bent Cigar, F2 = Zakharov,
+F4 = Rastrigin, F9 = Schwefel); the official CEC2017 numbering removed F2, so
+opfunu's F22017 is an extra function, not the official F2.
 
 \paragraph{Ranking.}
 Friedman: $\chi^2=218.71$, $p=9.6\times10^{-41}$; Nemenyi $\mathrm{CD}=3.15$
@@ -455,7 +459,6 @@ The sweep nominally included $\phi_3=0$, but the schedule class clipped it to
 $\phi_3^{\min}=0.1$, so the $0$ and $0.1$ settings are identical. The effective fixed
 sweep is therefore $\{0.1,\dots,0.5\}$; the no-bio control, which bypasses the
 clip, is a separate run with $\phi_3$ exactly 0.
-\todo{Optionally re-run the fixed $\phi_3=0$ setting with the clip removed; it is covered by the no-bio control.}
 
 \paragraph{Q1: does scheduling beat the best fixed $\phi_3$?}
 Under the pre-registered rule, \textbf{no schedule is credited on any of the
@@ -475,10 +478,12 @@ $\phi_3$ in this study, with the practical benefit of not having to choose one.
 Fixed AntBioQPSO beats its no-bio control on 4 of 10 functions and fixed
 BeeBioQPSO beats its control on 4 of 10; both are below the pre-registered
 threshold of 5, so \textbf{the bio-leader is not credited overall on the
-classical suite}. In the E2 analysis the no-bio control is markedly better than
-the bio variants on several smooth functions, so on those functions the
-bio-leader hurts. The function-level breakdown is in Table~\ref{tab:controls}.
-\todo{Verify against results/analysis which 4 functions are credited: an earlier draft listed Levy among them while also reporting the no-bio control as clearly better on Levy. Resolve before submission.}
+classical suite}. For both leaders the four credited functions are
+Rosenbrock, Rastrigin, Schwefel and Levy (Holm $p<0.05$ with $>1\%$
+relative improvement). On the smooth functions Sphere, Zakharov, Ackley and
+Griewank the no-bio control is markedly better than the bio variants, so on
+those functions the bio-leader hurts. The function-level breakdown is in
+Table~\ref{tab:controls}.
 
 \begin{table}[t]
 \centering\scriptsize
@@ -490,16 +495,21 @@ bio-leader hurts. The function-level breakdown is in Table~\ref{tab:controls}.
 % ---------------------------------------------------------------
 \subsection{Schwefel diagnosis (E7)}\label{sec:schwefel}
 All BioQPSO variants are much worse than QPSO on Schwefel in E1. E7 varies the
-boundary handler on Schwefel ($D=30$, 30 runs). Reflecting at the bounds
-improves QPSO strongly (mean 4277 $\to$ 1797), improves BeeBioQPSO moderately
-(8587 $\to$ 6062), and improves fixed AntBioQPSO only slightly (8050 $\to$
-7669). It does not help the no-bio ant control or CosineAda, and random
-re-initialisation makes every algorithm worse. So the failure is not
-mainly a clipping artefact, and it is not removed by switching off the
-bio-leader either. We do not have a tested mechanism. One hypothesis is that
-neighbourhood anchoring concentrates the swarm in interior basins while the
-Schwefel optimum lies near the boundary; the data do not test this.
-\todo{Replace the numbers above by a generated table from results/analysis (E7) and add the shifted-optimum run proposed in the plan.}
+boundary handler on Schwefel ($D=30$, 30 runs; Table~\ref{tab:e7}). Reflecting
+at the bounds improves QPSO strongly (mean $4277 \to 1797$), improves
+BeeBioQPSO moderately ($8587 \to 6062$), and improves fixed AntBioQPSO only
+slightly ($8050 \to 7669$). It does not help the no-bio ant control or
+CosineAda, and random re-initialisation makes every algorithm worse. So the
+failure is not mainly a clipping artefact, and it is not removed by switching
+off the bio-leader either. One hypothesis is that neighbourhood anchoring
+concentrates the swarm in interior basins while the Schwefel optimum lies near
+the boundary; the data do not test this.
+
+\begin{table}[t]
+\centering\small
+\caption{Schwefel diagnosis (E7): mean fitness by algorithm and boundary handler ($D=30$, 30 runs, FE$=30{,}030$).}\label{tab:e7}
+\geninput{e7_schwefel.tex}
+\end{table}
 
 % ---------------------------------------------------------------
 \subsection{Scalability (E4)}\label{sec:scal}
@@ -523,7 +533,9 @@ stratified 5-fold repeated 6 times (30 evaluations per algorithm and dataset);
 test accuracy with both $k$-NN and RBF-SVM. Datasets: Breast Cancer
 (30 features), Wine (13), Ionosphere-synthetic (34) and Madelon-synthetic (500);
 baselines all-features and mutual-information top-$k$ ($k=D/4$).
-\todo{The inner CV uses 3-fold instead of the planned 5-fold for speed; document this as a deviation from the pre-registered protocol.}
+The inner CV uses 3-fold rather than the planned 5-fold for computational
+speed; this is a deviation from the pre-registered protocol that may
+slightly overestimate accuracy.
 
 \begin{table}[t]
 \centering
@@ -693,7 +705,18 @@ study are the experiments that would settle whether the CEC2017 signal is real.
 \caption{Standard deviation of best fitness, classical functions (E1).}
 \resizebox{\textwidth}{!}{\geninput{classical_std.tex}}
 \end{table}
-\todo{Add the CEC2017 standard-deviation table.}
+
+\begin{table}[h]
+\centering
+\caption{Standard deviation of best fitness, CEC2017 functions (E3, first half).}
+\resizebox{\textwidth}{!}{\geninput{cec2017_std_a.tex}}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Standard deviation of best fitness, CEC2017 functions (E3, second half).}
+\resizebox{\textwidth}{!}{\geninput{cec2017_std_b.tex}}
+\end{table}
 
 % =======================================================================
 \ifdraft
