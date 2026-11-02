@@ -363,9 +363,9 @@ def wilcoxon_tables(d, algos, fns, fname_wtl, fname_eff, tag):
           ["Function"] + [ALGO[a][0] for a in BIO if a in algos], rows)
 
 
-# ── controls: pre-registered credit rules ─────────────────────────────────
+# ── controls: credit rules from docs/DECISION_RULE.md ─────────────────────────────────
 def credit(alt, base, fns, opt=None):
-    """Pre-registered test per function: one-sided Wilcoxon (Holm over functions), >1% rel."""
+    """Decision-rule test per function: one-sided Wilcoxon (Holm over functions), >1% rel."""
     opt = opt or {}
     raw = [wilcox(alt[f], base[f], "less") for f in fns]
     rawg = [wilcox(alt[f], base[f], "greater") for f in fns]

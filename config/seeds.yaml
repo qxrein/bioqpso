@@ -1,4 +1,4 @@
-# Pre-registered seeds for all experiments.
+# Seeds for all experiments, fixed in advance.
 # 30 seeds drawn once from SeedSequence(base=20261005).
 # DO NOT change after experiments start.
 base_seed: 20261005

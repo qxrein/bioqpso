@@ -100,7 +100,7 @@ The only meaningful difference: Run A (BioQPSO manuscript) included **GWO and WO
 ## 5. Required fix
 
 All future runs must:
-1. Use `base_seed = [list of 30 integers]` pre-committed to `config/seeds.yaml`.
+1. Use `base_seed = [list of 30 integers]` fixed in advance to `config/seeds.yaml`.
 2. Each run `r` seeds with `np.random.seed(base_seed[r])` before initialising every algorithm; all algorithms for the same run see the same initial population.
 3. Results then are fully reproducible from the seed list and a git commit hash.
 
@@ -117,4 +117,4 @@ Based on the above, the expected behaviour once seeds are fixed:
 | AntBioQPSO Sphere mean | 1.48e-7 | 1.84e-7 | 1e-8 – 3e-7 |
 | Styblinski-Tang p (Ant vs QPSO) | 1.0e-3 | 4.2e-2 | 0.02–0.10 (Holm-corrected may flip) |
 
-The exact values will be determined by the unified E1 run. The important point is that **AntBioQPSO's Levy behaviour is intrinsically high-variance**, and the true 30-run mean (over a fixed pre-registered seed list) will be the authoritative number.
+The exact values will be determined by the unified E1 run. The important point is that **AntBioQPSO's Levy behaviour is intrinsically high-variance**, and the true 30-run mean (over a fixed seed list fixed in advance) will be the authoritative number.

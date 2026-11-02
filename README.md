@@ -46,8 +46,8 @@ See `requirements.txt` for pinned versions.
 
 ## Seed list
 
-Pre-registered seeds: `config/seeds.yaml` (committed before any experiment
-was run). Do not change after experiments start.
+Seeds fixed in advance: `config/seeds.yaml` (see `docs/DEVIATIONS.md`).
+Do not change after experiments start.
 
 ## Provenance of results
 
@@ -63,7 +63,7 @@ was run). Do not change after experiments start.
 | `docs/AUDIT.md` | Phase 1 code audit |
 | `docs/REPRO.md` | Batch discrepancy root-cause analysis |
 | `docs/CEC2017_CHECK.md` | CEC2017 validity check (F5 defect) |
-| `docs/DECISION_RULE.md` | Pre-registered decision rules (locked) |
+| `docs/DECISION_RULE.md` | Decision rule specified before the analysis, with dated amendment |
 | `docs/SCHWEFEL.md` | Schwefel diagnosis from E7 |
 | `paper/cover_letter_notes.md` | Changes vs preprint, reviewer responses |
 
@@ -74,7 +74,7 @@ was run). Do not change after experiments start.
    No BioQPSO variant separated from QPSO.
 
 2. **E2 (controls)**: No schedule beats best-fixed φ3 on any function (0/10
-   credited, pre-registered threshold 5/10). Framing outcome (b): scheduling
+   credited, decision-rule threshold 5/10). Framing outcome (b): scheduling
    removes tuning burden at comparable accuracy.
 
 3. **E7 (Schwefel)**: Reflect boundary improves QPSO by 58% but AntBio variants

@@ -20,3 +20,5 @@
 !scripts/
 !results_legacy/
 !config/
+!paper/
+!paper/**
