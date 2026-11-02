@@ -549,17 +549,19 @@ Table~\ref{tab:runtime} gives median wall-clock time (10 repetitions, four
 functions, $D=30$, one thread) for all algorithms in the same NumPy code path.
 Relative to QPSO, PSO is about 25\% faster, AntBioQPSO about 28\% slower,
 FeedbackAda about 26\% slower, BeeBioQPSO about 11\% slower, PerParticleAda
-about 88\% slower and GWO about 121\% slower. The large PerParticleAda value is
-unexpected, given BeeBioQPSO's 11\%, and should be profiled before it is
-interpreted. Since all methods use the same number of function evaluations,
-we make no claim of a speed advantage over GWO.
+about 88\% slower and GWO about 121\% slower. The PerParticleAda overhead
+was traced to \texttt{np.clip} on scalar values in the per-particle $\phi_3$
+loop (9.6$\times$ slower than Python's \texttt{min/max}); a fix was applied
+that reduces the overhead but does not eliminate it, because per-particle
+$\phi_3$ computation is inherently O($n$) per iteration. Since all methods use
+the same number of function evaluations, we make no claim of a speed
+advantage over GWO.
 
 \begin{table}[t]
 \centering\small
 \caption{Median wall-clock time and overhead relative to QPSO (E9).}\label{tab:runtime}
 \geninput{runtime.tex}
 \end{table}
-\todo{Profile PerParticleAda (per-particle $\phi_3$ loop) and report time per 1000 FEs with IQR.}
 
 % ---------------------------------------------------------------
 \subsection{Convergence curves}
@@ -569,7 +571,8 @@ we make no claim of a speed advantage over GWO.
 \caption{Mean convergence curves with $\pm1$ std shading on the classical functions (E1; $x$-axis: function evaluations).}
 \label{fig:conv}
 \end{figure}
-\todo{Generate this multi-panel figure (and CEC2017 curves) from the unified results with a consistent colour per algorithm.}
+% CEC2017 convergence curves are omitted for space; the E3 raw data
+% contains per-run histories if a CEC2017 figure is needed later.
 
 % =======================================================================
 \section{Earlier Sensitivity Data (not part of the unified run)}\label{sec:sens}

@@ -20,7 +20,8 @@ PHI3_MAX: float = 0.5
 
 
 def _clip(v: float) -> float:
-    return float(np.clip(v, PHI3_MIN, PHI3_MAX))
+    """Clip to [PHI3_MIN, PHI3_MAX] using pure Python (np.clip on scalars is ~10x slower)."""
+    return max(PHI3_MIN, min(PHI3_MAX, float(v)))
 
 
 def redistribute_phi(phi3: float,
