@@ -26,3 +26,6 @@
    runs. The paper calls them "fixed in advance" and does not claim they were generated.
 8. **E8.** Features are now standardised on the outer-train split and inner CV is
    5-fold, as planned. Madelon uses 630 FEs per run (1,530 elsewhere) for compute reasons.
+9. **Rewritten hashes.** History was rewritten on 2026-11-02 only to remove commit-message
+   trailers; dates and file contents are unchanged. `791cf44` (cited in Amendment 1, A1.3)
+   is now `4e8e778`, `e090189` is `128caf1`, and the amendment `ca64d92` is `fff04fc`.

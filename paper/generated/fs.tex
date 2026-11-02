@@ -1,0 +1,24 @@
+% Auto-generated from results/e8_feature_selection/e8_results.json
+% E8: nested CV (30 outer folds = 5-fold × 6 repeats; 3-fold inner; T=50)
+% kNN = k-NN test accuracy; SVM = RBF-SVM test accuracy; #f = mean features selected
+% * = Holm-corrected Wilcoxon p < 0.05 vs QPSO (two-sided)
+\begin{tabular}{lrrrrrrrr}
+\toprule
+ & \multicolumn{2}{c}{BC(30)} & \multicolumn{2}{c}{Wine(13)} & \multicolumn{2}{c}{Iono(34)} & \multicolumn{2}{c}{Mad(500)} \\
+Algorithm & kNN & \#f & kNN & \#f & kNN & \#f & kNN & \#f \\
+\midrule
+QPSO       & 0.929 &  2 & 0.896 &  2 & 0.861 &  7 & 0.927 & 207 \\
+PSO        & 0.927 &  4 & 0.902 &  3 & 0.863 &  9 & 0.931 & 229 \\
+ACO$_R$    & 0.931 &  2 & 0.893 &  2 & 0.859 &  8 & 0.936 & 205 \\
+ABC        & 0.920 &  6 & \textbf{0.919}$^{*}$ &  3 & 0.839 & 12 & 0.928 & 247 \\
+GWO        & 0.921 &  2 & 0.906 &  2 & 0.848 &  6 & \textbf{0.945} & 86 \\
+WOA        & 0.923 &  2 & 0.897 &  2 & 0.850 &  7 & 0.938 & 122 \\
+AntBio     & \textbf{0.931} &  2 & 0.898 &  2 & \textbf{0.865} &  8 & 0.938 & 215 \\
+BeeBio     & \textbf{0.936}$^{*}$ &  2 & 0.896 &  2 & 0.860 &  7 & 0.929 & 208 \\
+Ant-Cos    & 0.933 &  2 & 0.898 &  2 & 0.844 &  7 & 0.941 & 207 \\
+Ant-FB     & 0.933 &  2 & 0.901 &  2 & 0.852 &  7 & 0.936 & 207 \\
+\midrule
+All-feat   & 0.930 & 30 & 0.702 & 13 & 0.885 & 34 & 0.913 & 500 \\
+MI-$k$     & 0.917 &  7 & 0.714 &  3 & 0.832 &  9 & 0.947 & 125 \\
+\bottomrule
+\end{tabular}
