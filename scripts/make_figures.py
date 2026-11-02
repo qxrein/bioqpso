@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-make_figures.py — Generate all manuscript figures (PDF + PNG, 300 dpi).
-
-Colour-blind-safe palette; identical colour+marker per algorithm across all figures.
+make_figures.py — all manuscript figures (PDF + PNG), sized for the printed text
+width so that 7 pt in the file is 7 pt on paper. Colour plus line style and marker
+identify an algorithm, with one fixed style per algorithm across all figures.
 """
 from __future__ import annotations
-import json, os, sys
+import glob, json, os, sys
+from collections import defaultdict
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -13,318 +14,219 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-import pandas as pd
+from matplotlib.colors import ListedColormap
+from scipy import stats
 
-OUT_DIR = "paper/figures"
-os.makedirs(OUT_DIR, exist_ok=True)
-
-# ── Colour-blind-safe palette (Wong 2011) ──────────────────────────────────
-PALETTE = {
-    "pso":              ("#E69F00", "o",  "-"),
-    "qpso":             ("#56B4E9", "s",  "-"),
-    "aco_r":            ("#009E73", "^",  "--"),
-    "abc":              ("#F0E442", "D",  "--"),
-    "gwo":              ("#0072B2", "v",  "-"),
-    "woa":              ("#D55E00", "P",  "-."),
-    "ant-fixed":        ("#CC79A7", "h",  "-"),
-    "bee-fixed":        ("#000000", "H",  "--"),
-    "ant-linear":       ("#56B4E9", "x",  ":"),
-    "ant-cosine":       ("#009E73", "+",  ":"),
-    "ant-feedback":     ("#D55E00", "*",  ":"),
-    "bee-per_particle": ("#CC79A7", "p",  "-."),
+OUT = "paper/figures"
+os.makedirs(OUT, exist_ok=True)
+WIDTH = 4.8  # inches, LNCS text width
+plt.rcParams.update({
+    "font.size": 7, "axes.titlesize": 7.5, "axes.labelsize": 7, "xtick.labelsize": 7,
+    "ytick.labelsize": 7, "legend.fontsize": 7, "axes.linewidth": 0.5, "pdf.fonttype": 42,
+    "xtick.major.width": 0.5, "ytick.major.width": 0.5, "xtick.minor.visible": False,
+    "ytick.minor.visible": False, "axes.spines.top": False, "axes.spines.right": False,
+    "axes.grid": True, "grid.linewidth": 0.3, "grid.color": "#d9d9d9", "axes.axisbelow": True,
+})
+STYLE = {  # colour, line style, marker
+    "qpso":      ("#4F46B8", "-",  "o"),
+    "gwo":       ("#0072B2", "-",  "v"),
+    "lshade":    ("#882255", "--", "X"),
+    "abc":       ("#E69F00", "--", "D"),
+    "woa":       ("#56B4E9", ":",  "P"),
+    "ant-fixed": ("#D55E00", "-",  "s"),
+    "ant-cosine":("#CC79A7", "--", "^"),
+    "ant-feedback": ("#CC79A7", ":", "*"),
+    "bee-fixed": ("#009E73", "-",  "h"),
+    "bee-per_particle": ("#009E73", ":", "p"),
 }
-ALGO_ORDER = list(PALETTE.keys())
-
-FUNCTION_DISPLAY = {
-    "sphere":          "Sphere",   "rosenbrock": "Rosenbrock",
-    "zakharov":        "Zakharov", "dixon_price": "Dixon-Price",
-    "rastrigin":       "Rastrigin","ackley":      "Ackley",
-    "griewank":        "Griewank", "schwefel":    "Schwefel",
-    "levy":            "Levy",     "styblinski_tang": "Styblinski-Tang",
-}
-
-ALGO_DISPLAY = {
-    "pso":"PSO", "qpso":"QPSO", "aco_r":"ACO$_R$", "abc":"ABC",
-    "gwo":"GWO", "woa":"WOA", "ant-fixed":"AntBio", "bee-fixed":"BeeBio",
-    "ant-linear":"Ant-Lin", "ant-cosine":"Ant-Cos",
-    "ant-feedback":"Ant-FB", "bee-per_particle":"Bee-PP",
-}
+NAME = {"qpso": "QPSO", "gwo": "GWO", "lshade": "L-SHADE", "abc": "ABC", "woa": "WOA",
+        "ant-fixed": "AntBio", "ant-cosine": "Ant-Cos", "ant-feedback": "Ant-FB",
+        "bee-fixed": "BeeBio", "bee-per_particle": "Bee-PP"}
+FN = {"sphere": "Sphere", "rosenbrock": "Rosenbrock", "zakharov": "Zakharov", "dixon_price": "Dixon–Price",
+      "rastrigin": "Rastrigin", "ackley": "Ackley", "griewank": "Griewank", "schwefel": "Schwefel",
+      "levy": "Levy", "styblinski_tang": "Styblinski–Tang"}
+ST_OPT = -39.16616570377142 * 30
 
 
-def _save(fig, name: str, dpi: int = 300):
-    p_png = os.path.join(OUT_DIR, name + ".png")
-    p_pdf = os.path.join(OUT_DIR, name + ".pdf")
-    fig.savefig(p_png, dpi=dpi, bbox_inches="tight")
-    fig.savefig(p_pdf, bbox_inches="tight")
+def save(fig, name):
+    fig.savefig(f"{OUT}/{name}.pdf", bbox_inches="tight")
+    fig.savefig(f"{OUT}/{name}.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
-    print(f"  Saved {p_png}")
+    print("  saved", name)
 
 
-# ── 1. Convergence curves ──────────────────────────────────────────────────
-
-def plot_convergence(results_dir: str, top_n: int = 6):
-    """Small-multiples convergence plots, log-y, FEs on x-axis."""
-    # Load mean convergence histories per (algo, function)
-    records = {}
-    for fn_file in Path(results_dir).glob("*.json"):
-        with open(fn_file) as f:
-            r = json.load(f)
-        key = (r["algorithm"], r["function"])
-        if key not in records:
-            records[key] = []
-        records[key].append(r.get("convergence", []))
-
-    fns = list(FUNCTION_DISPLAY.keys())
-    # Always show QPSO + GWO + top-4 by rank on E1
-    priority = ["gwo", "qpso", "abc", "ant-fixed", "ant-feedback", "ant-cosine",
-                "bee-fixed", "ant-linear"]
-    show_algos = [a for a in priority if a in ALGO_DISPLAY][:top_n + 2]
-
-    hist_every = 10
-    n_cols = 5; n_rows = 2
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(18, 7))
-    axes = axes.flatten()
-
-    for ax_idx, fn in enumerate(fns):
-        ax = axes[ax_idx]
-        for algo in show_algos:
-            runs = records.get((algo, fn), [])
-            if not runs: continue
-            L = min(len(r) for r in runs)
-            arr = np.array([r[:L] for r in runs], dtype=float)
-            mean = np.mean(arr, axis=0)
-            std  = np.std(arr, axis=0)
-            x    = np.arange(L) * hist_every * 30   # FEs
-            col, marker, ls = PALETTE.get(algo, ("#999999","o","-"))
-            ax.semilogy(x, np.abs(mean) + 1e-300, color=col, ls=ls,
-                        label=ALGO_DISPLAY.get(algo, algo), lw=1.3)
-            # ±1 std shading
-            lo = np.abs(mean - std) + 1e-300
-            hi = np.abs(mean + std) + 1e-300
-            ax.fill_between(x, lo, hi, color=col, alpha=0.10)
-        ax.set_title(FUNCTION_DISPLAY.get(fn, fn), fontsize=9)
-        ax.set_xlabel("FEs", fontsize=7)
-        ax.set_ylabel("Fitness", fontsize=7)
-        ax.tick_params(labelsize=6)
-        ax.grid(True, which="both", ls="--", alpha=0.3)
-
-    # Legend in last axis if spare
-    if len(fns) < len(axes):
-        legend_ax = axes[len(fns)]
-        handles = [
-            plt.Line2D([0],[0], color=PALETTE.get(a,("#999","o","-"))[0],
-                       ls=PALETTE.get(a,("#999","o","-"))[2],
-                       label=ALGO_DISPLAY.get(a,a))
-            for a in show_algos
-        ]
-        legend_ax.legend(handles=handles, fontsize=7, loc="center")
-        legend_ax.axis("off")
-
-    fig.tight_layout()
-    _save(fig, "convergence_classical")
+def shared_legend(fig, algos, ncol=4, y=1.0):
+    handles = [plt.Line2D([0], [0], color=STYLE[a][0], ls=STYLE[a][1], marker=STYLE[a][2], ms=3.5, lw=1.0,
+                          label=NAME[a]) for a in algos]
+    fig.legend(handles=handles, loc="lower center", ncol=ncol, frameon=False,
+               bbox_to_anchor=(0.5, y), handlelength=2.6, columnspacing=1.2)
 
 
-# ── 2. CD diagram ──────────────────────────────────────────────────────────
-
-def plot_cd_diagram(ranks_csv: str, summary_json: str, name: str):
-    """Simple horizontal CD diagram."""
-    ranks_df = pd.read_csv(ranks_csv)
-    with open(summary_json) as f:
-        summary = json.load(f)
-
-    cd = summary.get("nemenyi_CD", 1.0)
-    algos = ranks_df["algorithm"].tolist()
-    rank_vals = ranks_df["mean_rank"].tolist()
-    algo_disp = [ALGO_DISPLAY.get(a, a) for a in algos]
-
-    fig, ax = plt.subplots(figsize=(9, max(3, len(algos) * 0.4)))
-    y_positions = list(range(len(algos)))
-
-    for y, (algo, r) in enumerate(zip(algos, rank_vals)):
-        col, marker, _ = PALETTE.get(algo, ("#555555", "o", "-"))
-        ax.barh(y, r, color=col, alpha=0.8, height=0.6)
-        ax.text(r + 0.05, y, f"{r:.2f}", va="center", fontsize=8)
-
-    # CD bar on the first algorithm
-    best_rank = min(rank_vals)
-    ax.annotate("", xy=(best_rank + cd, len(algos) - 0.5),
-                xytext=(best_rank, len(algos) - 0.5),
-                arrowprops=dict(arrowstyle="<->", color="red", lw=1.5))
-    ax.text(best_rank + cd / 2, len(algos) - 0.3,
-            f"CD={cd:.2f}", ha="center", color="red", fontsize=8)
-
-    ax.set_yticks(y_positions)
-    ax.set_yticklabels(algo_disp, fontsize=9)
-    ax.set_xlabel("Average Rank", fontsize=10)
-    ax.set_title(f"Critical Difference Diagram (Nemenyi, α=0.05)", fontsize=10)
-    ax.invert_yaxis()
-    ax.grid(True, axis="x", ls="--", alpha=0.4)
-    fig.tight_layout()
-    _save(fig, name)
-
-
-# ── 3. Fixed φ3 heat-map ──────────────────────────────────────────────────
-
-def plot_phi3_heatmap(e2_results_dir: str):
-    """Heat-map: function × φ3 for ant leader; log10 mean fitness."""
-    phi3_vals = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
-    phi3_map  = {0.0: "ant-fixed-p00", 0.1: "ant-fixed-p01", 0.2: "ant-fixed-p02",
-                 0.3: "ant-fixed-p03", 0.4: "ant-fixed-p04", 0.5: "ant-fixed-p05"}
-    fns = list(FUNCTION_DISPLAY.keys())
-
-    # Load
-    records: dict[tuple, list[float]] = {}
-    for fn_file in Path(e2_results_dir).glob("*.json"):
-        with open(fn_file) as f:
-            r = json.load(f)
-        records.setdefault((r["algorithm"], r["function"]), []).append(r["final_f"])
-
-    mat = np.full((len(fns), len(phi3_vals)), np.nan)
-    for j, phi3 in enumerate(phi3_vals):
-        algo = phi3_map[phi3]
-        for i, fn in enumerate(fns):
-            vals = records.get((algo, fn), [])
-            if vals:
-                mat[i, j] = np.log10(np.mean(vals) + 1e-300)
-
-    # Normalise per function
-    norm_mat = mat.copy()
-    for i in range(len(fns)):
-        row = mat[i]
-        finite = row[np.isfinite(row)]
-        if len(finite):
-            rng = finite.max() - finite.min()
-            norm_mat[i] = (row - finite.min()) / (rng + 1e-300)
-
-    fig, ax = plt.subplots(figsize=(8, 5))
-    im = ax.imshow(norm_mat, aspect="auto", cmap="RdYlGn_r",
-                   vmin=0, vmax=1, interpolation="nearest")
-    ax.set_xticks(range(len(phi3_vals)))
-    ax.set_xticklabels([f"φ₃={v}" for v in phi3_vals], fontsize=9)
-    ax.set_yticks(range(len(fns)))
-    ax.set_yticklabels([FUNCTION_DISPLAY[fn] for fn in fns], fontsize=9)
-    ax.set_xlabel("Fixed φ₃ value", fontsize=10)
-    ax.set_title("Normalised log₁₀ mean fitness (Ant leader, fixed φ₃ sweep)\n"
-                 "Green = low (better), Red = high (worse)", fontsize=9)
-    plt.colorbar(im, ax=ax, label="Normalised log₁₀ fitness")
-    fig.tight_layout()
-    _save(fig, "phi3_heatmap")
+def fig_convergence():
+    """Median error curves; the median is not dominated by single diverged runs."""
+    algos = ["qpso", "gwo", "woa", "abc", "lshade", "ant-fixed", "ant-cosine", "bee-fixed"]
+    curves = defaultdict(list)
+    for a in algos:
+        for f in FN:
+            for p in glob.glob(f"results/e1_classical/{a}__{f}__d30__r*.json"):
+                curves[a, f].append(json.load(open(p))["convergence"])
+    fig, axes = plt.subplots(4, 3, figsize=(WIDTH, 5.2), sharex=True)
+    axes = axes.ravel()
+    for ax, f in zip(axes, FN):
+        fstar = ST_OPT if f == "styblinski_tang" else 0.0
+        for a in algos:
+            L = min(len(c) for c in curves[a, f])
+            arr = np.array([c[:L] for c in curves[a, f]], dtype=float) - fstar
+            med = np.median(arr, axis=0)
+            x = np.arange(L) * 300 + 30
+            col, ls, mk = STYLE[a]
+            floor = 1e-30
+            y = np.maximum(med, floor)
+            ax.plot(x, y, color=col, ls=ls, lw=0.9, marker=mk, ms=2.8, markevery=(L // 6, L // 3))
+        ax.set_yscale("log")
+        ax.set_ylim(bottom=1e-30 if ax.get_ylim()[0] < 1e-28 else None)
+        ax.set_title(FN[f], pad=2)
+        ax.set_xticks([0, 15000, 30000]); ax.set_xticklabels(["0", "15k", "30k"])
+        ax.yaxis.set_major_locator(matplotlib.ticker.LogLocator(numticks=4))
+        ax.yaxis.set_minor_locator(matplotlib.ticker.NullLocator())
+    for ax in axes[len(FN):]:
+        ax.set_visible(False)
+    for ax in axes[6:9]:
+        ax.tick_params(labelbottom=True)
+    axes[9].set_xlabel("Function evaluations")
+    for ax in axes[[0, 3, 6, 9]]:
+        ax.set_ylabel(r"Median $f-f^*$")
+    fig.tight_layout(pad=0.3, h_pad=0.6, w_pad=0.4)
+    # The two unused panels hold the shared legend.
+    handles = [plt.Line2D([0], [0], color=STYLE[a][0], ls=STYLE[a][1], marker=STYLE[a][2], ms=3.5, lw=1.0,
+                          label=NAME[a]) for a in algos]
+    pos = axes[10].get_position()
+    fig.legend(handles=handles, ncol=2, frameon=False, handlelength=2.6, columnspacing=1.2,
+               loc="center", bbox_to_anchor=((pos.x0 + axes[11].get_position().x1) / 2, (pos.y0 + pos.y1) / 2))
+    save(fig, "convergence_classical")
 
 
-# ── 4. φ3 traces ───────────────────────────────────────────────────────────
-
-def plot_phi3_traces(e1_results_dir: str):
-    """φ3(t) mean ± IQR for scheduled variants on Levy and Schwefel."""
-    trace_algos = ["ant-linear", "ant-cosine", "ant-feedback"]
-    target_fns  = ["levy", "schwefel", "sphere", "rastrigin"]
-
-    records: dict[tuple, list] = {}
-    for fn_file in Path(e1_results_dir).glob("*.json"):
-        with open(fn_file) as f:
-            r = json.load(f)
-        if r["algorithm"] not in trace_algos: continue
-        phi3 = r.get("phi3_hist")
-        if phi3 is None: continue
-        records.setdefault((r["algorithm"], r["function"]), []).append(phi3)
-
-    fig, axes = plt.subplots(2, 2, figsize=(12, 7))
-    axes = axes.flatten()
-    for ax_idx, fn in enumerate(target_fns):
-        ax = axes[ax_idx]
-        for algo in trace_algos:
-            runs = records.get((algo, fn), [])
-            if not runs: continue
-            L = min(len(r) for r in runs)
-            arr = np.array([r[:L] for r in runs], dtype=float)
-            mean = np.mean(arr, axis=0)
-            p25  = np.percentile(arr, 25, axis=0)
-            p75  = np.percentile(arr, 75, axis=0)
-            x    = np.arange(L)
-            col, marker, ls = PALETTE.get(algo, ("#555","o","-"))
-            ax.plot(x, mean, color=col, ls=ls,
-                    label=ALGO_DISPLAY.get(algo, algo), lw=1.4)
-            ax.fill_between(x, p25, p75, color=col, alpha=0.15)
-        ax.axhline(0.3, color="gray", ls="--", lw=1.0, label="Fixed φ₃=0.3")
-        ax.set_title(FUNCTION_DISPLAY.get(fn, fn), fontsize=9)
-        ax.set_xlabel("Iteration", fontsize=8)
-        ax.set_ylabel("φ₃(t)", fontsize=8)
-        ax.set_ylim(0.05, 0.55)
-        ax.legend(fontsize=7)
-        ax.grid(True, ls="--", alpha=0.3)
-    fig.tight_layout()
-    _save(fig, "phi3_traces")
+SEQ = ListedColormap(["#08519c", "#3182bd", "#6baed6", "#bdd7e7", "#eff3ff", "#f7f7f7"])
 
 
-# ── 5. Scalability ─────────────────────────────────────────────────────────
+def rank_cells(ax, R, xl, yl, cmap=SEQ, title=None, n=None):
+    n = n or R.shape[1]
+    ax.imshow(R, cmap=ListedColormap(SEQ.colors[:n]) if n < 6 else cmap, vmin=0.5, vmax=n + 0.5, aspect="auto")
+    ax.grid(False)
+    for s in ax.spines.values():
+        s.set_visible(False)
+    ax.tick_params(length=0)
+    ax.set_xticks(range(len(xl))); ax.set_xticklabels(xl)
+    ax.set_yticks(range(len(yl))); ax.set_yticklabels(yl)
+    for i in range(R.shape[0]):
+        for j in range(R.shape[1]):
+            v = R[i, j]
+            t = f"{v:.0f}" if float(v).is_integer() else f"{v:.1f}"
+            ax.text(j, i, t, ha="center", va="center", fontsize=6.5,
+                    color="white" if v <= 2 else "#222222")
+    if title:
+        ax.set_title(title, pad=3)
 
-def plot_scalability(e4_dir: str):
-    """Log-log fitness vs D for 6 functions × subset of algorithms."""
+
+def fig_phi3():
+    """Per-function rank of the fixed-phi3 settings; no-bio is the true phi3 = 0 run."""
+    fig, axes = plt.subplots(1, 2, figsize=(WIDTH, 2.3), sharey=True)
+    fns = list(FN)
+    for ax, L, title in zip(axes, ("ant", "bee"), ("Ant leader", "Bee leader")):
+        keys = [f"{L}-nobio"] + [f"{L}-fixed-p0{i}" for i in range(1, 6)]
+        M = np.zeros((len(fns), len(keys)))
+        for i, f in enumerate(fns):
+            for j, k in enumerate(keys):
+                M[i, j] = np.mean([json.load(open(p))["final_f"]
+                                   for p in glob.glob(f"results/e2_controls/{k}__{f}__d30__r*.json")])
+        R = np.apply_along_axis(stats.rankdata, 1, M)
+        rank_cells(ax, R, ["no-bio", "0.1", "0.2", "0.3", "0.4", "0.5"], [FN[f] for f in fns], title=title)
+        ax.set_xlabel(r"Fixed $\phi_3$")
+    fig.tight_layout(pad=0.3, w_pad=0.8)
+    save(fig, "phi3_heatmap")
+
+
+def fig_scalability():
     dims = [30, 50, 100]
-    fns  = ["sphere", "rastrigin", "rosenbrock", "levy", "schwefel", "griewank"]
-    show_algos = ["qpso", "gwo", "ant-fixed", "ant-cosine", "ant-feedback",
-                  "bee-fixed", "bee-per_particle"]
+    fns = ["sphere", "rastrigin", "rosenbrock", "levy", "schwefel", "griewank"]
+    algos = ["qpso", "gwo", "ant-fixed", "ant-cosine", "ant-feedback", "bee-fixed", "bee-per_particle"]
+    fig, axes = plt.subplots(2, 3, figsize=(WIDTH, 3.5))
+    for ax, f in zip(axes.ravel(), fns):
+        vals = {}
+        for a in algos:
+            vals[a] = [np.mean([json.load(open(p))["final_f"] for p in
+                                glob.glob(f"results/e4_scalability/{a}__{f}__d{D}__r*.json")]) for D in dims]
+        nz = [v for a in algos for v in vals[a] if v > 1e-250]
+        lo, hi = np.log10(min(nz)), np.log10(max(nz))
+        pad = max((hi - lo) * 0.08, 0.3)
+        band = 10 ** (lo - 3 * pad)  # separate "= 0" band below the data
+        any_zero = False
+        for a in algos:
+            col, ls, mk = STYLE[a]
+            y = np.array(vals[a], dtype=float)
+            zero = y <= 1e-250
+            any_zero = any_zero or zero.any()
+            ax.plot(np.array(dims)[~zero], y[~zero], color=col, ls=ls, marker=mk, ms=3, lw=0.9)
+            ax.plot(np.array(dims)[zero], [band] * zero.sum(), ls="none", color=col, marker=mk, ms=3,
+                    clip_on=False)
+        ax.set_yscale("log")
+        ax.set_xscale("log")
+        ax.set_xticks(dims); ax.set_xticklabels(dims)
+        ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
+        ax.yaxis.set_major_locator(matplotlib.ticker.LogLocator(numticks=5))
+        ax.yaxis.set_minor_locator(matplotlib.ticker.NullLocator())
+        bottom = band / 10 ** pad if any_zero else 10 ** (lo - pad)
+        ax.set_ylim(bottom, 10 ** (hi + pad))
+        if any_zero:
+            boundary = 10 ** (lo - 1.5 * pad)
+            ax.axhline(boundary, color="#888888", lw=0.5, ls=(0, (2, 2)))
+            ax.text(101, band, "= 0", ha="left", va="center", fontsize=7, clip_on=False)
+        ax.set_title(FN[f], pad=2)
+    for ax in axes[1]:
+        ax.set_xlabel("$D$")
+    for ax in axes[:, 0]:
+        ax.set_ylabel("Mean best $f$")
+    fig.subplots_adjust(left=0.12, right=0.97, top=0.88, bottom=0.11, hspace=0.42, wspace=0.42)
+    shared_legend(fig, algos, ncol=4, y=0.92)
+    save(fig, "scalability")
 
-    records: dict[tuple, list[float]] = {}
-    for fn_file in Path(e4_dir).glob("*.json"):
-        with open(fn_file) as f:
-            r = json.load(f)
-        records.setdefault((r["algorithm"], r["function"], r["dim"]), []).append(r["final_f"])
 
-    fig, axes = plt.subplots(2, 3, figsize=(14, 8))
-    axes = axes.flatten()
-    for ax_idx, fn in enumerate(fns):
-        ax = axes[ax_idx]
-        for algo in show_algos:
-            y_vals = []
-            for d in dims:
-                vals = records.get((algo, fn, d), [])
-                y_vals.append(np.mean(vals) if vals else np.nan)
-            if any(np.isfinite(v) for v in y_vals):
-                col, marker, ls = PALETTE.get(algo, ("#555","o","-"))
-                ax.semilogy(dims, [abs(v)+1e-300 for v in y_vals],
-                            color=col, ls=ls, marker=marker, ms=5,
-                            label=ALGO_DISPLAY.get(algo, algo), lw=1.3)
-        ax.set_title(FUNCTION_DISPLAY.get(fn, fn), fontsize=9)
-        ax.set_xlabel("D", fontsize=8)
-        ax.set_ylabel("Mean fitness", fontsize=8)
-        ax.set_xticks(dims)
-        ax.legend(fontsize=6, ncol=2)
-        ax.grid(True, ls="--", alpha=0.3)
-    fig.tight_layout()
-    _save(fig, "scalability")
-
-
-# ── Main ────────────────────────────────────────────────────────────────────
-
-def main():
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--e1",  default="results/e1_classical")
-    parser.add_argument("--e2",  default="results/e2_controls")
-    parser.add_argument("--e4",  default="results/e4_scalability")
-    parser.add_argument("--analysis", default="results/analysis/e1_classical")
-    args = parser.parse_args()
-
-    print("Generating figures…")
-
-    if os.path.isdir(args.e1):
-        plot_convergence(args.e1)
-        plot_phi3_traces(args.e1)
-
-    analysis_ranks = os.path.join(args.analysis, "ranks.csv")
-    analysis_summ  = os.path.join(args.analysis, "summary.json")
-    if os.path.exists(analysis_ranks):
-        plot_cd_diagram(analysis_ranks, analysis_summ, "cd_classical")
-
-    if os.path.isdir(args.e2):
-        plot_phi3_heatmap(args.e2)
-
-    if os.path.isdir(args.e4):
-        plot_scalability(args.e4)
-
-    print("Figures done.")
+def fig_sensitivity():
+    p6 = "results/analysis/e6_params.json"
+    if not os.path.exists(p6):
+        print("  E6 parameters missing; skipped")
+        return
+    params = json.load(open(p6))["params"]
+    fns = ["sphere", "rastrigin", "levy", "styblinski_tang", "schwefel", "griewank", "F12017", "F42017", "F112017", "F212017"]
+    lab = [FN[f][:6] if f in FN else f.replace("2017", "") for f in fns]
+    titles = {"rho": r"$\rho$ (AntBio)", "Delta": r"$\Delta$ (AntBio)", "Lscout": r"$L_{\mathrm{scout}}$ (BeeBio)",
+              "W": r"$W$ (Ant-FB)", "delta": r"$\delta$ (Ant-FB)",
+              "phi3bounds": r"$[\phi_3^{\min},\phi_3^{\max}]$ (Ant-Cos)", "beta": r"$\beta$ start–end (AntBio)"}
+    data = defaultdict(list)
+    for p in glob.glob("results/e6_sensitivity/*.json"):
+        r = json.load(open(p))
+        data[r["param"], r["value"], r["function"]].append(r["final_f"])
+    fig, axes = plt.subplots(3, 3, figsize=(WIDTH, 5.6), sharey=True)
+    axes = axes.ravel()
+    for ax, (p, t) in zip(axes, titles.items()):
+        vals = params[p]
+        M = np.array([[np.mean(data[p, v, f]) for v in vals] for f in fns])
+        R = np.apply_along_axis(stats.rankdata, 1, M)
+        xl = [v.replace("-", "\n") for v in vals]
+        rank_cells(ax, R, xl, lab, title=t, n=5)
+        ax.tick_params(axis="x", labelsize=6.5)
+    for ax in axes[7:]:
+        ax.set_visible(False)
+    for ax in axes[4:7]:
+        ax.tick_params(labelleft=True)
+    fig.tight_layout(pad=0.3, h_pad=0.8, w_pad=0.5)
+    save(fig, "sensitivity")
 
 
 if __name__ == "__main__":
-    main()
+    import matplotlib.ticker  # noqa: F401
+    if glob.glob("results/e1_classical/lshade__sphere*"):
+        fig_convergence()
+    fig_phi3()
+    fig_scalability()
+    fig_sensitivity()
