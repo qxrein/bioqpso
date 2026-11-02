@@ -44,13 +44,12 @@ class ACO_R(BaseOptimizer):
             archive = archive[idx]
             archive_f = archive_f[idx]
 
-            sigma = self.xi * np.abs(archive[-1] - archive[0]) + 1e-300
-
             new_sols = np.empty((m, self.dim))
             new_f = np.empty(m)
             for j in range(m):
                 k = int(self.rng.choice(m, p=weights))
                 center = archive[k]
+                sigma = self.xi * np.sum(np.abs(archive - center), axis=0) / (m - 1)
                 candidate = self.boundary(center + self.rng.standard_normal(self.dim) * sigma)
                 new_sols[j] = candidate
                 new_f[j] = self.func(candidate)

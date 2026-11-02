@@ -15,7 +15,7 @@ from bioqpso.benchmarks import get_classical_problem
 N_PARTICLES = 30
 MAX_ITER    = 1000
 MAX_FES     = N_PARTICLES * (MAX_ITER + 1)   # 30 030
-N_JOBS      = 8    # parallel workers
+N_JOBS      = 9
 OUT_DIR     = "results/e1_classical"
 os.makedirs(OUT_DIR, exist_ok=True)
 
@@ -25,6 +25,7 @@ SEEDS = [int(s) for s in _s["seeds"]]
 N_RUNS = len(SEEDS)   # 30
 
 ALGORITHMS = {
+    "lshade":           {},
     "pso":              {},
     "qpso":             {},
     "aco_r":            {},

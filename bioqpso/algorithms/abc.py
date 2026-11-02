@@ -12,14 +12,14 @@ class ABC(BaseOptimizer):
     Parameters
     ----------
     limit : int
-        Abandonment limit (default 30).  A food source is abandoned and
-        re-scouted when its trial counter exceeds limit.  Scout
-        re-evaluations count toward the FE budget.
+        Abandonment limit (default None = SN * D, the usual ABC setting).  A
+        food source is abandoned and re-scouted when its trial counter exceeds
+        limit.  Scout re-evaluations count toward the FE budget.
     """
 
-    def __init__(self, *args, limit: int = 30, **kwargs):
+    def __init__(self, *args, limit: int | None = None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.limit = limit
+        self.limit = limit if limit is not None else (self.n_particles // 2) * self.dim
 
     def run(self) -> tuple[float, list[float]]:
         self._initialize()

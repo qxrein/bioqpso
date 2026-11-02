@@ -8,7 +8,7 @@ from joblib import Parallel, delayed
 from bioqpso.runner import run_job
 from bioqpso.benchmarks import get_classical_problem
 
-N_PARTICLES = 30; N_JOBS = 4; OUT_DIR = "results/e4_scalability"
+N_PARTICLES = 30; N_JOBS = 9; OUT_DIR = "results/e4_scalability"
 os.makedirs(OUT_DIR, exist_ok=True)
 with open("config/seeds.yaml") as f: SEEDS = [int(s) for s in yaml.safe_load(f)["seeds"]]
 N_RUNS = len(SEEDS)

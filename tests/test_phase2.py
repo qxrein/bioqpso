@@ -299,3 +299,21 @@ def test_per_particle_schedule():
     # intermediate
     v = s.per_particle(8, 16)
     assert PHI3_MIN <= v <= PHI3_MAX
+
+
+# ─── Regressions: no-bio weights and fixed φ3 = 0 ───────────────────────────
+def test_nobio_weights_sum_to_one():
+    phi1, phi2, phi3 = redistribute_phi(0.0)
+    assert phi3 == 0.0
+    assert abs(phi1 + phi2 - 1.0) < 1e-12
+    assert abs(phi1 / phi2 - 4.0 / 3.0) < 1e-12
+
+
+def test_fixed_zero_is_not_clipped():
+    assert FixedSchedule(0.0)(0, 10) == 0.0
+
+
+def test_custom_bounds_are_honoured():
+    s = LinearSchedule(phi3_max=0.6, phi3_min=0.05)
+    assert abs(s(0, 11) - 0.6) < 1e-12
+    assert abs(s(10, 11) - 0.05) < 1e-12

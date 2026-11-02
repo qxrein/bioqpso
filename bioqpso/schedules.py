@@ -5,8 +5,8 @@ Every schedule is a pure callable: schedule(t, T) -> float
 where t ∈ [0, T-1] is the current iteration and T is max_iter.
 
 Constraints enforced here:
-  - output is clipped to [PHI3_MIN, PHI3_MAX]
-  - φ3 >= 0 always
+  - default schedules stay in [PHI3_MIN, PHI3_MAX]; Linear/Cosine honour their own bounds
+  - φ3 ∈ [0, 1] always (φ3 = 0 is exact for FixedSchedule(0) and NoBioSchedule)
 
 Caller is responsible for keeping φ1+φ2+φ3 == 1 (via redistribute_phi).
 """
@@ -24,11 +24,20 @@ def _clip(v: float) -> float:
     return max(PHI3_MIN, min(PHI3_MAX, float(v)))
 
 
+def _clip_unit(v: float) -> float:
+    """Clip to the simplex-valid range [0, 1]."""
+    return max(0.0, min(1.0, float(v)))
+
+
 def redistribute_phi(phi3: float,
                      phi1_base: float = 4.0,
                      phi2_base: float = 3.0) -> tuple[float, float, float]:
-    """Return (phi1, phi2, phi3) summing to 1 with phi1:phi2 = phi1_base:phi2_base."""
-    phi3 = _clip(phi3)
+    """Return (phi1, phi2, phi3) summing to 1 with phi1:phi2 = phi1_base:phi2_base.
+
+    phi3 is only restricted to [0, 1]. Clipping it to [PHI3_MIN, PHI3_MAX] here
+    made the no-bio weights sum to 0.9, shrinking the attractor towards the origin.
+    """
+    phi3 = _clip_unit(phi3)
     remaining = 1.0 - phi3
     total_base = phi1_base + phi2_base
     phi1 = remaining * phi1_base / total_base
@@ -44,7 +53,7 @@ class FixedSchedule:
     """φ3 is constant throughout the run."""
 
     def __init__(self, phi3: float = 0.3):
-        self.phi3_const = _clip(phi3)
+        self.phi3_const = _clip_unit(phi3)
 
     def __call__(self, t: int, T: int, **_) -> float:
         return self.phi3_const
@@ -68,7 +77,7 @@ class LinearSchedule:
         if T <= 1:
             return self.phi3_max
         phi3 = self.phi3_max - (self.phi3_max - self.phi3_min) * (t / (T - 1))
-        return _clip(phi3)
+        return max(self.phi3_min, min(self.phi3_max, float(phi3)))
 
     def reset(self):
         pass
@@ -91,7 +100,7 @@ class CosineSchedule:
         phi3 = self.phi3_min + 0.5 * (self.phi3_max - self.phi3_min) * (
             1.0 + np.cos(np.pi * t / (T - 1))
         )
-        return _clip(phi3)
+        return max(self.phi3_min, min(self.phi3_max, float(phi3)))
 
     def reset(self):
         pass
@@ -200,7 +209,7 @@ class PerParticleSchedule:
 
     def per_particle(self, stag_i: int, stag_limit: int) -> float:
         denom = max(float(stag_limit), 1.0)
-        frac = float(np.clip(stag_i / denom, 0.0, 1.0))
+        frac = max(0.0, min(1.0, stag_i / denom))
         return _clip(PHI3_MIN + (PHI3_MAX - PHI3_MIN) * frac)
 
     def reset(self):

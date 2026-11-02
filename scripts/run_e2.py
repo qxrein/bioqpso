@@ -14,7 +14,7 @@ from bioqpso.benchmarks import get_classical_problem
 N_PARTICLES = 30
 MAX_ITER    = 1000
 MAX_FES     = N_PARTICLES * (MAX_ITER + 1)
-N_JOBS      = 8
+N_JOBS = 9
 OUT_DIR     = "results/e2_controls"
 os.makedirs(OUT_DIR, exist_ok=True)
 

@@ -16,7 +16,7 @@ N_PARTICLES = 30
 MAX_ITER    = 1000
 MAX_FES     = N_PARTICLES * (MAX_ITER + 1)   # 30 030  (light tier)
 DIM         = 30
-N_JOBS      = 4  # reduced to share machine with manuscript work
+N_JOBS      = 9
 OUT_DIR     = "results/e3_cec2017_d30"
 os.makedirs(OUT_DIR, exist_ok=True)
 
@@ -26,6 +26,7 @@ SEEDS  = [int(s) for s in _s["seeds"]]
 N_RUNS = len(SEEDS)
 
 ALGORITHMS = {
+    "lshade":           {},
     "pso":              {},
     "qpso":             {},
     "aco_r":            {},

@@ -8,7 +8,7 @@ from joblib import Parallel, delayed
 from bioqpso.runner import run_job
 from bioqpso.benchmarks.classical import schwefel
 
-N_PARTICLES = 30; MAX_ITER = 1000; N_JOBS = 8
+N_PARTICLES = 30; MAX_ITER = 1000; N_JOBS = 9
 OUT_DIR = "results/e7_schwefel"; os.makedirs(OUT_DIR, exist_ok=True)
 with open("config/seeds.yaml") as f: SEEDS = [int(s) for s in yaml.safe_load(f)["seeds"]]
 N_RUNS = len(SEEDS)

@@ -28,21 +28,21 @@ class WOA(BaseOptimizer):
             a2 = -1.0 - t / max(self.max_iter - 1, 1)  # from −1 to −2
 
             for i in range(self.n_particles):
-                r = self.rng.random()
-                A = 2.0 * a * self.rng.random(self.dim) - a
-                C = 2.0 * self.rng.random(self.dim)
+                # A, C, l and p are per-agent scalars, as in the reference code.
+                A = 2.0 * a * self.rng.random() - a
+                C = 2.0 * self.rng.random()
+                l = (a2 - 1.0) * self.rng.random() + 1.0
                 p = self.rng.random()
-                l = self.rng.uniform(a2, 1.0, self.dim)
 
                 if p < 0.5:
-                    if np.linalg.norm(A) < 1.0:
+                    if abs(A) < 1.0:
                         # Shrinking encircling
                         D = np.abs(C * self.gbest_pos - self.x[i])
                         self.x[i] = self.boundary(self.gbest_pos - A * D)
                     else:
-                        # Random search (exploration)
-                        rand_idx = int(self.rng.integers(self.n_particles))
-                        x_rand = self.x[rand_idx]
+                        # Random search; the reference code draws the leader per dimension
+                        idx = self.rng.integers(self.n_particles, size=self.dim)
+                        x_rand = self.x[idx, np.arange(self.dim)]
                         D = np.abs(C * x_rand - self.x[i])
                         self.x[i] = self.boundary(x_rand - A * D)
                 else:
@@ -53,6 +53,8 @@ class WOA(BaseOptimizer):
                         + self.gbest_pos
                     )
 
+            # Evaluate after all moves: gbest is fixed during the move loop (reference code).
+            for i in range(self.n_particles):
                 f_val = self.func(self.x[i])
                 self._update_bests(i, f_val)
             self._record(t)

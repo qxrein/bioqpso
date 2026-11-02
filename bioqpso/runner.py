@@ -30,7 +30,7 @@ import numpy as np
 from .budget import FEBudget
 from .boundary import BoundaryHandler
 from .algorithms import (
-    PSO, QPSO, ACO_R, ABC, GWO, WOA, AntBioQPSO, BeeBioQPSO,
+    PSO, QPSO, ACO_R, ABC, GWO, WOA, LSHADE, AntBioQPSO, BeeBioQPSO,
 )
 from .schedules import (
     make_schedule, FixedSchedule, redistribute_phi, PHI3_MIN, PHI3_MAX,
@@ -66,7 +66,8 @@ def _make_algorithm(name: str, func: FEBudget, lb: float, ub: float,
         return PSO(**common,
                    w=extra.get("w", 0.729),
                    c1=extra.get("c1", 1.494),
-                   c2=extra.get("c2", 1.494))
+                   c2=extra.get("c2", 1.494),
+                   vmax_frac=extra.get("vmax_frac", 0.2))
 
     if name_lower == "qpso":
         return QPSO(**common,
@@ -79,13 +80,16 @@ def _make_algorithm(name: str, func: FEBudget, lb: float, ub: float,
                      xi=extra.get("xi", 0.85))
 
     if name_lower == "abc":
-        return ABC(**common, limit=extra.get("limit", 30))
+        return ABC(**common, limit=extra.get("limit", None))
 
     if name_lower == "gwo":
         return GWO(**common)
 
     if name_lower == "woa":
         return WOA(**common, b=extra.get("b", 1.0))
+
+    if name_lower == "lshade":
+        return LSHADE(**common)
 
     # ── BioQPSO family ─────────────────────────────────────
     # Name format: "ant-<schedule>" or "bee-<schedule>"
