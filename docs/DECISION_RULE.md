@@ -150,3 +150,36 @@ An algorithm is credited on a dataset if:
 
 *This file was committed before any E1/E2/E3 experiments were run.*
 *SHA of the first commit containing this file: see git log.*
+
+---
+
+## Amendment 1 — 2026-11-02 19:34 +0530
+
+Appended by the author. The text above is unchanged.
+
+**A1.1 CEC2017 threshold.** On the CEC2017 experiments (E2c, E3, E3s), the bio-leader or a
+schedule is credited overall only if it is credited on **at least 15 of 28 functions** (a
+majority). The classical suite stays at the locked rule: **more than 5 of 10**.
+
+**A1.2 Wording.** This study is described as using a "decision rule specified before the
+analysis", not as "pre-registered". The term "pre-registered" in the original text above is
+kept only as a historical record. The dated facts are:
+
+- file timestamp of this document before this amendment: 2026-10-05 16:28:44 +0530;
+- first E1 log written: 2026-10-05 16:53:11 +0530;
+- first git commit containing this document: efdf818, 2026-10-14 00:36:40 +0530.
+
+The first commit postdates the first experiments. Only the file timestamp, which is not
+tamper-evident, supports the claim that the rules came first.
+
+**A1.3 State of knowledge at the time of this amendment.**
+
+- No E2c result exists (no output file has been written) and no E3s run has started.
+- The corrected E3 re-run is in progress and has not been read.
+- Results from before the fixes of commit 791cf44 had been read, including the earlier E3
+  light-budget ranks, which are superseded.
+- The corrected E1 and E2 classical results had already been read, so A1.1 does not
+  affect the classical rule, which remains as locked.
+
+**A1.4 Freeze.** Baseline parameters are frozen from the commit that records them in
+`docs/BASELINE_CHECK.md`. No algorithm's settings change after that commit.
