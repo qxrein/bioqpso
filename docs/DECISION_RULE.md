@@ -183,3 +183,40 @@ tamper-evident, supports the claim that the rules came first.
 
 **A1.4 Freeze.** Baseline parameters are frozen from the commit that records them in
 `docs/BASELINE_CHECK.md`. No algorithm's settings change after that commit.
+
+---
+
+## Amendment 2 — 2026-11-06 23:51 +0530
+
+Appended by the author. The text above, including Amendment 1, is unchanged.
+
+**A2.1 Reason.** On 2026-11-06 the opfunu 1.0.4 implementation used for all CEC2017 runs so far
+was compared with the official CEC2017 C code (`docs/CEC2017_CHECK.md`, section 7). It matches the
+official code on F1 only. The CEC2017 experiments are therefore re-run on the official code.
+
+**A2.2 Suite.** The official suite has 29 functions: F1 and F3-F30. F2 is excluded, as the
+CEC2017 organizers removed it. Official F6 (Schaffer F7), excluded so far because opfunu's version
+(opfunu F5) is nearly flat, is restored. Functions are named by their official numbers. The
+code is `bioqpso/benchmarks/cec2017_official.py`, which wraps the official
+`cec17_test_func.cpp` and its data files (vendored in `bioqpso/benchmarks/cec17_official/`).
+
+**A2.3 Threshold.** On the official suite (E2c, E3, E3s), the bio-leader or a schedule is credited
+overall only if it is credited on **at least 15 of 29 functions** (a majority). The per-function
+test is unchanged (one-sided Wilcoxon, Holm over functions, p < 0.05, relative improvement > 1% on
+raw values). The classical rule stays as locked: more than 5 of 10.
+
+**A2.4 Unchanged.** Algorithms, parameters (frozen per A1.4), seeds, run counts, budgets
+(E2c and E3: 30 particles, 30,030 FEs, D=30; E3s: 10,000*D FEs, D=30 and D=50), the E2c control
+settings (no-bio, fixed phi3 in {0.1, 0.3, 0.5}, random phi3), the FE-budget wrapper and the
+statistical procedures.
+
+**A2.5 opfunu results.** The opfunu results (E2c, E3, E3s) are kept unchanged in `results/` and are
+reported in the supplement as a documented discrepancy. They are not used for any claim in the
+main text.
+
+**A2.6 State of knowledge at the time of this amendment.**
+
+- All opfunu CEC2017 results (E2c, E3, E3s at D=30 and D=50) have been read and analysed.
+- No result on the official suite exists: the official code has been evaluated only at random
+  points and at its optima, for the wrapper tests, and no optimizer has been run on it.
+- Evaluation cost was timed on random points only, to estimate run time.
