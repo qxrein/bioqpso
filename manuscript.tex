@@ -1,175 +1,144 @@
-% =======================================================================
-% BioQPSO + AdaBioQPSO -- UNIFIED MANUSCRIPT, corrected v2
-% Compile from the repository root:  latexmk -pdf paper/manuscript.tex
-% (macros below also look in ./generated and ./figures if you compile
-%  from inside paper/).
-%
-% RULES
-%  * Tables in paper/generated/*.tex are produced by scripts/make_tables.py.
-%    Do not edit them by hand.
-%  * Numbers typed in prose are copied from results/analysis/summary.json
-%    and should be replaced by macros from generated/numbers.tex.
-%  * \todo{} and \tbr mark unfinished items; set \draftfalse to hide them.
-% =======================================================================
-\documentclass[runningheads]{llncs}
-\usepackage[T1]{fontenc}
+% BioQPSO manuscript. Compile from the repository root: latexmk -pdf manuscript.tex
+% Tables and numbers.tex in paper/generated/ come from scripts/make_tables.py; do not edit them.
+% Every number in the prose is a macro from numbers.tex, except lines marked "% const", which
+% state protocol constants or dates. scripts/check_numbers.py checks this.
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
+
 \usepackage{graphicx}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb,amsfonts}
 \usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{placeins}
 \usepackage{url}
-\usepackage{orcidlink}
+\hypersetup{hypertexnames=false}
+% References to the supplement (supplementary.tex) appear as \ref{S-...}; compile the supplement first.
+% scripts/build_upload.py replaces them by their numbers in the single upload file.
+\usepackage{xr-hyper}
+\externaldocument[S-]{supplementary}
 
-% ---------------- draft switches ----------------
+% draft switch
 \newif\ifdraft
-\drafttrue   % <-- \draftfalse for the submission version
+\drafttrue
 \newcommand{\todo}[1]{\ifdraft\textcolor{red}{[TODO: #1]}\fi}
-\newcommand{\tbr}{\ifdraft\textcolor{red}{TBR}\else--\fi}
+\newcommand{\ZenodoDOI}{\todo{Zenodo DOI, needs the author's account}}
 
-% Win/Tie/Loss markers for Wilcoxon table
 \newcommand{\win}{\textcolor{green!60!black}{$\bullet$}}
 \newcommand{\tie}{$\circ$}
 \newcommand{\loss}{\textcolor{red}{$\times$}}
+\newcommand{\tabsetup}{\scriptsize\setlength{\tabcolsep}{3pt}}
 
-% ---------------- file lookup (flat folder, generated/, or paper/generated/) ----------------
-\graphicspath{{./}{figures/}{paper/figures/}{generated/}{paper/generated/}}
-\InputIfFileExists{numbers.tex}{}{%
-  \InputIfFileExists{generated/numbers.tex}{}{%
-  \InputIfFileExists{paper/generated/numbers.tex}{}{}}}
-% \geninput{name.tex}: tries ./name.tex, then generated/name.tex, then paper/generated/name.tex
-\newcommand{\geninput}[1]{%
-  \IfFileExists{#1}{\input{#1}}{%
-  \IfFileExists{generated/#1}{\input{generated/#1}}{%
-  \IfFileExists{paper/generated/#1}{\input{paper/generated/#1}}{%
-  \fbox{\scriptsize missing generated table: \detokenize{#1}}}}}}
+\graphicspath{{paper/figures/}}
+\input{paper/generated/numbers.tex}
+\newcommand{\geninput}[1]{\input{paper/generated/#1}}
+
+\raggedbottom
 
 \begin{document}
 
-\title{BioQPSO: Bio-Inspired Three-Term Attractors with Adaptive Weight
-Scheduling for Quantum-Behaved Particle Swarm Optimization}
-\titlerunning{BioQPSO with Adaptive Attractor Weights}
-\author{Manav\inst{1}\orcidlink{0009-0005-5197-5195}}
-\authorrunning{Manav}
-\institute{Department of Electronics and Communication Engineering,\\
-Netaji Subhas University of Technology, Delhi, India\\
-\email{manav-ug23@nsut.ac.in}}
+\title[Decomposing the Attractor of Quantum-Behaved PSO]{Decomposing the Attractor of Quantum-Behaved PSO: What Random Weights, Bio-Inspired Leaders and Weight Scheduling Each Contribute}
+
+\author*[1]{\sur{Manav}}\email{manav-ug23@nsut.ac.in} % const
+\affil*[1]{\orgdiv{Department of Electronics and Communication Engineering},
+\orgname{Netaji Subhas University of Technology}, \orgaddress{\city{Delhi}, \country{India}}}
+
+\abstract{Quantum-behaved particle swarm optimization (QPSO) samples around an attractor that
+mixes personal and global bests with a random weight. Hybrids often change this attractor in
+several ways at once, so it is unclear which change matters. We separate four: replacing the
+random weight with fixed weights, adding scout restarts, adding a ring-neighborhood ant or bee
+leader as a third anchor, and scheduling that anchor's weight. Thirteen algorithms, including
+L-SHADE, share one implementation and seeds, with a decision rule specified before the analysis.
+Fixed weights are worse than QPSO on \DcRandomToFixedClWorse{} of \EoneN{} classical functions, and scouts at
+their default limit are worse on \DcScoutsClWorse{} of \EoneN{} classical and \DcScoutsCeWorse{} of \EthreeN{} CEC2017 functions. The ant leader
+is credited on \EtwoBioCountAnt{} of \EoneN{} and \EtwocBioCountAnt{} of \EthreeN, and the bee leader on \EtwoBioCountBee{} of \EoneN{} and \EtwocBioCountBee{} of \EthreeN; neither reaches the CEC2017 threshold. No schedule is
+credited on any function. Moving the optimum away from the origin drops GWO from rank
+\EoneRankGWO{} to \EonebRankGWO. At the standard CEC2017 budget, L-SHADE ranks first at $D=30$ and $D=50$.
+Some ant-leader variants are better than QPSO on function means under Holm-corrected Wilcoxon tests
+(\EthreesThirtyBioPwBetterList{} at $D=30$, \EthreesFiftyBioPwBetterList{} at $D=50$), but not under the Nemenyi test, which we treat
+as weak evidence. In feature selection, no BioQPSO variant gains on
+QPSO, and all features are best on \FsAllBeatsList. The three-term attractor gives at most a small
+gain over QPSO, and weight scheduling adds nothing measurable.}
+
+\keywords{Quantum-behaved particle swarm optimization, Attractor decomposition, Control experiments,
+Weight scheduling, CEC2017, Feature selection}
+
 \maketitle
 
 % =======================================================================
-\begin{abstract}\sloppy
-Quantum-behaved particle swarm optimization (QPSO) samples each particle
-around a two-point attractor built from its personal best and the global
-best. We study BioQPSO, which adds a third, topology-dependent anchor---a
-ring-neighbourhood \emph{bio-leader} chosen by pheromone (AntBioQPSO) or by
-fitness with scout re-initialisation (BeeBioQPSO)---and ask whether its weight
-$\phi_3$ should be fixed or scheduled. Four schedules (linear, cosine,
-stagnation feedback, per-particle) are compared with fixed weights, a
-no-bio control ($\phi_3=0$) and a random-$\phi_3$ control.
-Twelve algorithms, all implemented in one NumPy code path, are run with
-shared pre-registered seeds and a budget of 30{,}030 function evaluations on ten classical functions
-and 28 CEC2017 functions ($D=30$, 30 runs).
-The results are mixed. On classical functions GWO has the best mean rank
-(3.50), QPSO is second (4.50), and the best BioQPSO variants
-(AntBioQPSO, FeedbackAda) have rank 5.20; the Friedman test is significant
-($\chi^2=43.09$, $p=1.0\times10^{-5}$) but the Nemenyi critical difference
-(5.27) separates no BioQPSO variant from QPSO.
-On CEC2017 all four Ant-leader variants have a lower mean rank
-(3.11--3.79) than QPSO (4.14), but the gap is below the critical difference
-(3.15), and GWO ranks 9.96.
-In pre-registered controls, no schedule beats the best fixed $\phi_3$ on any
-of 10 functions, and the bio-leader beats the no-bio control on only 4 of 10,
-below the pre-registered threshold of 5. All BioQPSO variants are poor on
-Schwefel. GWO's strong classical results occur on functions whose optimum is at the
-origin and reverse on shifted and rotated CEC2017 functions, so they should be read with that caveat.
-We conclude that the fixed-weight Ant-leader attractor is a reasonable, low-overhead QPSO
-variant whose advantage is visible on CEC2017 but not statistically
-established, and that adaptive scheduling gives robustness to the choice of
-$\phi_3$ rather than improvement over a well-chosen fixed value.
+\section{Introduction}\label{sec:intro}
+Particle swarm optimization (PSO)~\cite{Kennedy1995} is prone to premature convergence on
+multimodal landscapes. QPSO~\cite{Sun2004} replaces the velocity update by sampling from a
+delta-potential-well distribution centered on a local attractor, which is a random convex
+combination of a particle's personal best and the global best. Much QPSO work modifies this
+attractor or adds an operator around it~\cite{Fang2010}. The usual evaluation then compares the
+hybrid with QPSO as a whole, and this cannot show which change produced the difference.
 
-\keywords{Quantum-behaved particle swarm optimization \and
-Adaptive weight scheduling \and Bio-inspired hybridisation \and
-Metaheuristics \and CEC2017 \and Feature selection}
-\end{abstract}
-
-% =======================================================================
-\section{Introduction}
-Particle swarm optimization (PSO)~\cite{Kennedy1995} is prone to premature
-convergence on multimodal landscapes. QPSO~\cite{Sun2004,Fang2010}
-replaces the velocity update by sampling from a delta-potential-well
-distribution around a local attractor, leaving one main parameter, the
-contraction--expansion coefficient $\beta$. Most QPSO hybrids that
-borrow ideas from ant or bee colonies add the bio-inspired operator
-\emph{after} the base update (as a perturbation or restart).
-
-BioQPSO instead places the bio-inspired signal \emph{inside} the attractor,
+BioQPSO, the method studied here, is a typical case. Its attractor,
 \begin{equation}
 q_{i,d}(t)=\phi_1\,p_{i,d}(t)+\phi_2\,g_d(t)+\phi_3\,b_{i,d}(t),\qquad
 \phi_1+\phi_2+\phi_3=1,
 \label{eq:attractor}
 \end{equation}
-where $p_i$ is the personal best, $g$ the global best and $b_i$ a
-ring-neighbour leader. With fixed weights this is a convex combination of
-three anchors. It also removes the random mixing coefficient
-$\varphi\sim U(0,1)$ of standard QPSO (Eq.~\ref{eq:qpso-attractor}), so
-any difference from QPSO could come from the bio-leader or from the loss of
-that randomness; the no-bio control ($\phi_3=0$) separates the two.
+differs from the QPSO attractor in at least three ways at once. It drops the random mixing
+weight, it adds a ring-neighbor leader $b_i$, and $\phi_3$ may vary over time. The bee variant
+also adds scout restarts. An earlier version of this work~\cite{Manav2026BioQPSO} compared the whole
+method with baselines. This paper asks instead what each component contributes, and uses control
+experiments to separate them.
 
-\paragraph{What this paper does.}
-(i)~It defines the BioQPSO attractor and four $\phi_3$ schedules
-(Section~\ref{sec:method}); (ii)~it evaluates them on classical and CEC2017
-functions against six baselines under one budget and one code path;
-(iii)~it tests two questions: does a \emph{scheduled} $\phi_3$ beat a
-well-chosen \emph{fixed} $\phi_3$, and does the bio-leader help at all
-compared with the same fixed-weight attractor without it
-(Section~\ref{sec:ablation}); (iv)~it reports where the method fails.
+The main findings are negative, and we report them as such. Removing the random weight costs
+performance on the classical suite, leaders recover only part of what is lost, scouts at their default limit are
+harmful, and scheduling $\phi_3$ gives no measurable benefit.
 
-\paragraph{Why schedule $\phi_3$ rather than $\beta$.}
-Adaptive QPSO work usually schedules $\beta$, the \emph{step size} of the
-sampling. $\phi_3$ controls \emph{which anchor} guides the sample and exists
-only in the three-term form. $\beta$ decays linearly in all methods here.
-
-\paragraph{Scope.}
-The contribution is empirical. No convergence proof is given for the
-three-term attractor or for time-varying $\phi_3(t)$. The novelty is
-incremental relative to QPSO and to neighbourhood-topology hybrids; we size
-it with controls instead of asserting it.
-
-The paper is organised as follows: Section~\ref{sec:related} reviews related
-work, Section~\ref{sec:method} gives the method, Section~\ref{sec:exp} the
-experiments, Section~\ref{sec:sens} earlier sensitivity data, and
-Section~\ref{sec:disc} the discussion and limitations.
+The contributions are as follows.
+\begin{enumerate}
+\item An attractor decomposition of a QPSO hybrid into random weights, fixed weights, scouts, leader
+ and schedule, with a control for each step on classical and CEC2017 functions
+ (Table~\ref{tab:decomp}). % const
+\item A test of whether a scheduled $\phi_3$ beats the best fixed value under a decision rule
+ specified before the analysis, with the result that no schedule is credited on any function
+ (Sections~\ref{sec:controls} and~\ref{sec:cec}).
+\item A comparison of \EoneK{} algorithms in one implementation, including L-SHADE, on classical,
+ shifted and CEC2017 functions, showing how far the ranking depends on the suite
+ (Sections~\ref{sec:classical}--\ref{sec:cec}).
+\item A test of the Schwefel failure of the BioQPSO family, which moves the optimum away from the
+ bounds (Section~\ref{sec:schwefel}).
+\item An honest account of the corrections made to earlier implementations, with public code and
+ per-run results (Section~\ref{sec:protocol} and the Declarations).
+\end{enumerate}
 
 % =======================================================================
 \section{Related Work}\label{sec:related}
-\sloppy
-\paragraph{PSO and QPSO.}
-PSO~\cite{Kennedy1995} and its inertia-weight variant~\cite{Shi1998} suffer
-from premature convergence and slow fine tuning. QPSO~\cite{Sun2004} models
-particles in a delta potential well; Fang et al.~\cite{Fang2010} review
-variants. A solitons-based QPSO~\cite{Fallahi2022} adapts $\beta$.
-\todo{Add 3--5 adaptive/neighbourhood-QPSO papers you have actually read; verify every DOI.}
+\paragraph{The QPSO attractor.}
+QPSO was introduced by Sun et al.~\cite{Sun2004}, and Fang et al.~\cite{Fang2010} review its variants.
+Sun et al.\ analyze its convergence~\cite{Sun2012} and the behavior of individual particles,
+including the choice of the contraction--expansion coefficient~\cite{SunEC2012}. Several
+variants change the attractor itself: one draws it from a Gaussian distribution~\cite{Sun2011GA},
+and a ring model has been used for multi-objective QPSO~\cite{Zhou2016}. Neither isolates the effect of
+the random weight, which is the first step of our decomposition.
 
-\paragraph{Neighbourhood and bio-inspired hybrids.}
-ABC~\cite{Karaboga2005} uses employed, onlooker and scout roles; the scout
-mechanism is reused in BeeBioQPSO. Continuous ACO
-(ACO$_\mathbb{R}$)~\cite{Socha2008} samples from a quality-weighted archive;
-AntBioQPSO uses pheromone to pick the neighbourhood leader. Surveys of
-nature-inspired methods~\cite{Yang2008} motivate hybridisation but do not by
-themselves justify a given hybrid. HSPSO~\cite{Yao2024} combines adaptive
-weights, reverse learning and Cauchy mutation for PSO.
+\paragraph{Neighborhoods and bio-inspired operators.}
+Population structure affects PSO performance~\cite{KennedyMendes2002}, which motivates a ring
+neighbor as a third anchor. Artificial bee colony (ABC)~\cite{Karaboga2007,KarabogaAkay2009} provides the
+scout mechanism used in BeeBioQPSO, and ACO$_\mathbb{R}$~\cite{Socha2008} extends ant colony
+optimization to continuous domains. S\"orensen~\cite{Sorensen2015} criticizes metaheuristics
+justified mainly by their metaphor; our controls apply this criticism to our own method.
 
-\paragraph{Baselines.}
-GWO~\cite{Mirjalili2014} and WOA~\cite{Mirjalili2016} are widely used
-reference optimizers. More recent optimizers such as the Secant Optimization
-Algorithm~\cite{Ibrahim2026} and the Schr\"odinger optimizer~\cite{Hussein2025}
-are not compared here. \todo{Add at least one CEC-competitive DE variant (L-SHADE family) as baseline.}
+\paragraph{Scheduling.}
+Time-varying parameters have a long history in PSO, for example time-varying acceleration
+coefficients~\cite{Ratnaweera2004}. Adaptive QPSO work usually schedules the contraction--expansion
+coefficient $\beta$, the step size of the sampling. The weight $\phi_3$ instead controls which anchor
+guides the sample, and it exists only in the three-term form.
 
-\paragraph{Gap.}
-Fixed-weight bio-leader attractors cannot adapt to the phase of the search.
-We examine four schedules and whether they add anything over a fixed weight.
+\paragraph{Benchmarking and center bias.}
+Niu et al.~\cite{Niu2019} report that GWO performs better the closer an optimum is to the origin, and
+Kudela~\cite{Kudela2022} discusses the wider problem of center-biased methods evaluated on
+zero-centered benchmarks. Camacho-Villal\'on et al.~\cite{Camacho2023} examine GWO, WOA and four
+other algorithms and call them misleading. We keep GWO~\cite{Mirjalili2014} and WOA~\cite{Mirjalili2016} as
+baselines because of their wide use, and test the bias directly. L-SHADE~\cite{Tanabe2014} is included as a
+strong differential evolution baseline.
 
 % =======================================================================
 \section{Method}\label{sec:method}
@@ -179,83 +148,73 @@ For particle $i$ and dimension $d$,
 x_{i,d}(t{+}1)=q_{i,d}(t)\pm\beta\,|m_d(t)-x_{i,d}(t)|\ln\frac1u,
 \label{eq:qpso-position}
 \end{equation}
-with $+$ if $u\le0.5$ and $-$ otherwise, $u\sim U(0,1)$, and mean best
-$m_d(t)=\frac1n\sum_{i=1}^n p_{i,d}(t)$. $\beta$ decreases linearly from 1.0
-to 0.5. Standard QPSO uses
+with $+$ if $u\le0.5$ and $-$ otherwise, $u\sim U(0,1)$, and mean best % const
+$m_d(t)=\frac1n\sum_{i=1}^n p_{i,d}(t)$. The coefficient $\beta$ decreases linearly from 1.0 to 0.5. % const
+Standard QPSO uses
 \begin{equation}
 q_{i,d}(t)=\varphi\,p_{i,d}(t)+(1-\varphi)\,g_d(t),\quad\varphi\sim U(0,1).
 \label{eq:qpso-attractor}
 \end{equation}
 
-\subsection{Three-term BioQPSO attractor}
-Eq.~(\ref{eq:attractor}) replaces Eq.~(\ref{eq:qpso-attractor}). For
-$\phi_k\ge0$ the attractor lies in the convex hull of $\{p_i,g,b_i\}$. This is
-a design rationale, not a convergence result.
+\subsection{Three-term attractor and leaders}
+Eq.~(\ref{eq:attractor}) replaces Eq.~(\ref{eq:qpso-attractor}), with $p_i$ the personal best, $g$ the
+global best and $b_i$ the leader of the ring neighborhood $\mathcal N_i=\{i-1,i,i+1\}$ (modular). % const
 
 \paragraph{AntBioQPSO.}
-Each particle keeps a pheromone value $\tau_i$ with evaporation
-$\tau_i\leftarrow(1-\rho)\tau_i$ each iteration and deposit
-$\tau_i\leftarrow\tau_i+\Delta$ when its personal best improves. The leader is
-the personal best of the highest-pheromone member of the ring neighbourhood
-$\mathcal N_i=\{i-1,i,i+1\}$ (modular):
+Each particle keeps a pheromone value $\tau_i$, with evaporation $\tau_i\leftarrow(1-\rho)\tau_i$ each
+iteration and deposit $\tau_i\leftarrow\tau_i+\Delta$ when its personal best improves. The leader is
+the personal best of the neighbor with the most pheromone:
 \begin{equation}
 b_{i,d}=p_{\hat k,d},\qquad \hat k=\arg\max_{k\in\mathcal N_i}\tau_k .
 \end{equation}
 
 \paragraph{BeeBioQPSO.}
-The leader is the best personal best in $\mathcal N_i$,
-$\hat k=\arg\min_{k\in\mathcal N_i}f(p_k)$. Each particle has a stagnation
-counter $s_i$; if $s_i>L_{\mathrm{scout}}$ it is re-initialised uniformly
-(scout phase).
+The leader is the best personal best in the neighborhood,
+$\hat k=\arg\min_{k\in\mathcal N_i}f(p_k)$. Each particle has a stagnation counter $s_i$; if
+$s_i>L_{\mathrm{scout}}$ it is re-initialized uniformly (a scout), and that evaluation counts toward the budget.
 
 \subsection{Schedules for $\phi_3$}
-We schedule $\phi_3(t)\in[\phi_3^{\min},\phi_3^{\max}]=[0.1,0.5]$ and keep the
-simplex constraint by redistributing the remainder in the $4{:}3$ ratio of the
-fixed configuration $(\phi_1,\phi_2,\phi_3)=(0.4,0.3,0.3)$:
+We schedule $\phi_3(t)\in[\phi_3^{\min},\phi_3^{\max}]$ and keep the simplex constraint by distributing
+the remainder in a fixed $4{:}3$ ratio:
 \begin{equation}
 \phi_1(t)=\tfrac47\bigl(1-\phi_3(t)\bigr),\qquad
 \phi_2(t)=\tfrac37\bigl(1-\phi_3(t)\bigr).
 \label{eq:redistribution}
 \end{equation}
-
-\paragraph{LinearAda.}
-$\phi_3(t)=\phi_3^{\max}-(\phi_3^{\max}-\phi_3^{\min})\,t/T_{\max}$.
-
-\paragraph{CosineAda.}
-$\phi_3(t)=\phi_3^{\min}+\tfrac12(\phi_3^{\max}-\phi_3^{\min})\bigl(1+\cos(\pi t/T_{\max})\bigr)$.
-
-\paragraph{FeedbackAda.}
-With a global stagnation counter $s_g$ (reset when $g$ improves),
+\emph{LinearAda} uses $\phi_3(t)=\phi_3^{\max}-(\phi_3^{\max}-\phi_3^{\min})\,t/T_{\max}$.
+\emph{CosineAda} uses $\phi_3(t)=\phi_3^{\min}+\tfrac12(\phi_3^{\max}-\phi_3^{\min})\bigl(1+\cos(\pi t/T_{\max})\bigr)$.
+\emph{FeedbackAda} uses a global stagnation counter $s_g$, reset when $g$ improves:
 \begin{equation}
 \phi_3(t{+}1)=\begin{cases}
 \min(\phi_3(t)+\delta,\phi_3^{\max}), & s_g(t)>W,\\
-\max(\phi_3(t)-\delta,\phi_3^{\min}), & \text{otherwise,}
+\max(\phi_3(t)-\delta,\phi_3^{\min}), & \text{otherwise.}
 \end{cases}
 \end{equation}
-with $\delta=0.02$, $W=20$ and $\phi_3(0)=0.3$.
-
-\paragraph{PerParticleAda.}
-Particle $i$ uses its own counter $s_i$:
+\emph{PerParticleAda} uses each particle's own counter:
 $\phi_{3,i}(t)=\phi_3^{\min}+(\phi_3^{\max}-\phi_3^{\min})\min(s_i/L_{\mathrm{scout}},1)$.
+In the main comparison, the linear, cosine and feedback schedules use the ant leader and the
+per-particle schedule uses the bee leader. The control experiment on classical functions runs every
+schedule on both leaders, so schedule and leader type are not confounded there.
 
-\paragraph{Controls.}
-\emph{No-bio}: $\phi_3=0$ with $\phi_1{:}\phi_2=4{:}3$ (fixed weights, no neighbour
-leader). \emph{Random}: $\phi_3(t)\sim U[0.1,0.5]$ each iteration, to
-test whether variation alone, rather than a structured schedule, matters.
+\subsection{The decomposition}\label{sec:decomp-def}
+Each comparison changes one component:
+\begin{enumerate}
+\item \emph{Random to fixed weights:} no-bio control ($\phi_3=0$, $\phi_1{:}\phi_2=4{:}3$, ant variant, so % const
+ no leader and no scouts) against QPSO.
+\item \emph{Scouts:} bee no-bio control against ant no-bio control. The two differ only in scouts.
+\item \emph{Leader:} fixed $\phi_3$ with leader against the no-bio control of the same variant.
+\item \emph{Scheduling:} each schedule against the best fixed $\phi_3$ per function, and against the default.
+ A random-$\phi_3$ control, redrawn each iteration, tests whether variation alone matters.
+\end{enumerate}
+Comparison 2 and the comparison with the default were not in the rule as first written and are % const
+exploratory; the leader and best-fixed comparisons are the ones the rule governs.
 
-\paragraph{Pairing of schedules and leaders.}
-In the main benchmark (E1), LinearAda, CosineAda and FeedbackAda use the ant
-leader and are compared with fixed AntBioQPSO; PerParticleAda uses the bee
-leader (with scouts) and is compared with fixed BeeBioQPSO. The control
-experiment (E2) runs every schedule on both leaders so that schedule and
-leader type are not confounded.
-
-\begin{algorithm}[t]
-\caption{Unified BioQPSO / AdaBioQPSO}\label{alg:main}
+\begin{algorithm}[!htbp]
+\caption{Unified BioQPSO}\label{alg:main}
 \begin{algorithmic}[1]
 \State \textbf{Input:} $n$, bounds, $D$, $T_{\max}$, schedule, leader $\in\{$Ant, Bee$\}$
-\State Initialise $x_i$ uniformly; $p_i\!\leftarrow\!x_i$; $g\!\leftarrow\!\arg\min f(p_i)$; $\tau_i\!\leftarrow\!1$; $s_i\!\leftarrow\!0$; $s_g\!\leftarrow\!0$
-\For{$t=1$ \textbf{to} $T_{\max}$}
+\State Initialize $x_i$ uniformly; $p_i\!\leftarrow\!x_i$; $g\!\leftarrow\!\arg\min f(p_i)$; $\tau_i\!\leftarrow\!1$; $s_i\!\leftarrow\!0$; $s_g\!\leftarrow\!0$
+\For{$t=1$ \textbf{to} $T_{\max}$, while the budget lasts}
   \State compute $\phi_3(t)$ (or $\phi_{3,i}(t)$); set $\phi_1,\phi_2$ by Eq.~(\ref{eq:redistribution})
   \State $\beta\leftarrow\beta_{\mathrm{start}}-(\beta_{\mathrm{start}}-\beta_{\mathrm{end}})t/T_{\max}$; $m\leftarrow\frac1n\sum_i p_i$
   \State (Ant) $\tau_i\leftarrow(1-\rho)\tau_i$
@@ -269,471 +228,426 @@ leader type are not confounded.
       \State $s_i\leftarrow s_i+1$
     \EndIf
   \EndFor
-  \State (Bee) re-initialise particles with $s_i>L_{\mathrm{scout}}$; $s_i\leftarrow0$
+  \State (Bee) re-initialize and evaluate particles with $s_i>L_{\mathrm{scout}}$; $s_i\leftarrow0$
   \State (Feedback) update $s_g$ and $\phi_3$
 \EndFor
 \State \Return $g$
 \end{algorithmic}
 \end{algorithm}
 
-\paragraph{Cost.}
-A position update is $\mathcal O(nD)$ per iteration; pheromone and counter
-updates add $\mathcal O(n)$, and scouts re-evaluate at most $n$ particles. Total
-cost is $\mathcal O(nDT)$ as for QPSO; measured overheads are in
-Section~\ref{sec:runtime}.
-
-\paragraph{On convergence.}
-Keeping $\phi_3\in[0.1,0.5]$ keeps $\phi_1+\phi_2\ge0.5$ and the attractor
-inside the convex hull of three particle-derived points. This does
-\emph{not} show that the known QPSO convergence result carries over; no proof
-is claimed.
+\paragraph{Cost and convergence.}
+A position update is $\mathcal O(nD)$ per iteration, pheromone and counter updates add $\mathcal
+O(n)$, and scouts re-evaluate at most $n$ particles, so the total cost is $\mathcal O(nDT)$ as for
+QPSO. For $\phi_k\ge0$ the attractor lies in the convex hull of $\{p_i,g,b_i\}$. This is a design
+rationale. It does not show that the known QPSO convergence analysis~\cite{Sun2012} carries over, and no
+proof is claimed.
 
 % =======================================================================
 \section{Experiments}\label{sec:exp}
 \subsection{Protocol}\label{sec:protocol}
-\begin{itemize}
-\item \textbf{Budget:} $n=30$, $T_{\max}=1000$, 30 independent runs, $D=30$.
- Seeds are pre-registered (\texttt{config/seeds.yaml}) and shared across
- algorithms, so all algorithms start from the same initial population for a
- given run index. Maximum FEs $=n(T_{\max}{+}1)=30{,}030$; BeeBioQPSO scout
- re-evaluations count. This is a \emph{light} budget (the CEC standard is
- $10^4D$ FEs).
-\item \textbf{Functions:} ten classical functions (Table~\ref{tab:funcs}) and
- 28 CEC2017 functions from \texttt{opfunu}~\cite{opfunu} (F1--F4, F6--F29;
- F5 excluded; see below). Function names and ids should be taken from the library, not
- from the numbering of the original CEC2017 report~\cite{Awad2017}.
-\item \textbf{Algorithms (12):} PSO ($w=0.729$, $c_1=c_2=1.494$), QPSO,
- ACO$_\mathbb{R}$ ($q=0.1$, $\xi=0.85$), ABC (limit 30), GWO, WOA (own NumPy
- implementations in the same code path as the BioQPSO family), fixed
- AntBioQPSO and BeeBioQPSO ($\phi=(0.4,0.3,0.3)$, $\rho=0.1$, $\Delta=1$,
- $L_{\mathrm{scout}}=15$) and the four schedules ($[\phi_3^{\min},\phi_3^{\max}]=[0.1,0.5]$).
-\item \textbf{Boundary handling:} projection (clipping) for all algorithms; reflect
- and random re-initialisation are tested only in the Schwefel diagnosis (E7).
-\item \textbf{Statistics:} primary inference is across functions: Friedman
- test on per-function mean ranks and Nemenyi post hoc,
- $\mathrm{CD}=q_{0.05}\sqrt{k(k+1)/(6N)}$~\cite{Demsar2006}, with $N$ the
- number of functions. Per-function paired Wilcoxon tests against QPSO (one-sided,
- ``better'') use Holm correction~\cite{Holm1979} and rank-biserial $r$; a
- relative improvement below 1\% is called negligible regardless of $p$.
-\item \textbf{Pre-registered rule} (\texttt{docs/DECISION\_RULE.md}, committed
- before E1--E3): a schedule is credited on a function only if it beats the
- best fixed $\phi_3$ with Holm-corrected $p<0.05$ and $>1\%$ relative
- improvement; the bio-leader is credited overall only if it beats the no-bio
- control on at least 5 of 10 functions.
-\end{itemize}
+\paragraph{Budget and seeds.}
+Unless stated otherwise, $n=30$, $T_{\max}=1000$, 30 independent runs, $D=30$ and at most 30{,}030 % const
+function evaluations (FEs). This is a light budget, since the CEC standard is $10^4 D$ FEs, so the CEC2017
+experiments are also run at the standard budget (Section~\ref{sec:cec}). Seeds were fixed in advance
+and shared, so all algorithms start from the same population for a given run index.
 
-\paragraph{Earlier batches.}
-The preprint~\cite{Manav2026BioQPSO} and an earlier draft reported two batches
-that disagreed for the same algorithm (AntBioQPSO on Levy:
-$2.68\times10^{-9}$ vs.\ $1.33\times10^{-1}$). \texttt{docs/REPRO.md} traces
-this to one divergent run in the second batch and the absence of shared seeds
-and RNG streams. All numbers below come from the single unified run.
+\paragraph{Functions.}
+Ten classical functions (Table~\ref{tab:funcs}) are used in their standard form (E1) and with the optimum moved to % const
+$o\sim U(0.8\,\mathrm{lb},0.8\,\mathrm{ub})^D$, redrawn per run, with the same bounds (E1b). % const
+CEC2017~\cite{Awad2017} is evaluated with the official C code of the competition, called from Python, on its 29 functions, F1 and F3--F30 % const
+(the organizers removed F2). An earlier run of this study used the opfunu library~\cite{opfunu}, which agrees with the official code on only % const
+\CecOffSameCount{} of its functions; that run and the comparison are reported in Supplementary Section~\ref{S-sec:official} and are not used here.
 
-\begin{table}[t]
-\centering\scriptsize
-\caption{Classical benchmark functions ($D=30$).}\label{tab:funcs}
-\begin{tabular}{llc}
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Classical benchmark functions, with $w_i=1+(x_i-1)/4$. The Styblinski--Tang optimum is $-39.16617\,D$; the others are 0.}\label{tab:funcs}
+\begin{tabular}{p{0.15\linewidth}p{0.6\linewidth}l}
 \toprule
 Function & Formula & Bounds\\\midrule
 Sphere & $\sum x_i^2$ & $[-100,100]$\\
-Rosenbrock & $\sum_{i=1}^{D-1}[100(x_{i+1}-x_i^2)^2+(1-x_i)^2]$ & $[-2,2]$\\
+Rosenbrock & $\sum_{i=1}^{D-1}[100(x_{i+1}-x_i^2)^2+(1-x_i)^2]$ & $[-2.048,2.048]$\\
 Zakharov & $\sum x_i^2+(\sum\frac i2x_i)^2+(\sum\frac i2x_i)^4$ & $[-5,10]$\\
 Dixon--Price & $(x_1-1)^2+\sum_{i=2}^Di(2x_i^2-x_{i-1})^2$ & $[-10,10]$\\
 Rastrigin & $10D+\sum[x_i^2-10\cos(2\pi x_i)]$ & $[-5.12,5.12]$\\
-Ackley & $-20e^{-0.2\sqrt{\frac1D\sum x_i^2}}-e^{\frac1D\sum\cos2\pi x_i}+20+e$ & $[-32.77,32.77]$\\
+Ackley & $-20e^{-0.2\sqrt{\frac1D\sum x_i^2}}-e^{\frac1D\sum\cos2\pi x_i}+20+e$ & $[-32.768,32.768]$\\
 Griewank & $1+\frac1{4000}\sum x_i^2-\prod\cos(x_i/\sqrt i)$ & $[-600,600]$\\
 Schwefel & $418.9829D-\sum x_i\sin\sqrt{|x_i|}$ & $[-500,500]$\\
-Levy & $\sin^2(\pi w_1)+\sum_{i=1}^{D-1}(w_i{-}1)^2[1{+}10\sin^2(\pi w_{i+1})]+(w_D{-}1)^2$ & $[-10,10]$\\
+Levy & $\sin^2(\pi w_1)+\sum_{i=1}^{D-1}(w_i{-}1)^2[1{+}10\sin^2(\pi w_i{+}\pi)]+(w_D{-}1)^2[1{+}\sin^2(2\pi w_D)]$ & $[-10,10]$\\
 Styblinski--Tang & $\frac12\sum(x_i^4-16x_i^2+5x_i)$ & $[-5,5]$\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-% ---------------------------------------------------------------
-\subsection{Classical benchmarks (E1)}
-Table~\ref{tab:classical} gives mean final fitness; standard deviations are in
-Appendix~\ref{app:std}.
+\paragraph{Algorithms.}
+Table~\ref{tab:params} lists the \EoneK{} algorithms and their settings. All are implemented in one
+Python framework, with their settings frozen before the final runs. Boundary handling is clipping for all,
+except that L-SHADE uses its own midpoint repair. Reflection and re-initialization are tested only on Schwefel.
 
-\begin{table}[t]
-\centering
-\caption{Mean best fitness, classical functions (E1: 30 runs, $D=30$, FE$=30{,}030$, shared seeds). Bold: best mean. Ant/Bee: fixed $\phi_3=0.3$; Lin/Cos/Fb: schedules on the ant leader; PP: PerParticleAda on the bee leader.}
-\label{tab:classical}
-\resizebox{\textwidth}{!}{\geninput{classical_mean.tex}}
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Algorithm settings ($n=30$). Short names are those used in the tables.}\label{tab:params}
+\begin{tabular}{p{0.26\linewidth}p{0.14\linewidth}p{0.52\linewidth}}
+\toprule
+Algorithm & Short name & Settings\\\midrule
+PSO~\cite{Kennedy1995} & PSO & $w=0.729$, $c_1=c_2=1.494$, $v_{\max}=0.2(\mathrm{ub}-\mathrm{lb})$\\
+QPSO~\cite{Sun2004} & QPSO & $\beta$ from 1.0 to 0.5 linearly\\
+ACO$_\mathbb{R}$~\cite{Socha2008} & ACO$_\mathbb{R}$ & $q=0.1$, $\xi=0.85$, archive 30, 30 ants\\
+ABC~\cite{Karaboga2007} & ABC & $\mathrm{SN}=n/2$, limit $\mathrm{SN}\cdot D$\\
+GWO~\cite{Mirjalili2014} & GWO & $a$ from 2 to 0 linearly\\
+WOA~\cite{Mirjalili2016} & WOA & $a$ from 2 to 0 linearly, $b=1$, spiral probability 0.5\\
+L-SHADE~\cite{Tanabe2014} & L-SHADE & $r_{N^{\mathrm{init}}}=18$, $r_{\mathrm{arc}}=2.6$, $p=0.11$, $H=6$, $N^{\min}=4$\\
+AntBioQPSO & AntBio & $\phi=(0.4,0.3,0.3)$, $\rho=0.1$, $\Delta=1$\\
+BeeBioQPSO & BeeBio & $\phi=(0.4,0.3,0.3)$, $L_{\mathrm{scout}}=15$\\
+LinearAda, CosineAda (ant) & Ant-Lin, Ant-Cos & $\phi_3\in[0.1,0.5]$\\
+FeedbackAda (ant) & Ant-FB & $\phi_3\in[0.1,0.5]$, $\phi_3(0)=0.3$, $W=20$, $\delta=0.02$\\
+PerParticleAda (bee) & Bee-PP & $\phi_3\in[0.1,0.5]$, $L_{\mathrm{scout}}=15$\\
+\bottomrule
+\end{tabular}
 \end{table}
 
-\paragraph{Observations.}
-(1)~GWO has the best mean rank (3.50) and wins seven of the ten functions
-(Sphere, Rosenbrock, Zakharov, Dixon--Price, Ackley, Griewank,
-Styblinski--Tang), often by many orders of magnitude. (2)~QPSO is second
-(4.50). On Levy its mean ($3.3\times10^{-2}$, std $1.8\times10^{-1}$) is
-inflated by outlier runs; ABC achieves the best Levy mean
-($4.4\times10^{-11}$). (3)~ABC wins three functions: Rastrigin, Levy and
-Schwefel. (4)~Fixed AntBioQPSO and FeedbackAda are the best BioQPSO variants
-(rank 5.20), within one critical difference of QPSO. (5)~BeeBioQPSO and
-PerParticleAda (ranks 7.40 and 8.40) are clearly weaker, especially on Sphere
-and Ackley. (6)~All BioQPSO variants are far worse than the non-bio baselines
-on Schwefel.
+\paragraph{Statistics.}
+Primary inference is across functions: the Friedman test on mean ranks, with the Nemenyi critical difference
+$\mathrm{CD}=q_{0.05}\sqrt{k(k+1)/(6N)}$~\cite{Demsar2006}, and Holm-corrected~\cite{Holm1979} Wilcoxon
+tests on per-function means against QPSO. Ties receive average ranks. Per function, we use two-sided Wilcoxon
+tests paired by seed, Holm-corrected across algorithms and with win/tie/loss counts; a relative difference
+below 1\% counts as a tie. Effect sizes are matched-pairs rank-biserial $r$ with bootstrap 95\% CIs % const
+(Supplementary Table~\ref{S-tab:eff}). Failure to separate two algorithms is not evidence that they are equivalent.
 
-\paragraph{Caveat on GWO.}
-Sphere, Zakharov, Rastrigin, Ackley and Griewank have their optimum at the origin of a
-symmetric search space. GWO/WOA-type algorithms are known to favour
-search-space centres, and GWO's exact zeros on Sphere and Rastrigin in the
-scalability study (Section~\ref{sec:scal}) are consistent with this. GWO ranks
-9.96 on the shifted and rotated CEC2017 functions. Classical results for
-GWO should therefore not be generalised.
-\todo{Add shifted (and rotated) versions of the classical functions to E1 to quantify this effect.}
-
-% ---------------------------------------------------------------
-\subsection{Statistical analysis}\label{sec:stats}
-\paragraph{Across functions.}
-The Friedman test over the 10 classical functions gives
-$\chi^2=43.09$, $p=1.0\times10^{-5}$ ($k=12$). With $q_{0.05}=3.268$ the
-Nemenyi critical difference is $\mathrm{CD}=5.27$, and no BioQPSO variant
-differs from QPSO by more than CD. With only 10 functions the test has low
-power; failure to separate is not evidence of equivalence.
-
-\paragraph{Per function, against QPSO.}
-Table~\ref{tab:wilcoxon} (exploratory) lists Holm-corrected one-sided Wilcoxon
-results with effect sizes. Holm correction is applied within each function across
-the 11 non-QPSO algorithms.
-
-\begin{table}[t]
-\centering\scriptsize
-\caption{Win/tie/loss against QPSO per function (paired by seed, Holm-corrected $\alpha=0.05$, one-sided; ties include relative differences below 1\%).}
-\label{tab:wilcoxon}
-\geninput{wilcoxon.tex}
-\end{table}
+\paragraph{Decision rule.}
+The decision rule was specified before the analysis. A component is credited
+on a function if it beats its control under a one-sided Wilcoxon test, Holm-corrected over functions, at $p<0.05$ % const
+with a relative improvement above 1\% (on $f-f^*$ for the classical functions, and on raw values on CEC2017, % const
+as locked). It is credited overall on more than 5 of 10 classical functions, or at least 15 of 29 CEC2017 % const
+functions. The dates matter here. The rule document is dated 2026-10-05, before the first experiment log of that % const
+day, but its first version-controlled record is dated 2026-10-14, so that record alone does not prove the order. % const
+The CEC2017 threshold was added on 2026-11-02, before any CEC2017 control result existed, and restated for the 29 official % const
+functions on 2026-11-06, before any run on the official code. After the % const
+rule was written, errors were found in the no-bio control and in baseline implementations, and the affected
+experiments were re-run; all numbers here come from the corrected code. Results from before the
+corrections had been seen, so the corrections were not blind. Every deviation from the rule, including the experiments added later,
+is documented in the reproduction package.
 
 % ---------------------------------------------------------------
-\subsection{CEC2017 (E3, $D=30$, light budget)}\label{sec:cec}
-\paragraph{Function set.}
-F5 is excluded: in \texttt{opfunu}~1.0.4 the function behind id F5 is nearly
-constant over the search domain ($0.5/100$ input scaling), which gave the
-spurious value 500.00 for every algorithm in the earlier batches
-(\texttt{docs/CEC2017\_CHECK.md}). The remaining 28 functions pass the unit test
-$f(x^*)=f_{\mathrm{bias}}$. The opfunu ids correspond to the functions
-listed in \texttt{docs/CEC2017\_CHECK.md} (e.g.\ F1 = Bent Cigar, F2 = Zakharov,
-F4 = Rastrigin, F9 = Schwefel); the official CEC2017 numbering removed F2, so
-opfunu's F22017 is an extra function, not the official F2.
+\subsection{Classical functions (E1)}\label{sec:classical}
+The Friedman test rejects equal ranks ($\chi^2=\EoneChi$, $p=\EoneP$, $k=\EoneK$, $N=\EoneN$;
+Table~\ref{tab:ranks}). \EoneBestName{} ranks first (\EoneRankABC), then \EoneSecondName{} (\EoneRankLSHADE),
+with GWO and WOA tied at \EoneRankGWO{} and QPSO at \EoneRankQPSO. No BioQPSO variant ranks above QPSO; the
+best is AntBio at \EoneRankAntBio. With $\mathrm{CD}=\EoneCD$, no algorithm is separated from QPSO.
+The best mean (Table~\ref{tab:classical}) is achieved by ABC on \EoneWinFnsABC; by WOA on \EoneWinFnsWOA; by L-SHADE on
+\EoneWinFnsLSHADE; and by GWO on \EoneWinFnsGWO. Per function, AntBio wins, ties and loses against QPSO on
+\EoneWAntBio, \EoneTAntBio{} and \EoneLAntBio{} functions, and BeeBio on \EoneWBeeBio, \EoneTBeeBio{} and \EoneLBeeBio{}
+(Supplementary Table~\ref{S-tab:wtl}). Means can mislead on \EoneQpsoOutlierFns: QPSO has mean \EoneMeanLevyQPSO{} but median
+\EoneMedLevyQPSO{} and maximum \EoneMaxLevyQPSO, so a few runs dominate its mean. Medians, interquartile ranges and standard deviations are in
+Supplementary Section~\ref{S-sec:clfull} and Table~\ref{S-tab:clstd}. So on standard classical functions, the additions to the attractor do not improve on QPSO.
 
-\paragraph{Ranking.}
-Friedman: $\chi^2=218.71$, $p=9.6\times10^{-41}$; Nemenyi $\mathrm{CD}=3.15$
-($k=12$, $N=28$, $q_{0.05}=3.268$). Table~\ref{tab:cec_ranks} lists the mean
-ranks. All four Ant-leader variants (fixed 3.11, Cosine 3.29, Linear 3.39,
-Feedback 3.79) rank better than QPSO (4.14), but the largest gap, 1.03, is
-below the critical difference, so no separation is claimed. GWO (9.96), WOA
-(8.79), ACO$_\mathbb{R}$ (10.64) and PSO (11.00) rank worst. The consistency of
-the direction across four variants is suggestive but is not independent
-evidence, because the four variants share the ant leader and similar $\phi_3$ values.
-
-\begin{table}[t]
-\centering
-\caption{Mean ranks over 28 CEC2017 functions (E3, $D=30$, FE$=30{,}030$, 30 runs); lower is better; $\mathrm{CD}=3.15$.}
-\label{tab:cec_ranks}
-\small
-\geninput{cec2017_ranks.tex}
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Mean best fitness, classical functions (E1: 30 runs, $D=30$, 30{,}030 FEs, shared seeds). Bold: best at the printed precision.}\label{tab:classical}
+\geninput{classical_mean.tex}
 \end{table}
 
-\begin{table}[t]
-\centering
-\caption{CEC2017 mean fitness, first half of the function set (E3). Bold: best mean.}
-\label{tab:cec_a}
-\resizebox{\textwidth}{!}{\geninput{cec2017_mean_a.tex}}
-\end{table}
-
-\begin{table}[t]
-\centering
-\caption{CEC2017 mean fitness, second half of the function set (E3). Bold: best mean.}
-\label{tab:cec_b}
-\resizebox{\textwidth}{!}{\geninput{cec2017_mean_b.tex}}
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Mean ranks on the classical (E1) and shifted (E1b) functions, with Holm-corrected Wilcoxon $p$ against QPSO on per-function means.}\label{tab:ranks}
+\geninput{ranks.tex}
 \end{table}
 
 % ---------------------------------------------------------------
-\subsection{Controls: scheduling and the bio-leader (E2)}\label{sec:ablation}
-E2 runs both leaders with fixed $\phi_3\in\{0.1,\dots,0.5\}$, each schedule, the
-random-$\phi_3$ control, the no-bio control and QPSO, on the ten classical
-functions (30 runs each).
+\FloatBarrier
+\subsection{Shifted functions (E1b)}\label{sec:shifted}
+Moving the optimum changes the ranking sharply ($\chi^2=\EonebChi$, $p=\EonebP$, $\mathrm{CD}=\EonebCD$;
+Tables~\ref{tab:ranks} and~\ref{tab:shifted}). GWO falls from \EoneRankGWO{} to \EonebRankGWO{} and WOA from
+\EoneRankWOA{} to \EonebRankWOA, and they lose to QPSO on \EonebLGWO{} and \EonebLWOA{} of \EonebN{} functions. \EonebSepList{} are the algorithms
+separated from QPSO, all in the worse direction ($p_{\mathrm{Holm}}=\EonebPwGWO$ on means for GWO and WOA).
+ABC and L-SHADE share first place (\EonebRankABC), and QPSO is third (\EonebRankQPSO).
+The best BioQPSO variant is Ant-Cos (\EonebRankAntCos).
 
-\paragraph{Implementation note.}
-The sweep nominally included $\phi_3=0$, but the schedule class clipped it to
-$\phi_3^{\min}=0.1$, so the $0$ and $0.1$ settings are identical. The effective fixed
-sweep is therefore $\{0.1,\dots,0.5\}$; the no-bio control, which bypasses the
-clip, is a separate run with $\phi_3$ exactly 0.
+\paragraph{Caveat on GWO and WOA.}
+The strong E1 results of GWO and WOA therefore come from having the optimum at the origin: the same algorithms on
+the same functions lose everywhere once it moves. This matches the center bias reported for GWO~\cite{Niu2019} and
+for center-biased methods generally~\cite{Kudela2022}. Their E1 results should not be generalized. The same bias
+may affect any algorithm, so E1b and CEC2017 carry more weight than E1 in what follows.
 
-\paragraph{Q1: does scheduling beat the best fixed $\phi_3$?}
-Under the pre-registered rule, \textbf{no schedule is credited on any of the
-10 functions for either leader (0/10)}. The fixed-$\phi_3$ landscape is nearly
-flat on most functions (Fig.~\ref{fig:phi3heat}), so there is little for a
-schedule to exploit. Adaptive scheduling is therefore equivalent to a fixed
-$\phi_3$ in this study, with the practical benefit of not having to choose one.
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Mean best fitness, shifted classical functions (E1b: optimum redrawn per run; 30 runs, $D=30$, 30{,}030 FEs). Bold: best at the printed precision.}\label{tab:shifted}
+\geninput{shifted_mean.tex}
+\end{table}
 
-\begin{figure}
+% ---------------------------------------------------------------
+\FloatBarrier
+\subsection{Controls on classical functions (E2)}\label{sec:controls}
+E2 runs both leaders with fixed $\phi_3\in\{0.1,\dots,0.5\}$, every schedule, the random-$\phi_3$ control, the no-bio % const
+controls and QPSO. Table~\ref{tab:decomp} gives the decomposition, and Supplementary Section~\ref{S-sec:clfull} has the full sweep.
+
+\paragraph{Random to fixed weights.}
+With no leader and no scouts, fixed weights are better than QPSO on \DecBetterAnt{} functions and worse on
+\DecWorseAnt{} (\DecWorseFnsAnt). Means include Zakharov \EtwoMeanZakharovAntNobio{} against
+\EtwoMeanZakharovQPSO{} for QPSO, and Ackley \EtwoMeanAckleyAntNobio{} against \EtwoMeanAckleyQPSO. So the loss of the random
+weight is the largest cost that BioQPSO pays on this suite, and it is a cost that the earlier comparisons could not show.
+
+\paragraph{Scouts.}
+Adding scouts to fixed weights is worse on \DcScoutsClWorse{} of \EoneN{} functions and better on \DcScoutsClBetter.
+This cost is tied to the default limit $L_{\mathrm{scout}}$ (Section~\ref{sec:sens}).
+
+\paragraph{Leaders.}
+The ant leader is credited on \EtwoBioCountAnt{} of \EoneN{} functions (\EtwoBioFnsAnt), so it is not credited overall.
+Under the rule the bee leader is credited overall, on \EtwoBioCountBee{} of \EoneN{} (\EtwoBioFnsBee). Neither is significantly
+worse than its control on any function. Table~\ref{tab:bio} has the per-function results. Earlier text
+claimed that the leader hurt on smooth functions, so we report them explicitly. The leader's mean against the no-bio mean is, for the ant and bee variants respectively:
+Dixon--Price \EtwoMeanDixonPriceAntFixed{} vs \EtwoMeanDixonPriceAntNobio{} and \EtwoMeanDixonPriceBeeFixed{} vs \EtwoMeanDixonPriceBeeNobio;
+Zakharov \EtwoMeanZakharovAntFixed{} vs \EtwoMeanZakharovAntNobio{} and \EtwoMeanZakharovBeeFixed{} vs \EtwoMeanZakharovBeeNobio;
+Ackley \EtwoMeanAckleyAntFixed{} vs \EtwoMeanAckleyAntNobio{} and \EtwoMeanAckleyBeeFixed{} vs \EtwoMeanAckleyBeeNobio;
+Sphere \EtwoMeanSphereAntFixed{} vs \EtwoMeanSphereAntNobio{} and \EtwoMeanSphereBeeFixed{} vs \EtwoMeanSphereBeeNobio;
+Griewank \EtwoMeanGriewankAntFixed{} vs \EtwoMeanGriewankAntNobio{} and \EtwoMeanGriewankBeeFixed{} vs \EtwoMeanGriewankBeeNobio.
+That earlier claim came from the faulty control and is withdrawn; none of these differences is significantly in the control's favor. The bee credit needs careful reading: its control carries the scouts, so the
+leader recovers part of the scout damage, and BeeBio remains worse than QPSO on \DcNetBeeClWorse{} of \EoneN{} functions.
+Among the five variants, mean ranks are QPSO \EtwoRankQPSO, AntBio \EtwoRankAntBio, ant no-bio \EtwoRankAntNobio,
+BeeBio \EtwoRankBeeBio{} and bee no-bio \EtwoRankBeeNobio.
+
+\paragraph{Scheduling.}
+No schedule is credited on any function: \EtwoSchedTotal{} credits over \EtwoSchedN{} schedule--leader pairs and \EoneN{}
+functions, for both leaders and the random-$\phi_3$ control. Schedules are significantly worse than the
+per-function best fixed value in \EtwoSchedHarmTotal{} cells, although that baseline is chosen after the fact and so
+favors the fixed setting. Against the plain default $\phi_3=0.3$, none is better on any function either % const
+(Table~\ref{tab:decomp}), so there is no tuning effort for scheduling to save. The heat map in
+Fig.~\ref{fig:phi3heat} shows why there is little to exploit: on \EtwoFlatCount{} of \EoneN{} functions (\EtwoFlatFns) all
+fixed values lie within a factor of two (mean error, ant leader). For the bee leader, the larger values usually rank best, which fits the leader offsetting scout damage; for the ant leader no value dominates. % const
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Attractor decomposition: number of functions on which the first-named variant is credited (better) or significantly worse than its control, under the decision-rule test. Classical: E2, 10 functions. CEC2017: E2c and E3, 29 functions, 30{,}030 FEs.}\label{tab:decomp}
+\geninput{decomposition.tex}
+\end{table}
+
+\begin{sidewaystable}
+\centering\tabsetup
+\caption{Bio-leader credit on classical functions (E2). Bio: fixed $\phi_3=0.3$. Rel.: relative improvement on $f-f^*$. Cr.: credited under the decision rule.}\label{tab:bio}
+\geninput{bioleader_credit.tex}
+\end{sidewaystable}
+
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.85\linewidth]{phi3_heatmap.pdf}
-\caption{Fixed-$\phi_3$ heat-map (ant leader, E2): normalised $\log_{10}$ mean fitness per function and $\phi_3$ (green: better).}
+\includegraphics[width=\linewidth]{phi3_heatmap.pdf}
+\caption{Rank of each $\phi_3$ setting per function (E2), including the no-bio column, for the ant and bee leaders. Lower is better.}
 \label{fig:phi3heat}
 \end{figure}
 
-\paragraph{Q2: does the bio-leader help?}
-Fixed AntBioQPSO beats its no-bio control on 4 of 10 functions and fixed
-BeeBioQPSO beats its control on 4 of 10; both are below the pre-registered
-threshold of 5, so \textbf{the bio-leader is not credited overall on the
-classical suite}. For both leaders the four credited functions are
-Rosenbrock, Rastrigin, Schwefel and Levy (Holm $p<0.05$ with $>1\%$
-relative improvement). On the smooth functions Sphere, Zakharov, Ackley and
-Griewank the no-bio control is markedly better than the bio variants, so on
-those functions the bio-leader hurts. The function-level breakdown is in
-Table~\ref{tab:controls}.
+% ---------------------------------------------------------------
+\FloatBarrier
+\subsection{CEC2017}\label{sec:cec}
+\paragraph{Standard budget (E3s).}
+At $10^4D$ FEs, Friedman gives $\chi^2=\EthreesThirtyChi$, $p=\EthreesThirtyP$ at $D=30$ and $\chi^2=\EthreesFiftyChi$, $p=\EthreesFiftyP$ at $D=50$, with $\mathrm{CD}=\EthreesThirtyCD$
+(Table~\ref{tab:cecranks}; means in Supplementary Tables~\ref{S-tab:e3sa}--\ref{S-tab:e3s50b}).
+L-SHADE ranks first at both dimensions (\EthreesThirtyRankLSHADE{} and \EthreesFiftyRankLSHADE), is the only algorithm separated from QPSO in its favor, and
+against QPSO per function wins \EthreesThirtyWLSHADE{} and loses \EthreesThirtyLLSHADE{} of \EthreesThirtyN{} at $D=30$ (\EthreesFiftyWLSHADE{} and \EthreesFiftyLLSHADE{} at $D=50$).
+PSO, GWO and WOA are the three worst at both dimensions and are separated from QPSO.
 
-\begin{table}[t]
-\centering\scriptsize
-\caption{E2 controls, mean fitness (30 runs, FE$=30{,}030$): QPSO, no-bio, fixed $\phi_3$ values, random and scheduled $\phi_3$ (ant leader).}
-\label{tab:controls}
-\resizebox{\textwidth}{!}{\geninput{controls_fixed_sweep.tex}}
+At $D=30$, \EthreesThirtyBioBetterCount{} BioQPSO variants rank above QPSO, and \EthreesFiftyBioBetterCount{} at $D=50$, with Ant-FB best (\EthreesThirtyRankAntFB{} and \EthreesFiftyRankAntFB;
+QPSO \EthreesThirtyRankQPSO{} and \EthreesFiftyRankQPSO). The largest gaps, \EthreesThirtyBioGap{} and \EthreesFiftyBioGap{} ranks, are below CD. The Holm-corrected Wilcoxon test on means
+finds \EthreesThirtyBioPwBetterList{} better than QPSO at $D=30$ ($p=\EthreesThirtyPwAntFB$) and \EthreesFiftyBioPwBetterList{} at $D=50$ ($p=\EthreesFiftyPwAntBio$ and $\EthreesFiftyPwAntFB$),
+and no variant worse. As on the light budget, the two procedures disagree, and we report both. We treat this as weak evidence, not as an established difference, because it holds under one of the two procedures only.
+Per function, AntBio wins \EthreesThirtyWAntBio{} and loses \EthreesThirtyLAntBio{} at $D=30$ and wins \EthreesFiftyWAntBio{} and loses \EthreesFiftyLAntBio{} at $D=50$; Ant-FB wins \EthreesThirtyWAntFB{} and loses \EthreesThirtyLAntFB{}
+at $D=30$ and wins \EthreesFiftyWAntFB{} and loses \EthreesFiftyLAntFB{} at $D=50$. BeeBio loses \EthreesThirtyLBeeBio{} and \EthreesFiftyLBeeBio, and Bee-PP \EthreesThirtyLBeePP{} and \EthreesFiftyLBeePP.
+On $f-f^*$ instead of raw values, AntBio wins \EthreesFiftyErrWAntBio{} and loses \EthreesFiftyErrLAntBio{} at $D=50$.
+These are comparisons with QPSO alone: the standard budget has no controls, so they do not separate the leader from the fixed weights.
+
+As a check of our L-SHADE, we compared it with the competition results of jSO~\cite{Brest2017jSO}, an improved L-SHADE, and of LSHADE-SPACMA~\cite{Mohamed2017LSHADESPACMA}
+at the same budget (Supplementary Table~\ref{S-tab:lshade}). Our mean error lies within a factor of two of jSO's on \LsWithinTwoThirty{} of \LsFns{} functions at $D=30$ and
+\LsWithinTwoFifty{} at $D=50$; the largest ratio is \LsMaxRatioThirty{} (\LsMaxRatioFnThirty{}, $D=30$), in jSO's favor.
+
+\paragraph{Light budget (E3).}
+Friedman gives $\chi^2=\EthreeChi$, $p=\EthreeP$ with $\mathrm{CD}=\EthreeCD$ (Table~\ref{tab:cecranks}). L-SHADE ranks first
+(\EthreeRankLSHADE), then AntBio (\EthreeRankAntBio), Ant-FB (\EthreeRankAntFB), BeeBio and Ant-Cos (\EthreeRankBeeBio), and QPSO is at \EthreeRankQPSO.
+So \EthreeBioBetterCount{} BioQPSO variants rank above QPSO, but the largest gap is \EthreeMaxGap{} and below CD, and none differs from QPSO on means
+(AntBio: $p=\EthreePwAntBio$). L-SHADE's gap to QPSO is also below CD, yet the Wilcoxon test on means is significant ($p=\EthreePwLSHADE$), so the two procedures disagree there.
+GWO (\EthreeRankGWO) and WOA (\EthreeRankWOA) are the worst and the only algorithms separated from QPSO, consistent with E1b. Supplementary Tables~\ref{S-tab:ceca} and~\ref{S-tab:cecb} give the means.
+
+\paragraph{Controls on CEC2017 (E2c).}
+E2c repeats the controls at the light budget (Table~\ref{tab:decomp}, and Supplementary Tables~\ref{S-tab:ceccontrols} and~\ref{S-tab:biocec}). On this suite, the cost of
+fixed weights almost disappears: better than QPSO on \DcRandomToFixedCeBetter{} functions and worse on \DcRandomToFixedCeWorse.
+Scouts at the default limit are worse on \DcScoutsCeWorse{} of \EthreeN{} functions and better on \DcScoutsCeBetter, a smaller cost than on the classical suite.
+The ant leader is credited on \EtwocBioCountAnt{} functions (\EtwocBioFnsAnt) and the bee leader on \EtwocBioCountBee{} (\EtwocBioFnsBee), below the threshold of 15, % const
+so neither is credited overall, and neither is significantly worse than its control on any function. The bee credits are again measured against a control that carries
+the scouts: BeeBio is better than QPSO on \DcNetBeeCeBetter{} functions and worse on \DcNetBeeCeWorse. No schedule is credited on any function
+(\EtwocSchedTotal{} over \EtwocSchedN{} schedules), against the best of three fixed values. Mean ranks among the five variants are AntBio \EtwocRankAntBio, BeeBio \EtwocRankBeeBio,
+QPSO \EtwocRankQPSO, ant no-bio \EtwocRankAntNobio{} and bee no-bio \EtwocRankBeeNobio.
+The rule's raw-value form is strict on CEC2017, whose offsets inflate the denominator. Using $f-f^*$ instead gives \EtwocErrBioCountAnt{} and \EtwocErrBioCountBee{}
+credits, still below the threshold.
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Mean ranks over 29 CEC2017 functions at the light budget (E3) and the standard budget (E3s), with Holm-corrected Wilcoxon $p$ against QPSO on per-function means.}\label{tab:cecranks}
+\geninput{cec2017_ranks.tex}
 \end{table}
 
 % ---------------------------------------------------------------
-\subsection{Schwefel diagnosis (E7)}\label{sec:schwefel}
-All BioQPSO variants are much worse than QPSO on Schwefel in E1. E7 varies the
-boundary handler on Schwefel ($D=30$, 30 runs; Table~\ref{tab:e7}). Reflecting
-at the bounds improves QPSO strongly (mean $4277 \to 1797$), improves
-BeeBioQPSO moderately ($8587 \to 6062$), and improves fixed AntBioQPSO only
-slightly ($8050 \to 7669$). It does not help the no-bio ant control or
-CosineAda, and random re-initialisation makes every algorithm worse. So the
-failure is not mainly a clipping artefact, and it is not removed by switching
-off the bio-leader either. One hypothesis is that neighbourhood anchoring
-concentrates the swarm in interior basins while the Schwefel optimum lies near
-the boundary; the data do not test this.
+\FloatBarrier
+\subsection{The Schwefel failure (E7, E7b)}\label{sec:schwefel}
+All BioQPSO variants fail on Schwefel in E1, while QPSO does less badly (\EsevQPSOClip{} against \EsevAntBioClip{} for AntBio and
+\EsevBeeBioClip{} for BeeBio). The leader is not the cause, since the no-bio control is also poor (\EsevnobioantClip). Reflecting at the
+bounds helps QPSO strongly (\EsevQPSOReflect) and BeeBio moderately (\EsevBeeBioReflect), but AntBio little (\EsevAntBioReflect), and random re-initialization
+makes all of them worse (Table~\ref{tab:e7}).
 
-\begin{table}[t]
-\centering\small
-\caption{Schwefel diagnosis (E7): mean fitness by algorithm and boundary handler ($D=30$, 30 runs, FE$=30{,}030$).}\label{tab:e7}
+E7b moves the optimum inward, from $c=420.97$ to $c=120.97$, to test whether the gap exists because the optimum lies near the bound % const
+(Supplementary Section~\ref{S-sec:e7b}). Under clipping, \EsevBWorseNear{} of 6 family members are significantly worse than QPSO with the optimum near % const
+the bound and \EsevBWorseInward{} with it inward, but under reflection the gap remains (AntBio's ratio to QPSO's mean, \EsevBRatioNearReflectAnt{} near and
+\EsevBRatioInwardReflectAnt{} inward). The hypothesis therefore holds for clipping, the handling used in the main experiments, but does not fully explain the failure.
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Schwefel by boundary handler (E7: mean fitness, $D=30$, 30 runs, 30{,}030 FEs).}\label{tab:e7}
 \geninput{e7_schwefel.tex}
 \end{table}
 
 % ---------------------------------------------------------------
+\FloatBarrier
 \subsection{Scalability (E4)}\label{sec:scal}
-E4 uses $D\in\{30,50,100\}$, six functions, 30 runs and FE$=10{,}000D$.
-GWO reaches exactly zero on Sphere and Rastrigin at all dimensions, which is
-consistent with the origin bias noted above.
+E4 uses $D\in\{30,50,100\}$, six functions, seven algorithms, 30 runs and $10^4 D$ FEs, which is \EfourJobs{} runs in total % const
+(Fig.~\ref{fig:scal}, Table~\ref{tab:scal}). Mean ranks are close at the larger budget: at $D=30$, QPSO \EfourRankThirtyQPSO, Ant-FB \EfourRankThirtyAntFB,
+AntBio \EfourRankThirtyAntBio{} and GWO \EfourRankThirtyGWO; at $D=100$, QPSO and GWO \EfourRankHundredQPSO, AntBio \EfourRankHundredAntBio{} and Ant-FB
+\EfourRankHundredAntFB. The bee variants are last at every dimension (\EfourRankHundredBeeBio{} and \EfourRankHundredBeePP{} at $D=100$). QPSO has the best mean on
+\EfourWinFnsHundredQPSO{} at every dimension, and AntBio on \EfourWinFnsHundredAntBio{} at $D=100$. GWO's exact zeros on \EfourGwoZeroFns{} at all dimensions fit the
+origin bias of Section~\ref{sec:shifted}, as these functions are not shifted. So no BioQPSO variant scales better than QPSO overall. Only the ant variants stay level with it.
 
-\begin{figure}
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.95\linewidth]{scalability.pdf}
-\caption{Scalability: mean fitness versus $D$ (E4, 30 runs, FE$=10{,}000D$).}
+\includegraphics[width=\linewidth]{scalability.pdf}
+\caption{Scalability: mean error versus $D$ (E4: 30 runs, $10^4 D$ FEs).}
 \label{fig:scal}
 \end{figure}
 
-% ---------------------------------------------------------------
-\subsection{Feature selection (E8)}\label{sec:fs}
-Each particle is a vector in $[0,1]^D$ and entries $\ge0.5$ select a feature.
-Fitness $f(x)=0.7(1-\bar\alpha_{\mathrm{inner}})+0.3|S|/D$ with an inner
-3-fold $k$-NN ($k=5$) computed only on the outer-training split. Outer:
-stratified 5-fold repeated 6 times (30 evaluations per algorithm and dataset);
-test accuracy with both $k$-NN and RBF-SVM. Datasets: Breast Cancer
-(30 features), Wine (13), Ionosphere-synthetic (34) and Madelon-synthetic (500);
-baselines all-features and mutual-information top-$k$ ($k=D/4$).
-The inner CV uses 3-fold rather than the planned 5-fold for computational
-speed; this is a deviation from the pre-registered protocol that may
-slightly overestimate accuracy.
-
-\begin{table}[t]
-\centering
-\caption{Feature selection, nested CV (E8: 30 outer folds, kNN test accuracy; $^{*}$ Holm $p<0.05$ vs QPSO; \#f = mean features selected).}\label{tab:fs}
-\resizebox{\textwidth}{!}{\geninput{fs.tex}}
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Scalability: mean best fitness (E4: 30 runs, $10^4 D$ FEs); standard deviations are in Supplementary Table~\ref{S-tab:scalstd}. Bold: best at the printed precision.}\label{tab:scal}
+\geninput{scalability.tex}
 \end{table}
 
 % ---------------------------------------------------------------
-\subsection{Runtime (E9)}\label{sec:runtime}
-Table~\ref{tab:runtime} gives median wall-clock time (10 repetitions, four
-functions, $D=30$, one thread) for all algorithms in the same NumPy code path.
-Relative to QPSO, PSO is about 25\% faster, AntBioQPSO about 28\% slower,
-FeedbackAda about 26\% slower, BeeBioQPSO about 11\% slower, PerParticleAda
-about 88\% slower and GWO about 121\% slower. The PerParticleAda overhead
-was traced to \texttt{np.clip} on scalar values in the per-particle $\phi_3$
-loop (9.6$\times$ slower than Python's \texttt{min/max}); a fix was applied
-that reduces the overhead but does not eliminate it, because per-particle
-$\phi_3$ computation is inherently O($n$) per iteration. Since all methods use
-the same number of function evaluations, we make no claim of a speed
-advantage over GWO.
+\FloatBarrier
+\subsection{Feature selection (E8)}\label{sec:fs}
+Each particle is a vector in $[0,1]^D$, and entries of at least 0.5 select a feature. Fitness is % const
+$f(x)=0.7(1-\bar\alpha_{\mathrm{inner}})+0.3|S|/D$ with 5-fold inner cross-validation on the outer-training split. % const
+Features are standardized on the outer-training split. Outer folds are stratified 5-fold repeated six times (30 % const
+evaluations per algorithm and dataset), and test accuracy uses $k$-NN and an RBF SVM. % const
+The datasets are Breast Cancer and Wine from scikit-learn, and Ionosphere and Madelon from OpenML. Runs use 30 particles and 1,530 FEs, or 630 FEs on Madelon. % const
+The baselines are all features and mutual-information top-$k$ with $k=\lfloor D/4\rfloor$. L-SHADE is not included: this experiment predates its addition, and its initial population of $18D$ would exceed Madelon's budget. % const
 
-\begin{table}[t]
-\centering\small
-\caption{Median wall-clock time and overhead relative to QPSO (E9).}\label{tab:runtime}
+Selection does not help on every dataset (Table~\ref{tab:fs}). All features give the best accuracy with both classifiers on \FsAllBeatsList,
+where all \FsBCKnnBelowAll{} selectors are significantly below them, and mutual-information top-$k$ also beats every selector on \FsMiBeatsList.
+On Ionosphere the result depends on the classifier: selection lifts $k$-NN from \FsIonoKnnAll{} to \FsIonoKnnBest{} (\FsIonoKnnBestName), while the SVM is best with all features (\FsIonoSvmAll).
+Madelon is the only dataset where selection helps both classifiers: \FsMadKnnBestName{} reaches \FsMadKnnBest{} and \FsMadSvmBest{} against \FsMadKnnAll{} and \FsMadSvmAll{} for all features.
+Against QPSO, only \FsCreditTotal{} of \FsCells{} comparisons is a significant gain above 0.005 (\FsMadKnnCredited, Madelon, $k$-NN), \FsBioCreditTotal{} involve a BioQPSO variant, and \FsWorseTotal{} are significantly below QPSO. % const
+Subsets are small on the three smaller datasets, for example \FsBCFeatQpso{} of 30 features for QPSO on Breast Cancer, because the fitness rewards small subsets; part of the accuracy lost there is that trade-off. % const
+On Madelon, QPSO still keeps \FsMadFeatQpso{} of 500 features at this budget, whereas WOA keeps \FsMadFeatWoa{} with lower accuracy. % const
+These results give no support to a BioQPSO variant for feature selection at these budgets.
+
+\begin{sidewaystable}
+\centering\tabsetup
+\caption{Feature selection (E8): mean outer-test accuracy and mean subset size \#f over 30 outer evaluations. Bold: best per column at the printed precision, baselines included. $^{*}$: differs from QPSO (two-sided Wilcoxon, Holm-corrected, $p<0.05$). $^{\dagger}$: also above QPSO by more than 0.005.}\label{tab:fs}
+\geninput{fs.tex}
+\end{sidewaystable}
+
+% ---------------------------------------------------------------
+\subsection{Runtime (E9)}\label{sec:runtime}
+Table~\ref{tab:runtime} gives the cost per 1,000 FEs at $D=30$ over \RtFns{} classical functions (Sphere, Rastrigin, Levy, Schwefel), as the median over functions of the median of 10 runs of 30,030 FEs, in one process on an otherwise idle Apple M4. % const
+Costs range from \RtLo{} ms (L-SHADE) to \RtHi{} ms (ACO$_\mathbb{R}$), with QPSO at \RtQpso{} ms. AntBio is \RtOverAntBio{} \RtDirAntBio{} than QPSO, and schedules add almost nothing: the fixed, linear, cosine and feedback ant variants lie within \RtAntSpread.
+GWO is \RtOverGWO{} \RtDirGWO{} than QPSO, although both have the same $\mathcal O(nDT)$ cost and the same number of evaluations. A profile on Sphere shows that its random-number generation takes \RtProfGwoRng{} of its time against \RtProfQpsoRng{} for QPSO, because each wolf draws six random vectors, and its per-agent update steps take \RtProfGwoSelf{} (QPSO: \RtProfQpsoSelf). The gap is therefore a matter of our implementation, not of the algorithm. % const
+A first pass that ran the algorithms in sequence gave a ratio of \RtSeqRatio{} between two ant variants of equal cost on Rastrigin, so we interleaved them in random order and report that pass. These differences would be small next to any costly objective.
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Runtime (E9): median cost, with the median over functions of the interquartile range of a run.}\label{tab:runtime}
 \geninput{runtime.tex}
 \end{table}
 
 % ---------------------------------------------------------------
-\subsection{Convergence curves}
-\begin{figure}
+\subsection{Convergence}\label{sec:conv}
+Figure~\ref{fig:conv} shows median error against FEs for eight algorithms. GWO and WOA fall fastest on the functions with the optimum at the origin, in
+line with Section~\ref{sec:shifted}. BeeBio stalls at a higher error than AntBio on Sphere, Griewank, Ackley and Levy, which fits the cost of scouts in Table~\ref{tab:decomp}.
+L-SHADE improves slowly at first and is still improving at the end of the budget on most functions, so the light budget penalizes it; this is one reason for the standard-budget CEC2017 runs.
+
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.95\linewidth]{convergence_classical.pdf}
-\caption{Mean convergence curves with $\pm1$ std shading on the classical functions (E1; $x$-axis: function evaluations).}
+\includegraphics[width=\linewidth]{convergence_classical.pdf}
+\caption{Median convergence on the classical functions (E1: 30 runs).}
 \label{fig:conv}
 \end{figure}
-% CEC2017 convergence curves are omitted for space; the E3 raw data
-% contains per-run histories if a CEC2017 figure is needed later.
+
+\FloatBarrier
+\subsection{Sensitivity (E6)}\label{sec:sens}
+One-at-a-time sweeps over five values of each parameter, on six classical and four CEC2017 functions, are in Supplementary Section~\ref{S-sec:sens}. % const
+Of \EsixCells{} Holm-corrected Friedman tests, \EsixSigCells{} are significant: \EsixSigLscout{} for $L_{\mathrm{scout}}$, \EsixSigBeta{} for the $\beta$ range,
+\EsixSigBounds{} for the $\phi_3$ bounds and \EsixSigRho{} for $\rho$, $W$ and $\delta$. The deposit $\Delta$ has no effect by construction: all \EsixDeltaTuples{} runs are identical
+across its values, because scaling every deposit leaves the comparison between neighbors unchanged. The longest scout limit tested, \EsixLscoutMax, gives the best mean on
+\EsixLscoutBestAtMax{} of \EsixFns{} functions (Sphere \EsixLSphereDefault{} at the default \EsixLscoutDefault{} against \EsixLSphereLong), so the cost of scouts belongs to
+the default limit, not to scouts as such. We keep the frozen default, since choosing a limit here would tune on the test functions.
 
 % =======================================================================
-\section{Earlier Sensitivity Data (not part of the unified run)}\label{sec:sens}
-The tables in this section come from the earlier batch (20 runs, 500
-iterations, 30 particles), not from the unified run, and are kept only as
-preliminary information on $\rho$, $\Delta$, $W$, $\delta$ and the $\phi_3$ range. In
-almost every cell the standard deviation is of the same order as the mean, so only
-ranges, not optima, can be read. \todo{Re-run this analysis as E6 with the unified framework (30 runs, full budget, including Schwefel) and replace these tables.}
-
-\begin{table}[t]
-\centering\small
-\caption{Pheromone parameters (ant leader): mean (std), earlier batch.}\label{tab:ant}
-\begin{tabular}{cccc}
-\toprule Param & Value & Sphere & Rastrigin\\\midrule
-$\rho$ & 0.05 & 2.99e-03 (1.49e-03) & 6.23e+01 (4.81e+01)\\
- & 0.10 & 3.76e-03 (4.11e-03) & 6.11e+01 (5.06e+01)\\
- & 0.20 & 7.80e-03 (7.04e-03) & 5.94e+01 (4.32e+01)\\
- & 0.30 & 9.34e-03 (7.55e-03) & 6.34e+01 (5.20e+01)\\
- & 0.50 & 7.68e-03 (4.88e-03) & 6.47e+01 (5.51e+01)\\\midrule
-$\Delta$ & 0.5 & 3.99e-03 (4.10e-03) & 5.88e+01 (4.12e+01)\\
- & 1.0 & 9.88e-03 (1.72e-02) & 6.11e+01 (5.06e+01)\\
- & 2.0 & 3.29e-03 (3.17e-03) & 6.43e+01 (5.29e+01)\\
- & 5.0 & 4.89e-03 (4.33e-03) & 6.72e+01 (5.60e+01)\\
- & 10 & 5.69e-03 (4.65e-03) & 7.11e+01 (5.94e+01)\\
-\bottomrule\end{tabular}
-\end{table}
-
-\begin{table}[t]
-\centering\scriptsize
-\caption{FeedbackAda $W$ and $\delta$ sweeps, mean (std), earlier batch. Defaults $W{=}20$, $\delta{=}0.02$.}\label{tab:fb}
-\begin{tabular}{ccccc}
-\toprule Param & Value & Sphere & Rastrigin & Levy\\\midrule
-$W$ & 5 & 5.99e-03 (8.57e-03) & 9.58e+01 (5.08e+01) & 8.29e-05 (1.01e-04)\\
- & 10 & 3.83e-03 (4.28e-03) & 7.91e+01 (5.29e+01) & 4.96e-02 (2.16e-01)\\
- & 20 & 3.54e-03 (3.55e-03) & 6.39e+01 (3.74e+01) & 8.60e-05 (1.59e-04)\\
- & 30 & 3.54e-03 (3.55e-03) & 6.66e+01 (3.84e+01) & 1.79e-04 (5.84e-04)\\
- & 50 & 3.54e-03 (3.55e-03) & 7.77e+01 (5.10e+01) & 5.51e-05 (7.14e-05)\\\midrule
-$\delta$ & 0.01 & 5.43e-03 (7.15e-03) & 8.80e+01 (5.06e+01) & 1.77e-04 (5.27e-04)\\
- & 0.02 & 3.54e-03 (3.55e-03) & 6.39e+01 (3.74e+01) & 8.60e-05 (1.59e-04)\\
- & 0.05 & 3.43e-03 (4.49e-03) & 7.85e+01 (5.63e+01) & 4.95e-02 (2.16e-01)\\
- & 0.10 & 3.33e-03 (2.58e-03) & 8.61e+01 (5.24e+01) & 5.47e-05 (5.24e-05)\\
- & 0.20 & 2.77e-03 (2.17e-03) & 6.90e+01 (4.94e+01) & 1.29e-04 (4.34e-04)\\
-\bottomrule\end{tabular}
-\end{table}
-
-\paragraph{FeedbackAda.}
-On Sphere the settings $W=20,30,50$ give identical results, which suggests
-the stagnation trigger never fires on that function under the shared seeds,
-so FeedbackAda there reduces to a fixed decay of $\phi_3$. Differences on
-Rastrigin and Levy are within run-to-run dispersion (a few Levy outliers
-dominate some means), so no optimal $W$ or $\delta$ can be claimed.
-
-\begin{table}[t]
-\centering\scriptsize
-\caption{CosineAda $[\phi_3^{\min},\phi_3^{\max}]$ sensitivity, mean (std), earlier batch.}\label{tab:bounds}
-\begin{tabular}{ccccc}
-\toprule $[\phi_3^{\min},\phi_3^{\max}]$ & Sphere & Rastrigin & Levy & Styb.--Tang\\\midrule
-{[0.05,0.6]} & 6.04e-02 (5.53e-02) & 7.51e+01 (5.47e+01) & 3.82e-04 (4.61e-04) & $-1.12{\times}10^3$ (27.5)\\
-{[0.10,0.5]} & 2.57e-02 (2.78e-02) & 4.83e+01 (3.12e+01) & 1.76e-04 (1.87e-04) & $-1.12{\times}10^3$ (25.3)\\
-{[0.15,0.5]} & 1.76e-02 (1.73e-02) & 7.79e+01 (4.67e+01) & 1.28e-04 (1.33e-04) & $-1.12{\times}10^3$ (34.8)\\
-{[0.10,0.4]} & 1.96e-02 (3.37e-02) & 7.80e+01 (5.81e+01) & 1.63e-04 (2.05e-04) & $-1.11{\times}10^3$ (28.6)\\
-{[0.20,0.4]} & 1.77e-02 (1.63e-02) & 7.67e+01 (4.62e+01) & 6.40e-05 (7.56e-05) & $-1.12{\times}10^3$ (22.4)\\
-\bottomrule\end{tabular}
-\end{table}
-
-% =======================================================================
-\section{Discussion and Limitations}\label{sec:disc}
+\section{Discussion}\label{sec:disc}
 \paragraph{What the evidence supports.}
-(a)~On classical functions (E1), GWO ranks first (3.50) and QPSO second
-(4.50); no BioQPSO variant is separated from QPSO (CD$=5.27$).
-(b)~On CEC2017 (E3, 28 functions), the four Ant-leader variants rank above
-QPSO (3.11--3.79 vs.\ 4.14), but the gap is below CD$=3.15$.
-(c)~Scheduling $\phi_3$ does not beat a fixed $\phi_3$ on any classical
-function under the pre-registered rule (0/10), so the default $\phi_3=0.3$ is a
-reasonable setting that needs no per-function tuning.
-(d)~The bio-leader is credited on 4 of 10 classical functions per leader,
-below the threshold of 5.
-(e)~AntBioQPSO costs about 28\% more per run than QPSO.
+Within the attractor, the components act differently. Removing the random weight costs performance on classical functions and
+little on CEC2017. Scouts are harmful on both suites at the default limit, and that cost shrinks as the limit grows (Section~\ref{sec:sens}). A ring-neighbor leader never significantly hurts relative to its control, and helps on a few
+functions; only the bee leader on the classical suite passes the overall threshold, and it does so against a control already damaged by scouts.
+Scheduling gives nothing, either against the best fixed value or against the default. Separately, GWO's and WOA's classical results depend on the optimum's location. In feature selection, the baselines match or beat the selectors on most dataset and classifier pairs, and no BioQPSO variant gains on QPSO.
+At the standard CEC2017 budget, L-SHADE is clearly best. No BioQPSO variant is worse than QPSO on function means, and some ant-leader variants are better under one of the two procedures at both dimensions. This is the strongest positive result for the three-term attractor, and it is weak evidence only.
 
 \paragraph{What it does not support.}
-Statistical superiority over QPSO on either suite; a speed advantage over GWO;
-scheduling over a tuned fixed $\phi_3$; a mechanistic explanation of the Schwefel failure;
-feature-selection superiority over QPSO (E8 shows no significant difference on 3 of 4 datasets; ABC alone is significant on Wine).
+It does not support a claim that any BioQPSO variant is separated from QPSO by the Nemenyi test on any suite, or better than QPSO on the classical suite. Nor does it support crediting the ant leader overall, or
+the claim that scheduling removes the need for tuning. The gain of the ant variants at the standard budget comes without controls, so it cannot be assigned to the leader rather than to the fixed weights, and it holds under one procedure only.
+
+\paragraph{Practical recommendation.}
+For a new continuous problem, start with L-SHADE: it ranks first at the standard CEC2017 budget at both dimensions and loses to QPSO on no function. If a simple swarm method with few parameters is wanted, QPSO is a sound default.
+AntBioQPSO costs about \RtOverAntBio{} more time per evaluation and shows weak evidence of a small gain on CEC2017 at the standard budget, but it is not better on the classical suite.
+Avoid GWO and WOA unless the optimum is known to lie near the center of the domain. Do not use scouts with a short stagnation limit, and do not expect a $\phi_3$ schedule to replace tuning.
+For feature selection, compare against all features and a simple filter before using any metaheuristic.
 
 \paragraph{Threats to validity.}
-\emph{Budget:} 30{,}030 FEs is low for $D=30$ and well below the CEC standard;
-rankings may change at $10^4D$ FEs. \emph{Origin bias:} classical functions with the optimum at the
-origin favour centre-biased algorithms such as GWO; shifted and rotated
-variants are needed. \emph{Baseline tuning:} baselines use published defaults,
-whereas $\rho$, $\Delta$ and $L_{\mathrm{scout}}$ were examined on the same
-functions in the earlier batch, which may favour the proposed method.
-\emph{Statistics:} 10 and 28 functions give limited power; 30 runs do not
-always characterise heavy tails (e.g.\ Levy outliers). \emph{Benchmarks:}
-$D=30$ only for the main results; no composition-function analysis. \emph{Missing baselines:} no CEC-competitive DE variant and no
-recent optimizers. \emph{Reproducibility:} seeds and code are public; the
-earlier batch discrepancies are documented in \texttt{docs/REPRO.md}.
-
-\paragraph{Conclusion.}
-The three-term BioQPSO attractor with an ant leader and fixed weights is a
-coherent, low-overhead QPSO variant. It is not distinguishable from QPSO on
-the classical suite and shows a consistent but statistically unsupported rank
-advantage on CEC2017. Adaptive scheduling of $\phi_3$ did not improve on a fixed
-weight in a pre-registered test, and the bio-leader helps on a minority of
-functions and hurts on smooth ones. Schwefel remains an unexplained failure.
-The CEC2017 result at the standard FE budget, a $D=50$ study, shifted
-classical functions, a CEC-grade baseline and a larger-budget feature-selection
-study are the experiments that would settle whether the CEC2017 signal is real.
+\emph{Budget:} the light budget favors fast early convergence, and leader credits were measured only there, as the standard-budget runs include no controls.
+\emph{Tuning:} the bio-inspired settings were chosen in earlier work on the same functions, which may favor them, and some baseline settings are study choices or rest on secondary sources.
+\emph{Scouts and budget:} scout evaluations count, so bee variants complete fewer iterations and their $\beta$ does not reach its final value, which is part of the measured cost of scouts.
+\emph{Controls:} the scout comparison and the comparison with the default $\phi_3$ are exploratory, and CEC2017 fixed sweeps use three values rather than five. % const
+\emph{Instances:} the CEC2017 results use the official code. A first run on the opfunu library, which differs from the official code in data or formula on all but \CecOffSameCount{} of its functions, is reported in the supplement only; where its conclusions differ, the official results govern.
+\emph{Statistics:} \EoneN{} and \EthreeN{} functions give limited power, and 30 runs do not fully describe heavy tails such as Levy for QPSO. Outer folds in feature selection share data, so those $p$-values are optimistic.
+\emph{Sensitivity:} one-at-a-time sweeps miss interactions, and the scout limit was not tested beyond \EsixLscoutMax.
+\emph{Implementation:} earlier code contained errors; the current code was checked against the original papers and a reference implementation, and the checks that do not support a change are also reported.
+WOA follows the reference code where it differs from the paper's notation.
+\emph{Order of the rule:} the document date, which is not tamper-evident, is the only evidence that the rule preceded the first experiments.
 
 % =======================================================================
+\section{Conclusion}\label{sec:conclusion}
+We decomposed a three-term QPSO attractor with a control for each component. Fixed weights lose to QPSO's random weight on classical functions, scouts at their default limit are harmful on both suites, and
+ring-neighbor leaders help on few functions, with no overall credit on CEC2017. Scheduling the leader weight is credited on no function.
+At the standard CEC2017 budget L-SHADE is best, and there is weak evidence that some ant-leader variants beat QPSO on function means.
+The classical strength of GWO and WOA disappears when the optimum moves, and feature selection favors no BioQPSO variant.
+For QPSO hybrids, the lesson is to test each change against a control, because a whole-method comparison hides costs and benefits that act in opposite directions.
+
+% =======================================================================
+\backmatter
+
+\bmhead{Acknowledgements}
+Prof.\ Richa Bhatia provided guidance. The work uses NumPy~\cite{Harris2020}, SciPy~\cite{Virtanen2020},
+scikit-learn~\cite{Pedregosa2011} and opfunu~\cite{opfunu}.
+
 \section*{Declarations}
 \begin{itemize}
 \item \textbf{Funding:} Not applicable.
-\item \textbf{Conflict of interest:} None.
-\item \textbf{Prior dissemination:} The fixed-weight method appeared as a
- preprint~\cite{Manav2026BioQPSO}. This manuscript adds adaptive schedules,
- controls, corrected statistics and negative findings. \todo{Confirm that no part is under review elsewhere and disclose the preprint in the cover letter.}
-\item \textbf{Data availability:} Benchmark functions are synthetic. The UCI
- datasets~\cite{UCI} are public.
-\item \textbf{Code availability:} \url{https://github.com/qxrein/bioqpso}
- (branch \texttt{merged-uni\-fied}), MIT licence; seeds in
- \texttt{config/seeds.yaml}; environment in \texttt{requirements.txt}.
-\item \textbf{Author contribution:} Sole author.
-\item \textbf{Acknowledgements:} Prof.\ Richa Bhatia for guidance. The work
- uses NumPy~\cite{Harris2020}, SciPy~\cite{Virtanen2020},
- scikit-learn~\cite{Pedregosa2011} and \texttt{opfunu}~\cite{opfunu}.
+\item \textbf{Conflict of interest:} The author declares no competing interests.
+\item \textbf{Prior dissemination:} An earlier version appeared as a preprint~\cite{Manav2026BioQPSO}.
+ This manuscript is not under review elsewhere.
+\item \textbf{Data availability:} Per-run results are available at \ZenodoDOI.
+ The benchmark functions are synthetic.
+\item \textbf{Code availability:} \url{https://github.com/qxrein/bioqpso} (MIT license), with the seeds, the software
+ environment, the decision rule and the list of deviations. The official CEC2017 code is not redistributed;
+ the repository downloads it from its official source, verifies checksums and applies three portability patches.
+\item \textbf{Author contribution:} Sole author. ORCID 0009-0005-5197-5195. % const
 \end{itemize}
 
-% =======================================================================
-\appendix
-\section{Standard deviations}\label{app:std}
-\begin{table}[h]
-\centering
-\caption{Standard deviation of best fitness, classical functions (E1).}
-\resizebox{\textwidth}{!}{\geninput{classical_std.tex}}
-\end{table}
+\noindent Supplementary material (a separate PDF) gives the sensitivity analysis, the inward-optimum Schwefel experiment,
+the opfunu discrepancy with the superseded opfunu results, the L-SHADE check, per-function CEC2017 tables, all standard deviations,
+and further tables for the classical functions.
 
-\begin{table}[h]
-\centering
-\caption{Standard deviation of best fitness, CEC2017 functions (E3, first half).}
-\resizebox{\textwidth}{!}{\geninput{cec2017_std_a.tex}}
-\end{table}
 
-\begin{table}[h]
-\centering
-\caption{Standard deviation of best fitness, CEC2017 functions (E3, second half).}
-\resizebox{\textwidth}{!}{\geninput{cec2017_std_b.tex}}
-\end{table}
-
-% =======================================================================
-\ifdraft
-\section*{Author actions before submission (delete in final version)}
-\begin{enumerate}
-\item Verify every bibliography entry against the publisher or DOI page.
-\item Run E6 (sensitivity) with the unified framework and replace the legacy tables.
-\item Resolve the Levy contradiction in the E2 bio-leader list and profile PerParticleAda runtime.
-\item Add shifted classical functions, a CEC-grade baseline and the CEC2017 standard-budget run.
-\item Replace prose numbers by macros, set \verb|\draftfalse|, convert to the journal template and tag the release.
-\end{enumerate}
-\fi
-
-\bibliographystyle{splncs04}
 \bibliography{references}
 
 \end{document}

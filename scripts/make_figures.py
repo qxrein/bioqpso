@@ -19,7 +19,7 @@ from scipy import stats
 
 OUT = "paper/figures"
 os.makedirs(OUT, exist_ok=True)
-WIDTH = 4.8  # inches, LNCS text width
+WIDTH = 4.8  # inches, text width
 plt.rcParams.update({
     "font.size": 7, "axes.titlesize": 7.5, "axes.labelsize": 7, "xtick.labelsize": 7,
     "ytick.labelsize": 7, "legend.fontsize": 7, "axes.linewidth": 0.5, "pdf.fonttype": 42,
@@ -180,7 +180,7 @@ def fig_scalability():
         if any_zero:
             boundary = 10 ** (lo - 1.5 * pad)
             ax.axhline(boundary, color="#888888", lw=0.5, ls=(0, (2, 2)))
-            ax.text(101, band, "= 0", ha="left", va="center", fontsize=7, clip_on=False)
+            ax.text(72, band, "= 0", ha="center", va="center", fontsize=7)
         ax.set_title(FN[f], pad=2)
     for ax in axes[1]:
         ax.set_xlabel("$D$")
@@ -197,14 +197,19 @@ def fig_sensitivity():
         print("  E6 parameters missing; skipped")
         return
     params = json.load(open(p6))["params"]
-    fns = ["sphere", "rastrigin", "levy", "styblinski_tang", "schwefel", "griewank", "F12017", "F42017", "F112017", "F212017"]
-    lab = [FN[f][:6] if f in FN else f.replace("2017", "") for f in fns]
+    # classical runs of E6 and the CEC part re-run on the official code (the opfunu CEC runs are not shown)
+    fns = ["sphere", "rastrigin", "levy", "styblinski_tang", "schwefel", "griewank", "F1", "F4", "F11", "F21"]
+    short = {"rastrigin": "Rastrigin", "styblinski_tang": "Styb.-Tang", "schwefel": "Schwefel", "griewank": "Griewank"}
+    lab = [short.get(f, FN.get(f, f.replace("2017", ""))) for f in fns]
     titles = {"rho": r"$\rho$ (AntBio)", "Delta": r"$\Delta$ (AntBio)", "Lscout": r"$L_{\mathrm{scout}}$ (BeeBio)",
               "W": r"$W$ (Ant-FB)", "delta": r"$\delta$ (Ant-FB)",
               "phi3bounds": r"$[\phi_3^{\min},\phi_3^{\max}]$ (Ant-Cos)", "beta": r"$\beta$ start–end (AntBio)"}
     data = defaultdict(list)
-    for p in glob.glob("results/e6_sensitivity/*.json"):
+    # sorted, so that identical runs give identical means rather than rounding differences
+    for p in sorted(glob.glob("results/e6_sensitivity/*.json")) + sorted(glob.glob("results/e6_official/*.json")):
         r = json.load(open(p))
+        if r["function"].endswith("2017"):
+            continue
         data[r["param"], r["value"], r["function"]].append(r["final_f"])
     fig, axes = plt.subplots(3, 3, figsize=(WIDTH, 5.6), sharey=True)
     axes = axes.ravel()
@@ -214,7 +219,7 @@ def fig_sensitivity():
         R = np.apply_along_axis(stats.rankdata, 1, M)
         xl = [v.replace("-", "\n") for v in vals]
         rank_cells(ax, R, xl, lab, title=t, n=5)
-        ax.tick_params(axis="x", labelsize=6.5)
+        ax.tick_params(axis="x", labelsize=5.5)
     for ax in axes[7:]:
         ax.set_visible(False)
     for ax in axes[4:7]:

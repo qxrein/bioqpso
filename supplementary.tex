@@ -1,0 +1,307 @@
+% Supplementary material for the BioQPSO manuscript. Compile from the repository root:
+% latexmk -pdf supplementary.tex   (compile it before manuscript.tex, which reads its .aux)
+% Tables and numbers.tex in paper/generated/ come from scripts/make_tables.py; do not edit them.
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{placeins}
+\usepackage{url}
+\hypersetup{hypertexnames=false}
+
+\newcommand{\win}{\textcolor{green!60!black}{$\bullet$}}
+\newcommand{\tie}{$\circ$}
+\newcommand{\loss}{\textcolor{red}{$\times$}}
+\newcommand{\tabsetup}{\scriptsize\setlength{\tabcolsep}{3pt}}
+
+\graphicspath{{paper/figures/}}
+\input{paper/generated/numbers.tex}
+\newcommand{\geninput}[1]{\input{paper/generated/#1}}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+\raggedbottom
+
+\begin{document}
+
+\title[Supplementary material]{Supplementary material for: Decomposing the Attractor of Quantum-Behaved PSO: What Random Weights, Bio-Inspired Leaders and Weight Scheduling Each Contribute}
+
+\author*[1]{\sur{Manav}}\email{manav-ug23@nsut.ac.in} % const
+\affil*[1]{\orgdiv{Department of Electronics and Communication Engineering},
+\orgname{Netaji Subhas University of Technology}, \orgaddress{\city{Delhi}, \country{India}}}
+
+\abstract{This supplement gives the sensitivity analysis (E6), the Schwefel experiment with the optimum
+moved inward (E7b), the discrepancy between opfunu and the official CEC2017 code with the superseded opfunu results, the L-SHADE check, the per-function
+CEC2017 tables, all standard deviations, and further tables for the classical functions. Section,
+table and experiment labels follow the main text.}
+
+\maketitle
+
+% =======================================================================
+\section{Sensitivity analysis (E6)}\label{sec:sens}
+We varied one parameter at a time over five values on six classical and four CEC2017 functions, one per class (30 runs, 30,030 FEs; Figure~\ref{fig:sens}, Table~\ref{tab:sens}). A Friedman test across the five values of each parameter on each function, with Holm correction over \EsixCells{} tests, is significant in \EsixSigCells{} cases: \EsixSigLscout{} for $L_{\mathrm{scout}}$, \EsixSigBeta{} for the $\beta$ range, \EsixSigBounds{} for the $\phi_3$ bounds (\EsixSigFnsBounds), and \EsixSigRho{} for $\rho$, $W$ and $\delta$. % const
+
+\paragraph{Deposit.}
+$\Delta$ has no effect by construction: all \EsixDeltaTuples{} runs are identical across its five values. Pheromone is used only to compare neighbors, the initial amount decays equally for all particles, and scaling every deposit by a constant leaves the comparison unchanged. It is a redundant parameter.
+
+\paragraph{Scout limit.}
+The longest limit tested, \EsixLscoutMax, gives the best mean on \EsixLscoutBestAtMax{} of \EsixFns{} functions. Sphere improves from \EsixLSphereDefault{} at the default \EsixLscoutDefault{} to \EsixLSphereLong, and Schwefel from \EsixLSchwefelDefault{} to \EsixLSchwefelLong.
+In an exploratory comparison at that limit, BeeBio is significantly better than AntBio on \EsixLongBetterAnt{} of \EsixFns{} functions and worse on \EsixLongWorseAnt. The cost of scouts reported in the main text therefore belongs to the default limit, not to scouts as such. We keep the default, as settings were frozen before these runs and choosing a limit here would tune on the test functions.
+
+\paragraph{Contraction range.}
+The $\beta$ range trades precision against exploration: ending at 0.75 instead of 0.5 takes Sphere from \EsixBetaSphereDefault{} to \EsixBetaSphereHigh{} and Rastrigin from \EsixBetaRastriginDefault{} to \EsixBetaRastriginHigh. % const
+
+Apart from these two parameters, the results are stable, so the defaults of $\rho$, $W$, $\delta$ and the $\phi_3$ bounds are not driving the findings of the main text.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{sensitivity.pdf}
+\caption{Sensitivity (E6): rank of the mean among five values of each parameter, per function (1 is best). Identical results share a rank.}
+\label{fig:sens}
+\end{figure}
+
+\begin{sidewaystable}
+\centering\tabsetup
+\caption{Sensitivity (E6): mean fitness per parameter value. Default values: $\rho=0.1$, $\Delta=1$, $L_{\mathrm{scout}}=15$, $W=20$, $\delta=0.02$, $[\phi_3^{\min},\phi_3^{\max}]=[0.1,0.5]$, $\beta$ from 1.0 to 0.5.}\label{tab:sens} % const
+\geninput{e6_sensitivity.tex}
+\end{sidewaystable}
+
+% =======================================================================
+\FloatBarrier
+\section{Schwefel with the optimum moved inward (E7b)}\label{sec:e7b}
+E7b tests a specific hypothesis: the gap to QPSO on Schwefel exists because the optimum lies near the bound. It moves the optimum inward, from $c=420.97$ to % const
+$c=120.97$, with a CEC-style penalty outside the domain (Table~\ref{tab:e7b}). Under clipping, all six family members are significantly % const
+worse than QPSO with the optimum near the bound (\EsevBWorseNear{} of 6), and only \EsevBWorseInward{} with the optimum inward. AntBio's ratio % const
+to QPSO's mean falls from \EsevBRatioNearClipAnt{} to \EsevBRatioInwardClipAnt, and BeeBio's from \EsevBRatioNearClipBee{} to \EsevBRatioInwardClipBee.
+Under reflection, however, the gap remains (AntBio \EsevBRatioNearReflectAnt{} to \EsevBRatioInwardReflectAnt), and the no-bio control stays worse inward under
+both handlers (\EsevBRatioInwardClipNobio{} and \EsevBRatioInwardReflectNobio). The hypothesis is therefore supported for clipping, the handling used in the main
+experiments, but rejected as a complete explanation, since part of the gap is unrelated to where the optimum lies.
+
+\begin{sidewaystable}
+\centering\tabsetup
+\caption{Schwefel with the optimum near the bound (near: $c=420.97$) or moved inward (inward: $c=120.97$), by boundary handler (E7b: mean fitness, $D=30$, 30 runs, 30{,}030 FEs).}\label{tab:e7b}
+\geninput{e7b_schwefel.tex}
+\end{sidewaystable}
+
+% =======================================================================
+\FloatBarrier
+\section{The opfunu implementation: a documented discrepancy}\label{sec:official}
+A first run of this study evaluated CEC2017 through the opfunu library (version 1.0.4), which numbers the functions so that its F$k$ is % const
+official F$(k{+}1)$ for $k\ge2$, and whose F5 (official F6) we excluded as nearly flat, leaving 28 functions. We then compared it with the % const
+official C implementation and its data files at five fixed random points in $[-100,100]^D$ per function, at $D=30$ and $D=50$. % const
+Table~\ref{tab:official} gives the largest relative difference of $f-f^*$. The two agree on \CecOffSameList{} only. Loading the official
+shift, rotation and shuffle data into opfunu makes \CecOffDataOnlyList{} agree as well, so for these the formula is the official one
+and only the data differ. For the other functions the formula differs: for example, the Rastrigin function (opfunu F4) omits the
+official scaling of $z$ by $5.12/100$, and the Zakharov function (F2) omits the index weights in its second sum. The composition functions % const
+already use the official data files and still differ. All CEC2017 experiments were therefore repeated on the official code, with the same
+algorithms, settings, seeds and budgets; the main text reports only those runs. The opfunu results are kept here.
+
+\paragraph{Results on opfunu.}
+The main conclusions are the same on both implementations: L-SHADE ranks first at the standard budget (opfunu: \OpEthreesThirtyRankLSHADE{} at $D=30$ and
+\OpEthreesFiftyRankLSHADE{} at $D=50$), neither leader reaches the overall threshold (opfunu: ant \OpEtwocBioCountAnt, bee \OpEtwocBioCountBee{} of \OpEthreeN), and no
+schedule is credited on any function. The size of some effects differs. Scouts are worse on \OpDcScoutsCeWorse{} of \OpEthreeN{} opfunu functions
+but on \DcScoutsCeWorse{} of \EthreeN{} official ones, and the bee leader is credited on \OpEtwocBioCountBee{} opfunu functions but \EtwocBioCountBee{} official ones.
+At the standard budget, the Holm-corrected Wilcoxon test finds \OpEthreesThirtyBioPwBetterList{} better than QPSO on opfunu at $D=30$ and
+\OpEthreesFiftyBioPwBetterList{} at $D=50$; on the official suite it finds \EthreesThirtyBioPwBetterList{} at $D=30$ and \EthreesFiftyBioPwBetterList{} at $D=50$.
+On opfunu, restricted to the \CecOffFormulaCount{} functions with the official formula (\CecOffFormulaList), the $D=50$ comparison has too few functions for any
+Wilcoxon test on means to reach $p<0.05$. Table~\ref{tab:opranks} gives the opfunu ranks and Table~\ref{tab:opdecomp} the decomposition. % const
+The CEC part of the sensitivity analysis (Section~\ref{sec:sens}) was also first run on opfunu F1, F4, F11 and F21, with the same settings; % const
+there, \OpEsixSigCells{} of \OpEsixCells{} Holm-corrected Friedman tests are significant (Table~\ref{tab:opsens}). Section~\ref{sec:sens} uses the official functions.
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Largest relative difference of $f-f^*$ between opfunu 1.0.4 and the official CEC2017 code over five random points, with opfunu's own data and with the official data loaded into it.}\label{tab:official} % const
+\geninput{cec2017_official.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{opfunu run (superseded): mean ranks over its 28 functions at the light budget (E3) and the standard budget (E3s), with Holm-corrected Wilcoxon $p$ against QPSO on per-function means. opfunu identifiers.}\label{tab:opranks}
+\geninput{opfunu_cec2017_ranks.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{opfunu run (superseded): attractor decomposition as in the main text, with the opfunu functions in the CEC2017 columns (28 functions, light budget).}\label{tab:opdecomp}
+\geninput{opfunu_decomposition.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{opfunu run (superseded): sensitivity (E6) on the four opfunu CEC2017 functions, mean fitness per parameter value (opfunu identifiers).}\label{tab:opsens}
+\geninput{opfunu_e6_sensitivity.tex}
+\end{table}
+
+% =======================================================================
+\FloatBarrier
+\section{Per-function CEC2017 results}\label{sec:cecfull}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{CEC2017 mean fitness at the standard budget, first half (E3s: $D=30$, $10^4D$ FEs, 30 runs). Bold: best at the printed precision.}\label{tab:e3sa}
+\geninput{e3s_d30_mean_a.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{CEC2017 mean fitness at the standard budget, second half (E3s: $D=30$).}\label{tab:e3sb}
+\geninput{e3s_d30_mean_b.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{CEC2017 mean fitness at the standard budget, first half (E3s: $D=50$, $10^4D$ FEs, 30 runs).}\label{tab:e3s50a}
+\geninput{e3s_d50_mean_a.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{CEC2017 mean fitness at the standard budget, second half (E3s: $D=50$).}\label{tab:e3s50b}
+\geninput{e3s_d50_mean_b.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Our L-SHADE against the CEC2017 competition results of jSO and LSHADE-SPACMA at $10^4D$ FEs: mean error $f-f^*$ (ours: 30 runs; theirs: 51 runs, from the official CEC2017 repository; errors below $10^{-8}$ count as 0). First three columns $D=30$, last three $D=50$.}\label{tab:lshade} % const
+\geninput{lshade_reference.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{CEC2017 mean fitness, light budget, first half (E3: $D=30$, 30{,}030 FEs). Bold: best at the printed precision.}\label{tab:ceca}
+\geninput{cec2017_mean_a.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{CEC2017 mean fitness, light budget, second half (E3).}\label{tab:cecb}
+\geninput{cec2017_mean_b.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Controls on CEC2017 (E2c, E3): mean fitness at the light budget. Ant leader unless marked.}\label{tab:ceccontrols}
+\geninput{controls_cec.tex}
+\end{table}
+
+\begin{sidewaystable}
+\centering\tabsetup
+\caption{Bio-leader credit on CEC2017 (E2c, E3). Rel.: relative improvement on raw values, as locked.}\label{tab:biocec}
+\geninput{bioleader_credit_cec.tex}
+\end{sidewaystable}
+
+% =======================================================================
+\FloatBarrier
+\section{Standard deviations}\label{sec:std}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Standard deviation of best fitness, classical functions (E1).}\label{tab:clstd}
+\geninput{classical_std.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Standard deviation, shifted functions (E1b).}\label{tab:shstd}
+\geninput{shifted_std.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Standard deviation of best fitness, scalability (E4).}\label{tab:scalstd}
+\geninput{scalability_std.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Standard deviation, CEC2017 light budget, first half (E3).}
+\geninput{cec2017_std_a.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Standard deviation, CEC2017 light budget, second half (E3).}
+\geninput{cec2017_std_b.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Standard deviation, CEC2017 standard budget, first half (E3s: $D=30$).}
+\geninput{e3s_d30_std_a.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Standard deviation, CEC2017 standard budget, second half (E3s: $D=30$).}
+\geninput{e3s_d30_std_b.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Standard deviation, CEC2017 standard budget, first half (E3s: $D=50$).}
+\geninput{e3s_d50_std_a.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Standard deviation, CEC2017 standard budget, second half (E3s: $D=50$).}
+\geninput{e3s_d50_std_b.tex}
+\end{table}
+
+% =======================================================================
+\FloatBarrier
+\section{Further tables, classical functions}\label{sec:clfull}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Median best fitness, classical functions (E1).}\label{tab:clmed}
+\geninput{classical_median.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Interquartile range of best fitness, classical functions (E1).}
+\geninput{classical_iqr.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Win/tie/loss against QPSO per function (E1; two-sided, paired by seed, Holm-corrected $\alpha=0.05$; ties include relative differences below 1\%).}\label{tab:wtl}
+\geninput{wilcoxon.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Win/tie/loss against QPSO per function, shifted functions (E1b).}
+\geninput{wilcoxon_shifted.tex}
+\end{table}
+
+\begin{sidewaystable}
+\centering\tabsetup
+\caption{Rank-biserial $r$ with bootstrap 95\% CI against QPSO (E1). Negative favors the variant.}\label{tab:eff}
+\geninput{effect_sizes.tex}
+\end{sidewaystable}
+
+\begin{sidewaystable}
+\centering\tabsetup
+\caption{Rank-biserial $r$ with bootstrap 95\% CI against QPSO (E1b).}
+\geninput{effect_sizes_shifted.tex}
+\end{sidewaystable}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Controls on classical functions, ant leader: mean fitness (E2).}\label{tab:sweep}
+\geninput{controls_fixed_sweep.tex}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\tabsetup
+\caption{Controls on classical functions, bee leader: mean fitness (E2).}
+\geninput{controls_fixed_sweep_bee.tex}
+\end{table}
+
+\end{document}

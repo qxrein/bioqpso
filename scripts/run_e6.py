@@ -36,5 +36,6 @@ def job(path, k, val, a, extra, fn, r):
     rec = run_job(a, p, r, SEEDS[r], max_fes=30030, extra=extra)
     rec.update(param=k, value=val, phi3_hist=None, convergence=None)
     write_json(path, rec)
-run_jobs("E6", job, [(f"{OUT}/{k}__{v}__{fn}__r{r:03d}.json", (k, v, a, e, fn, r))
-                     for k, v, a, e in CFG for fn in CL + CE for r in range(30)])
+if __name__ == "__main__":
+    run_jobs("E6", job, [(f"{OUT}/{k}__{v}__{fn}__r{r:03d}.json", (k, v, a, e, fn, r))
+                         for k, v, a, e in CFG for fn in CL + CE for r in range(30)])

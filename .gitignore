@@ -22,3 +22,9 @@
 !config/
 !paper/
 !paper/**
+
+# Official CEC2017 code: not redistributed; scripts/fetch_cec2017_official.sh installs it
+bioqpso/benchmarks/cec17_official/cec17_test_func.cpp
+bioqpso/benchmarks/cec17_official/input_data/
+bioqpso/benchmarks/cec17_official/cec17_official_decls.h
+bioqpso/benchmarks/cec17_official/_build/
